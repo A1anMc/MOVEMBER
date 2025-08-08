@@ -1076,6 +1076,15 @@ async def get_logo():
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Logo not found")
 
+# Favicon endpoint
+@app.get("/favicon.ico")
+async def get_favicon():
+    """Get the Movember favicon."""
+    try:
+        return FileResponse("assets/images/favicon.ico")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Favicon not found")
+
 
 if __name__ == "__main__":
     import uvicorn

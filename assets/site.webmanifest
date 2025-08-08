@@ -1,0 +1,22 @@
+{
+  "name": "Movember AI Rules System",
+  "short_name": "Movember AI",
+  "description": "Movember AI Rules System for grant evaluation and impact measurement",
+  "icons": [
+    {
+      "src": "/static/images/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#2E86AB",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/"
+}
