@@ -7,6 +7,7 @@ All responses use UK spelling and AUD currency.
 
 import asyncio
 import logging
+import os
 import json
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
@@ -29,7 +30,9 @@ logger = logging.getLogger(__name__)
 
 # Database setup
 Base = declarative_base()
-engine = create_engine("sqlite:///movember_ai.db")
+# Use DATABASE_URL if provided, else default to local SQLite for tests/dev
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///movember_ai.db")
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Create tables

@@ -20,6 +20,7 @@ from sqlalchemy.orm import sessionmaker
 import requests
 from urllib.parse import urljoin, urlparse
 import re
+import os
 
 from rules.domains.movember_ai.behaviours import convert_to_uk_spelling, format_aud_currency
 
@@ -31,7 +32,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Database setup
-engine = create_engine("sqlite:///movember_ai.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///movember_ai.db")
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
