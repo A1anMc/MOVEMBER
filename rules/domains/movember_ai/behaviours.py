@@ -137,7 +137,7 @@ AI_RULES = [
     ),
 
     Rule(
-        name="ensure_uk_spelling_consistency",
+        name="ensure_ai_uk_spelling_consistency",
         conditions=[
             Condition("text.contains_american_spelling == True"),
             Condition("audience.includes_uk_users == True")

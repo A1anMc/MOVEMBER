@@ -53,7 +53,7 @@ REFACTOR_RULES = [
     ),
 
     Rule(
-        name="validate_uk_spelling_consistency",
+        name="validate_rule_uk_spelling_consistency",
         conditions=[
             Condition("rule.description.contains_american_spelling == True"),
             Condition("rule.status == 'active'")
@@ -68,7 +68,7 @@ REFACTOR_RULES = [
     ),
 
     Rule(
-        name="validate_aud_currency_standards",
+        name="validate_rule_aud_currency_standards",
         conditions=[
             Condition("rule.contains_currency_references == True"),
             Condition("rule.currency_format != 'AUD'")
