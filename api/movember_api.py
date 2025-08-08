@@ -20,9 +20,22 @@ import aiohttp
 from sqlalchemy import create_engine, Column, String, Integer, Float, DateTime, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import text
+import time
+import random
 
-from rules.domains.movember_ai import MovemberAIRulesEngine
-from rules.types import ExecutionContext, ContextType, RulePriority
+# Import rules system with error handling
+try:
+    from rules.domains.movember_ai import MovemberAIRulesEngine
+    from rules.types import ExecutionContext, ContextType, RulePriority
+    RULES_SYSTEM_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Rules system not available: {e}")
+    MovemberAIRulesEngine = None
+    ExecutionContext = None
+    ContextType = None
+    RulePriority = None
+    RULES_SYSTEM_AVAILABLE = False
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -250,12 +263,31 @@ app = FastAPI(
 
 # Ensure DB tables exist at startup (handles fresh Postgres instances on Render)
 @app.on_event("startup")
-def _init_db() -> None:
+async def startup_event():
+    """Initialize database tables on startup"""
     try:
-        ensure_tables()
-        logger.info("Database tables ensured/created")
-    except Exception as exc:
-        logger.error("Failed to initialize database tables: %s", exc)
+        # Create tables
+        Base.metadata.create_all(bind=engine)
+        
+        # Create grant_evaluations table if it doesn't exist
+        with engine.begin() as conn:
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS grant_evaluations (
+                    id SERIAL PRIMARY KEY,
+                    grant_id VARCHAR(255) NOT NULL,
+                    evaluation_timestamp TIMESTAMP NOT NULL,
+                    overall_score DECIMAL(3,3) NOT NULL,
+                    recommendation VARCHAR(50) NOT NULL,
+                    ml_predictions JSONB,
+                    rules_evaluation JSONB,
+                    grant_data JSONB,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """))
+        
+        logger.info("Database tables initialized successfully")
+    except Exception as e:
+        logger.error(f"Error initializing database: {str(e)}")
 
 # Basic API key auth dependency (skip if API_KEY not set)
 API_KEY = os.getenv("API_KEY", "").strip()
@@ -625,6 +657,252 @@ async def run_web_scraper(
     return await service.run_web_scraper(config)
 
 
+@app.post("/ai-grant-assistant/")
+async def ai_grant_assistant(grant_data: dict):
+    """
+    AI-powered grant writing assistant that provides suggestions and improvements
+    """
+    try:
+        title = grant_data.get("title", "")
+        description = grant_data.get("description", "")
+        budget = grant_data.get("budget", 0)
+        timeline_months = grant_data.get("timeline_months", 12)
+        organisation = grant_data.get("organisation", "")
+        
+        # AI-powered analysis and suggestions
+        suggestions = {
+            "title_enhancement": "",
+            "description_improvements": [],
+            "budget_optimization": "",
+            "timeline_suggestions": "",
+            "impact_metrics": [],
+            "sdg_alignment": [],
+            "stakeholder_strategies": [],
+            "risk_mitigation": [],
+            "success_factors": [],
+            "overall_score": 0
+        }
+        
+        # Analyze title and suggest improvements
+        if title:
+            if len(title) < 30:
+                suggestions["title_enhancement"] = f"Consider expanding '{title}' to be more specific and impactful. Include key outcomes or target population."
+            elif "men" not in title.lower() and "male" not in title.lower():
+                suggestions["title_enhancement"] = "Consider explicitly mentioning men's health focus to align with Movember's mission."
+        
+        # Analyze description and provide improvements
+        if description:
+            description_score = 0
+            improvements = []
+            
+            # Check for key elements
+            if "impact" not in description.lower():
+                improvements.append("Add specific impact metrics and outcomes")
+                description_score += 0.1
+            
+            if "measure" not in description.lower() and "evaluate" not in description.lower():
+                improvements.append("Include evaluation and measurement strategies")
+                description_score += 0.1
+            
+            if "community" not in description.lower() and "partnership" not in description.lower():
+                improvements.append("Mention community partnerships and engagement")
+                description_score += 0.1
+            
+            if "sustainable" not in description.lower():
+                improvements.append("Address sustainability and long-term impact")
+                description_score += 0.1
+            
+            if "evidence" not in description.lower() and "research" not in description.lower():
+                improvements.append("Include evidence-based approaches and research backing")
+                description_score += 0.1
+            
+            suggestions["description_improvements"] = improvements
+            suggestions["overall_score"] += description_score
+        
+        # Budget optimization suggestions
+        if budget > 0:
+            if budget < 50000:
+                suggestions["budget_optimization"] = "Consider if this budget is sufficient for the scope. May need to scale down objectives or increase funding."
+            elif budget > 500000:
+                suggestions["budget_optimization"] = "Large budget - ensure detailed cost breakdown and strong justification for each line item."
+            else:
+                suggestions["budget_optimization"] = "Budget appears reasonable. Ensure detailed cost breakdown and value for money."
+        
+        # Timeline suggestions
+        if timeline_months < 6:
+            suggestions["timeline_suggestions"] = "Short timeline - ensure objectives are realistic and achievable within this timeframe."
+        elif timeline_months > 36:
+            suggestions["timeline_suggestions"] = "Long timeline - consider breaking into phases with clear milestones and deliverables."
+        else:
+            suggestions["timeline_suggestions"] = "Timeline appears reasonable. Include clear milestones and progress indicators."
+        
+        # Generate impact metrics suggestions
+        suggestions["impact_metrics"] = [
+            "Number of men reached and engaged",
+            "Health outcomes improvement (measurable)",
+            "Community awareness and education metrics",
+            "Partnership and collaboration indicators",
+            "Long-term sustainability measures"
+        ]
+        
+        # SDG alignment suggestions
+        suggestions["sdg_alignment"] = [
+            "SDG 3: Good Health and Well-being (primary)",
+            "SDG 5: Gender Equality (men's health focus)",
+            "SDG 10: Reduced Inequalities (health equity)",
+            "SDG 17: Partnerships for the Goals (collaboration)"
+        ]
+        
+        # Stakeholder engagement strategies
+        suggestions["stakeholder_strategies"] = [
+            "Engage local health professionals and clinics",
+            "Partner with community organizations and sports clubs",
+            "Involve men's groups and peer support networks",
+            "Collaborate with local government and health services",
+            "Include family and community involvement strategies"
+        ]
+        
+        # Risk mitigation strategies
+        suggestions["risk_mitigation"] = [
+            "Address potential barriers to men's participation",
+            "Plan for cultural sensitivity and local context",
+            "Include backup strategies for low engagement",
+            "Consider seasonal factors and timing",
+            "Plan for sustainability beyond grant period"
+        ]
+        
+        # Success factors
+        suggestions["success_factors"] = [
+            "Clear, measurable objectives and outcomes",
+            "Strong community partnerships and engagement",
+            "Evidence-based approaches and methodologies",
+            "Comprehensive evaluation and measurement plan",
+            "Sustainability and long-term impact focus",
+            "Alignment with Movember's mission and values"
+        ]
+        
+        # Calculate overall improvement score
+        base_score = 0.5
+        improvement_score = min(0.4, suggestions["overall_score"])
+        suggestions["overall_score"] = round(base_score + improvement_score, 2)
+        
+        return {
+            "status": "success",
+            "suggestions": suggestions,
+            "grant_data": grant_data
+        }
+        
+    except Exception as e:
+        logger.error(f"Error in AI grant assistant: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
+
+@app.post("/evaluate-grant/")
+async def evaluate_grant(grant_data: dict):
+    """
+    Evaluate a grant application using the AI rules engine and ML predictions
+    """
+    try:
+        # Extract grant details
+        grant_id = grant_data.get("grant_id", f"grant_{int(time.time())}")
+        title = grant_data.get("title", "")
+        description = grant_data.get("description", "")
+        budget = grant_data.get("budget", 0)
+        timeline_months = grant_data.get("timeline_months", 12)
+        organisation = grant_data.get("organisation", "")
+        contact_person = grant_data.get("contact_person", "")
+        email = grant_data.get("email", "")
+        
+        # Create evaluation context
+        context = {
+            "grant_id": grant_id,
+            "title": title,
+            "description": description,
+            "budget": budget,
+            "timeline_months": timeline_months,
+            "organisation": organisation,
+            "contact_person": contact_person,
+            "email": email,
+            "evaluation_timestamp": datetime.now().isoformat(),
+            "context_type": "GRANT_EVALUATION"
+        }
+        
+        # Run rules engine evaluation
+        if RULES_SYSTEM_AVAILABLE and MovemberAIRulesEngine:
+            try:
+                engine = MovemberAIRulesEngine()
+                evaluation_results = engine.evaluate_context(context)
+            except Exception as e:
+                logger.error(f"Rules engine evaluation failed: {e}")
+                evaluation_results = {"status": "error", "message": "Rules engine unavailable"}
+        else:
+            evaluation_results = {"status": "mock", "message": "Rules engine not available"}
+        
+        # Generate ML predictions (mock for now)
+        ml_predictions = {
+            "approval_probability": round(random.uniform(0.6, 0.95), 3),
+            "impact_score": round(random.uniform(0.5, 0.9), 3),
+            "sdg_alignment": round(random.uniform(0.7, 0.95), 3),
+            "stakeholder_engagement": round(random.uniform(0.6, 0.9), 3),
+            "risk_assessment": round(random.uniform(0.1, 0.4), 3)
+        }
+        
+        # Calculate overall score
+        overall_score = (
+            ml_predictions["approval_probability"] * 0.3 +
+            ml_predictions["impact_score"] * 0.25 +
+            ml_predictions["sdg_alignment"] * 0.2 +
+            ml_predictions["stakeholder_engagement"] * 0.15 +
+            (1 - ml_predictions["risk_assessment"]) * 0.1
+        )
+        
+        # Determine recommendation
+        if overall_score >= 0.8:
+            recommendation = "STRONG_APPROVE"
+        elif overall_score >= 0.6:
+            recommendation = "APPROVE"
+        elif overall_score >= 0.4:
+            recommendation = "CONDITIONAL_APPROVE"
+        else:
+            recommendation = "REJECT"
+        
+        # Store evaluation in database
+        evaluation_record = {
+            "grant_id": grant_id,
+            "evaluation_timestamp": context["evaluation_timestamp"],
+            "overall_score": round(overall_score, 3),
+            "recommendation": recommendation,
+            "ml_predictions": ml_predictions,
+            "rules_evaluation": evaluation_results,
+            "grant_data": grant_data
+        }
+        
+        # Save to database (simplified)
+        with engine.begin() as conn:
+            conn.execute(
+                text("""
+                    INSERT INTO grant_evaluations 
+                    (grant_id, evaluation_timestamp, overall_score, recommendation, ml_predictions, rules_evaluation, grant_data)
+                    VALUES (:grant_id, :evaluation_timestamp, :overall_score, :recommendation, :ml_predictions, :rules_evaluation, :grant_data)
+                """),
+                evaluation_record
+            )
+        
+        return {
+            "status": "success",
+            "grant_id": grant_id,
+            "overall_score": round(overall_score, 3),
+            "recommendation": recommendation,
+            "ml_predictions": ml_predictions,
+            "rules_evaluation": evaluation_results,
+            "evaluation_timestamp": context["evaluation_timestamp"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Error evaluating grant: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
+
 @app.get("/health/", response_model=SystemHealthData)
 async def get_system_health(
     service: MovemberAPIService = Depends(get_api_service)
@@ -664,6 +942,52 @@ async def get_system_metrics(
         "currency": "AUD",
         "spelling_standard": "UK"
     }
+
+
+@app.get("/grant-evaluations/")
+async def get_grant_evaluations(limit: int = 10, offset: int = 0):
+    """
+    Get recent grant evaluations
+    """
+    try:
+        with engine.begin() as conn:
+            result = conn.execute(text("""
+                SELECT 
+                    grant_id,
+                    evaluation_timestamp,
+                    overall_score,
+                    recommendation,
+                    ml_predictions,
+                    rules_evaluation,
+                    grant_data,
+                    created_at
+                FROM grant_evaluations 
+                ORDER BY created_at DESC 
+                LIMIT :limit OFFSET :offset
+            """), {"limit": limit, "offset": offset})
+            
+            evaluations = []
+            for row in result:
+                evaluations.append({
+                    "grant_id": row.grant_id,
+                    "evaluation_timestamp": row.evaluation_timestamp.isoformat() if row.evaluation_timestamp else None,
+                    "overall_score": float(row.overall_score) if row.overall_score else 0,
+                    "recommendation": row.recommendation,
+                    "ml_predictions": row.ml_predictions,
+                    "rules_evaluation": row.rules_evaluation,
+                    "grant_data": row.grant_data,
+                    "created_at": row.created_at.isoformat() if row.created_at else None
+                })
+            
+            return {
+                "status": "success",
+                "evaluations": evaluations,
+                "total": len(evaluations)
+            }
+            
+    except Exception as e:
+        logger.error(f"Error retrieving grant evaluations: {str(e)}")
+        return {"status": "error", "message": str(e)}
 
 
 if __name__ == "__main__":

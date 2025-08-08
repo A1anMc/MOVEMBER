@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import {
   HomeIcon,
   DocumentTextIcon,
+  SparklesIcon,
   ChartBarIcon,
   CpuChipIcon,
   CogIcon
@@ -15,6 +16,7 @@ const Navigation: React.FC = () => {
   const navigation = [
     { name: 'Dashboard', href: '/', icon: HomeIcon },
     { name: 'Grant Evaluation', href: '/grants', icon: DocumentTextIcon },
+    { name: 'AI Assistant', href: '/ai-assistant', icon: SparklesIcon },
     { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
     { name: 'ML Insights', href: '/ml-insights', icon: CpuChipIcon },
   ];

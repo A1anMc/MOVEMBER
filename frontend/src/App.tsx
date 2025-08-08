@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import Dashboard from './components/Dashboard';
 import GrantEvaluation from './components/GrantEvaluation';
+import AIGrantAssistant from './components/AIGrantAssistant';
 import Analytics from './components/Analytics';
 import MLInsights from './components/MLInsights';
 import Navigation from './components/Navigation';
@@ -26,9 +27,10 @@ function App() {
           <main className="pt-16">
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/grants" element={<GrantEvaluation />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/ml-insights" element={<MLInsights />} />
+                        <Route path="/grants" element={<GrantEvaluation />} />
+          <Route path="/ai-assistant" element={<AIGrantAssistant />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/ml-insights" element={<MLInsights />} />
             </Routes>
           </main>
         </div>
