@@ -501,27 +501,31 @@ async def main():
     # Create logs directory
     os.makedirs('logs', exist_ok=True)
     
-    # Example scraping configuration
-    grants_config = {
-        "sources": [
-            {"url": "https://example-grants-site.com/grants"},
-            {"url": "https://another-grants-site.com/funding"}
-        ]
-    }
-    
-    research_config = {
-        "sources": [
-            {"url": "https://example-research-site.com/publications"},
-            {"url": "https://another-research-site.com/studies"}
-        ]
-    }
-    
-    impact_config = {
-        "sources": [
-            {"url": "https://example-impact-site.com/reports"},
-            {"url": "https://another-impact-site.com/outcomes"}
-        ]
-    }
+    # Build sources strictly from environment (comma-separated URLs). No fallbacks.
+    def env_sources(env_var: str) -> list:
+        raw = os.getenv(env_var, "").strip()
+        if not raw:
+            return []
+        return [{"url": u.strip()} for u in raw.split(",") if u.strip()]
+
+    grants_config = {"sources": env_sources("SCRAPER_GRANTS_SOURCES")}
+    research_config = {"sources": env_sources("SCRAPER_RESEARCH_SOURCES")}
+    impact_config = {"sources": env_sources("SCRAPER_IMPACT_SOURCES")}
+
+    # Validate that real sources were provided
+    missing = []
+    if not grants_config["sources"]:
+        missing.append("SCRAPER_GRANTS_SOURCES")
+    if not research_config["sources"]:
+        missing.append("SCRAPER_RESEARCH_SOURCES")
+    if not impact_config["sources"]:
+        missing.append("SCRAPER_IMPACT_SOURCES")
+    if missing:
+        logger.error(
+            "Missing environment variables for scraper sources: %s. "
+            "Please set them as comma-separated URLs and re-run.", ", ".join(missing)
+        )
+        raise SystemExit(1)
     
     async with MovemberDataScraper() as scraper:
         logger.info("🕷️ Starting Movember Data Scraper...")
