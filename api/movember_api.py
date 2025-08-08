@@ -70,6 +70,17 @@ except ImportError as e:
     real_data_router = None
     REAL_DATA_AVAILABLE = False
 
+# Import data upload system
+try:
+    from data_upload_system import upload_system
+    from api.data_upload_api import data_upload_router
+    DATA_UPLOAD_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Data upload system not available: {e}")
+    upload_system = None
+    data_upload_router = None
+    DATA_UPLOAD_AVAILABLE = False
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -361,6 +372,13 @@ if REAL_DATA_AVAILABLE and real_data_router:
     logger.info("Real data integration endpoints included")
 else:
     logger.warning("Real data integration endpoints not available")
+
+# Include data upload router if available
+if DATA_UPLOAD_AVAILABLE and data_upload_router:
+    app.include_router(data_upload_router)
+    logger.info("Data upload endpoints included")
+else:
+    logger.warning("Data upload endpoints not available")
 
 # Global variables
 movember_engine = None

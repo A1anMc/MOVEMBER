@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movember Data Upload System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .upload-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .upload-form {
+            display: grid;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group select,
+        .form-group input[type="file"] {
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group select:focus,
+        .form-group input[type="file"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .upload-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .templates-section {
+            margin-top: 40px;
+        }
+        
+        .template-card {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .template-card h3 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+        }
+        
+        .template-card ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .template-card li {
+            margin-bottom: 5px;
+        }
+        
+        .summary-section {
+            margin-top: 40px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .summary-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .summary-card h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        
+        .summary-card .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .instructions {
+            background: #e8f4fd;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .instructions h3 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+        }
+        
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .supported-formats {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .format-tag {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📤 Movember Data Upload System</h1>
+            <p>Upload real Movember data in various formats for automatic processing</p>
+        </div>
+        
+        <div class="content">
+            <div class="instructions">
+                <h3>📋 Upload Instructions</h3>
+                <ol>
+                    <li>Prepare your data file in one of the supported formats</li>
+                    <li>Select the appropriate data type for your file</li>
+                    <li>Upload your file using the form below</li>
+                    <li>Check the validation status of your uploaded data</li>
+                    <li>Access your processed data through the API endpoints</li>
+                </ol>
+                <div class="supported-formats">
+                    <span class="format-tag">CSV</span>
+                    <span class="format-tag">JSON</span>
+                    <span class="format-tag">Excel</span>
+                    <span class="format-tag">PDF</span>
+                </div>
+            </div>
+            
+            <div class="upload-section">
+                <h2>📁 Upload Data File</h2>
+                <form class="upload-form" id="uploadForm">
+                    <div class="form-group">
+                        <label for="dataType">Data Type:</label>
+                        <select id="dataType" name="dataType" required>
+                            <option value="">Select data type...</option>
+                            <option value="annual_reports">Annual Reports</option>
+                            <option value="grants">Grant Opportunities</option>
+                            <option value="projects">Project Data</option>
+                            <option value="impact_metrics">Impact Metrics</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dataFile">Data File:</label>
+                        <input type="file" id="dataFile" name="file" accept=".csv,.json,.xlsx,.xls,.pdf" required>
+                    </div>
+                    
+                    <button type="submit" class="upload-btn" id="uploadBtn">
+                        📤 Upload Data
+                    </button>
+                </form>
+                
+                <div id="status" class="status" style="display: none;"></div>
+            </div>
+            
+            <div class="templates-section">
+                <h2>📋 Data Templates</h2>
+                <div class="template-card">
+                    <h3>Annual Reports Template</h3>
+                    <p>Upload data about funding, reach, and impact from annual reports.</p>
+                    <strong>CSV Columns:</strong>
+                    <ul>
+                        <li>year, funding_raised, men_reached, countries_reached</li>
+                        <li>research_funding, lives_saved, awareness_increase</li>
+                    </ul>
+                </div>
+                
+                <div class="template-card">
+                    <h3>Grant Opportunities Template</h3>
+                    <p>Upload data about available grant opportunities.</p>
+                    <strong>CSV Columns:</strong>
+                    <ul>
+                        <li>id, title, amount, currency, deadline, status</li>
+                        <li>funding_body, focus_areas, geographic_scope</li>
+                    </ul>
+                </div>
+                
+                <div class="template-card">
+                    <h3>Project Data Template</h3>
+                    <p>Upload data about Movember projects and initiatives.</p>
+                    <strong>CSV Columns:</strong>
+                    <ul>
+                        <li>project_id, title, budget, currency, start_date</li>
+                        <li>end_date, status, geographic_scope, target_audience</li>
+                    </ul>
+                </div>
+                
+                <div class="template-card">
+                    <h3>Impact Metrics Template</h3>
+                    <p>Upload data about impact measurement and outcomes.</p>
+                    <strong>CSV Columns:</strong>
+                    <ul>
+                        <li>metric_name, value, unit, region, year</li>
+                        <li>target, actual, percentage_achieved</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="summary-section">
+                <h2>📊 Upload Summary</h2>
+                <div class="summary-grid" id="summaryGrid">
+                    <div class="summary-card">
+                        <h3>Total Uploads</h3>
+                        <div class="number" id="totalUploads">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Valid Data</h3>
+                        <div class="number" id="validData">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Data Types</h3>
+                        <div class="number" id="dataTypes">0</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>File Formats</h3>
+                        <div class="number" id="fileFormats">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:8001';
+        
+        // Load summary on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSummary();
+        });
+        
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const fileInput = document.getElementById('dataFile');
+            const dataTypeInput = document.getElementById('dataType');
+            
+            if (fileInput.files.length === 0) {
+                showStatus('Please select a file to upload.', 'error');
+                return;
+            }
+            
+            if (!dataTypeInput.value) {
+                showStatus('Please select a data type.', 'error');
+                return;
+            }
+            
+            formData.append('file', fileInput.files[0]);
+            formData.append('data_type', dataTypeInput.value);
+            
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '📤 Uploading...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/data-upload/upload-file/`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus(`✅ File uploaded successfully! Data ID: ${result.data_id}`, 'success');
+                    document.getElementById('uploadForm').reset();
+                    loadSummary();
+                } else {
+                    showStatus(`❌ Upload failed: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Upload failed: ${error.message}`, 'error');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '📤 Upload Data';
+            }
+        });
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        async function loadSummary() {
+            try {
+                const response = await fetch(`${API_BASE}/data-upload/summary/`);
+                const summary = await response.json();
+                
+                document.getElementById('totalUploads').textContent = summary.total_uploads;
+                document.getElementById('validData').textContent = summary.by_status.valid || 0;
+                document.getElementById('dataTypes').textContent = Object.keys(summary.by_type).length;
+                document.getElementById('fileFormats').textContent = Object.keys(summary.by_format).length;
+            } catch (error) {
+                console.error('Failed to load summary:', error);
+            }
+        }
+    </script>
+</body>
+</html> 
