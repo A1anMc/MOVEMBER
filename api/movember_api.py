@@ -59,6 +59,17 @@ except ImportError as e:
     impact_intelligence_router = None
     IMPACT_INTELLIGENCE_AVAILABLE = False
 
+# Import real data integration system
+try:
+    from real_data_integration import movember_data_integrator
+    from api.real_data_api import real_data_router
+    REAL_DATA_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Real data integration system not available: {e}")
+    movember_data_integrator = None
+    real_data_router = None
+    REAL_DATA_AVAILABLE = False
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -343,6 +354,13 @@ if IMPACT_INTELLIGENCE_AVAILABLE and impact_intelligence_router:
     logger.info("Impact intelligence endpoints included")
 else:
     logger.warning("Impact intelligence endpoints not available")
+
+# Include real data integration router if available
+if REAL_DATA_AVAILABLE and real_data_router:
+    app.include_router(real_data_router)
+    logger.info("Real data integration endpoints included")
+else:
+    logger.warning("Real data integration endpoints not available")
 
 # Global variables
 movember_engine = None
