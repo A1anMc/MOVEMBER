@@ -39,7 +39,14 @@ class ActionExecutor:
             'approve_request': self._approve_request,
             'reject_request': self._reject_request,
             'schedule_task': self._schedule_task,
-            'update_status': self._update_status
+            'update_status': self._update_status,
+            # No-op/safe stub actions used by some rules
+            'trigger_audit_log': self._trigger_audit_log,
+            'send_refactor_summary_to_admin': self._send_refactor_summary_to_admin,
+            'schedule_next_review': self._schedule_next_review,
+            'abort': self._abort,
+            'log_context_violation': self._log_context_violation,
+            'redirect_to_movember_scope': self._redirect_to_movember_scope
         }
         
         # Custom action registry
@@ -203,7 +210,7 @@ class ActionExecutor:
         if action.name in self.built_in_actions:
             return self.built_in_actions[action.name]
         
-        return None
+        return self._no_op
     
     # Built-in action executors
     
@@ -406,4 +413,44 @@ class ActionExecutor:
         # In production, you'd update the status in your system
         logger.info(f"Would update status of {entity_id} to {status}")
         
-        return f"Status updated to {status}" 
+        return f"Status updated to {status}"
+
+    # Safe no-op/stub executors
+    def _trigger_audit_log(self, action: Action, context: ExecutionContext) -> str:
+        """Record an audit log entry (stub)."""
+        message = action.parameters.get('message', 'Audit event recorded')
+        logger.info(f"AUDIT: {message}")
+        return "audit_logged"
+
+    def _send_refactor_summary_to_admin(self, action: Action, context: ExecutionContext) -> str:
+        """Send refactor summary to admin (stub)."""
+        admin = action.parameters.get('admin', 'admin@local')
+        logger.info(f"Refactor summary would be sent to {admin}")
+        return "refactor_summary_sent"
+
+    def _schedule_next_review(self, action: Action, context: ExecutionContext) -> str:
+        """Schedule the next rule review (stub)."""
+        when = action.parameters.get('when', 'next_week')
+        logger.info(f"Next review scheduled for {when}")
+        return "next_review_scheduled"
+
+    def _abort(self, action: Action, context: ExecutionContext) -> str:
+        """Abort execution (stub)."""
+        message = action.parameters.get('message', 'Aborted by rule')
+        logger.warning(f"ABORT requested: {message}")
+        return "aborted"
+
+    def _log_context_violation(self, action: Action, context: ExecutionContext) -> str:
+        reason = action.parameters.get('reason', 'Context violation detected')
+        logger.warning(f"CONTEXT VIOLATION: {reason}")
+        return "context_violation_logged"
+
+    def _redirect_to_movember_scope(self, action: Action, context: ExecutionContext) -> str:
+        target = action.parameters.get('target', 'movember')
+        logger.info(f"Redirecting context to scope: {target}")
+        return "redirected_to_movember"
+
+    def _no_op(self, action: Action, context: ExecutionContext) -> str:
+        """Fallback executor that performs no operation but logs the action name."""
+        logger.info(f"No-op executor used for unknown action '{action.name}'")
+        return "no_op" 

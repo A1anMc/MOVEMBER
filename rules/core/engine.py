@@ -142,7 +142,7 @@ class RuleEngine:
                 applicable_rules.append(rule)
         
         # Sort by priority (higher priority first)
-        applicable_rules.sort(key=lambda r: r.priority, reverse=True)
+        applicable_rules.sort(key=lambda r: r.priority.value, reverse=True)
         
         return applicable_rules
     
@@ -177,7 +177,8 @@ class RuleEngine:
                     rule_name=rule.name,
                     success=True,
                     conditions_met=False,
-                    execution_time=time.time() - start_time
+                    execution_time=time.time() - start_time,
+                    metadata={"priority": rule.priority}
                 )
             
             # Execute actions
@@ -196,7 +197,8 @@ class RuleEngine:
                 success=True,
                 conditions_met=True,
                 action_results=action_results,
-                execution_time=execution_time
+                execution_time=execution_time,
+                metadata={"priority": rule.priority}
             )
             
         except Exception as e:
@@ -211,7 +213,8 @@ class RuleEngine:
                 rule_name=rule.name,
                 success=False,
                 error=str(e),
-                execution_time=execution_time
+                execution_time=execution_time,
+                metadata={"priority": rule.priority}
             )
     
     def _record_audit_trail(self, context: ExecutionContext, results: List[RuleResult], total_time: float) -> None:

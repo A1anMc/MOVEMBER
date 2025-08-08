@@ -11,13 +11,14 @@ import logging
 import time
 from datetime import datetime
 
-from .engine import RuleEngine
+from .engine import RuleEngine, RuleEngineConfig
 from .evaluator import RuleEvaluator
 from .executor import ActionExecutor
 from .metrics import MetricsCollector
 
 __all__ = [
     'RuleEngine',
+    'RuleEngineConfig', 
     'RuleEvaluator', 
     'ActionExecutor',
     'MetricsCollector'

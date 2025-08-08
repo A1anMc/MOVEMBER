@@ -1,0 +1,48 @@
+🎯 Starting Movember Impact Dashboard...
+🚀 Starting API server...
+✅ API server started (PID: 11108)
+INFO:monitoring.advanced_metrics:Advanced metrics database initialized
+INFO:rules.core.cache:Rule cache initialized with strategy: intelligent
+/Users/alanmccarthy/Library/CloudStorage/OneDrive-SharedLibraries-Onedrive/MOVEMBER_MIIS 2025/simple_api.py:936: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+INFO:     Started server process [11108]
+INFO:     Waiting for application startup.
+INFO:__main__:Starting Movember AI Rules System...
+INFO:__main__:Database initialized successfully
+INFO:__main__:System started successfully
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+🌐 Starting frontend server...
+
+🎉 Movember Impact Dashboard is ready!
+📊 API: http://localhost:8000
+🌐 Dashboard: http://localhost:3000
+
+📋 Available endpoints:
+   • /impact/global/ - Global impact data
+   • /impact/executive-summary/ - Executive summary
+   • /impact/dashboard/ - Dashboard data
+   • /impact/category/{category}/ - Category-specific data
+
+⏹️  Press Ctrl+C to stop all servers
+Traceback (most recent call last):
+  File "/Users/alanmccarthy/Library/CloudStorage/OneDrive-SharedLibraries-Onedrive/MOVEMBER_MIIS 2025/frontend/server.py", line 48, in <module>
+    run_server(port) 
+    ^^^^^^^^^^^^^^^^
+  File "/Users/alanmccarthy/Library/CloudStorage/OneDrive-SharedLibraries-Onedrive/MOVEMBER_MIIS 2025/frontend/server.py", line 26, in run_server
+    httpd = HTTPServer(server_address, CORSRequestHandler)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alanmccarthy/.pyenv/versions/3.11.7/lib/python3.11/socketserver.py", line 456, in __init__
+    self.server_bind()
+  File "/Users/alanmccarthy/.pyenv/versions/3.11.7/lib/python3.11/http/server.py", line 136, in server_bind
+    socketserver.TCPServer.server_bind(self)
+  File "/Users/alanmccarthy/.pyenv/versions/3.11.7/lib/python3.11/socketserver.py", line 472, in server_bind
+    self.socket.bind(self.server_address)
+OSError: [Errno 48] Address already in use

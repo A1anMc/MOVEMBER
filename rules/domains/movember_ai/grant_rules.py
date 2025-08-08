@@ -1,334 +1,455 @@
+#!/usr/bin/env python3
 """
-Movember Grant Lifecycle Rules
-
-Defines rules for grant application, evaluation, and lifecycle management
-to ensure proper impact linkage and evaluation standards.
+Movember AI Rules System - Grant Lifecycle Rules
+Manages grant application, evaluation, and lifecycle with UK spelling and AUD currency.
 """
 
-from rules.types import Rule, Condition, Action, RulePriority, ContextType
+from rules.types import Rule, Condition, Action, RulePriority
+from rules.core import RuleEngine
 
 
-# Grant Lifecycle Rules for Movember
+# Grant Lifecycle Rules with UK spelling and AUD currency
 GRANT_RULES = [
     Rule(
         name="grant_application_completeness",
-        description="Ensure grant applications are complete before review",
-        priority=RulePriority.CRITICAL,
-        context_types=[ContextType.BUSINESS_PROCESS],
         conditions=[
-            Condition("grant.status == 'submitted'", description="Grant has been submitted"),
-            Condition("grant.application_fields.missing == []", description="All required fields completed"),
-            Condition("grant.budget.total > 0", description="Budget information provided"),
-            Condition("grant.timeline.start_date is not None", description="Timeline specified")
+            Condition("grant.status == 'submitted'"),
+            Condition("grant.application_fields.missing == []")
         ],
         actions=[
-            Action("approve_grant_for_review", parameters={
-                'review_priority': 'normal',
-                'assign_reviewer': True,
-                'notify_applicant': True
-            }),
-            Action("log_completeness_check", parameters={
-                'grant_id': 'grant.id',
-                'completeness_score': 1.0,
-                'timestamp': 'now'
-            })
+            Action("approve_grant_for_review"),
+            Action("validate_uk_spelling"),
+            Action("ensure_aud_currency_format")
         ],
-        tags=['grant', 'completeness', 'submission']
+        priority=RulePriority.CRITICAL,
+        description="Validate grant application completeness with UK spelling and AUD currency"
     ),
     
     Rule(
         name="grant_to_impact_linkage",
-        description="Ensure grants include proper impact metrics and outcomes",
-        priority=RulePriority.CRITICAL,
-        context_types=[ContextType.BUSINESS_PROCESS],
-        conditions=[
-            Condition("grant.impact_metrics.length < 1", description="No impact metrics specified"),
-            Condition("grant.type in ['research', 'program', 'capacity_building']", description="Impact-focused grant type")
-        ],
+        conditions=[Condition("grant.impact_metrics.length < 1")],
         actions=[
-            Action("block_submission", parameters={
-                'message': 'Grants must include measurable impact metrics linked to outcomes.',
-                'require_impact_metrics': True
-            }),
-            Action("suggest_impact_metrics", parameters={
-                'research': ['publications', 'knowledge_advancement', 'policy_influence'],
-                'program': ['participant_outcomes', 'behavior_change', 'health_improvements'],
-                'capacity_building': ['skill_development', 'organizational_growth', 'sustainability']
-            }),
-            Action("require_outcome_mapping", parameters={
-                'short_term': True,
-                'medium_term': True,
-                'long_term': True
-            })
+            Action("block_submission", parameters={"message":"Grants must include measurable impact metrics."}),
+            Action("require_impact_metrics"),
+            Action("suggest_impact_frameworks")
         ],
-        tags=['grant', 'impact', 'metrics']
-    ),
-    
-    Rule(
-        name="validate_grant_budget",
-        description="Ensure grant budgets are realistic and properly justified",
         priority=RulePriority.HIGH,
-        context_types=[ContextType.BUSINESS_PROCESS],
-        conditions=[
-            Condition("grant.budget.total > grant.category.max_amount", description="Budget exceeds category limit"),
-            Condition("grant.budget.justification.length < 100", description="Insufficient budget justification")
-        ],
-        actions=[
-            Action("flag_budget_issues", parameters={
-                'issue_type': 'budget_exceeds_limit',
-                'suggest_reduction': True,
-                'require_justification': True
-            }),
-            Action("require_detailed_justification", parameters={
-                'min_length': 200,
-                'require_breakdown': True,
-                'cost_effectiveness': True
-            }),
-            Action("suggest_budget_optimization", parameters={
-                'cost_efficiency': True,
-                'alternative_approaches': True,
-                'partnership_opportunities': True
-            })
-        ],
-        tags=['grant', 'budget', 'validation']
+        description="Ensure grants include measurable impact metrics"
     ),
     
     Rule(
-        name="enforce_sdg_alignment_for_grants",
-        description="Ensure grants align with relevant Sustainable Development Goals",
-        priority=RulePriority.HIGH,
-        context_types=[ContextType.BUSINESS_PROCESS],
+        name="budget_realism_validation",
         conditions=[
-            Condition("grant.type in ['research', 'program', 'global']", description="Grant with global implications"),
-            Condition("grant.sdg_mapping.count == 0", description="No SDG alignment specified")
+            Condition("grant.budget > 1000000"),
+            Condition("grant.timeline_months < 12")
         ],
         actions=[
-            Action("require_sdg_mapping", parameters={
-                'relevant_sdgs': ['SDG3', 'SDG4', 'SDG5', 'SDG10', 'SDG17'],
-                'mapping_justification': True,
-                'target_contribution': True
-            }),
-            Action("suggest_sdg_metrics", parameters={
-                'SDG3_health': ['health_outcomes', 'wellbeing_indicators', 'access_improvement'],
-                'SDG4_education': ['awareness_raising', 'knowledge_dissemination', 'capacity_building'],
-                'SDG5_gender': ['gender_equity', 'inclusive_approaches', 'women_empowerment'],
-                'SDG10_inequality': ['reduced_inequalities', 'access_improvement', 'inclusive_growth'],
-                'SDG17_partnerships': ['partnerships', 'capacity_building', 'knowledge_sharing']
-            }),
-            Action("validate_sdg_contribution", parameters={
-                'contribution_evidence': True,
-                'target_progress': True,
-                'measurement_plan': True
-            })
+            Action("flag_for_review", parameters={"reason":"High budget for short timeline"}),
+            Action("request_budget_justification"),
+            Action("validate_aud_currency"),
+            Action("suggest_timeline_adjustment")
         ],
-        tags=['grant', 'sdg', 'global_impact']
-    ),
-    
-    Rule(
-        name="validate_grant_timeline",
-        description="Ensure grant timelines are realistic and achievable",
         priority=RulePriority.MEDIUM,
-        context_types=[ContextType.BUSINESS_PROCESS],
-        conditions=[
-            Condition("grant.timeline.duration < grant.category.min_duration", description="Timeline too short"),
-            Condition("grant.timeline.milestones.count < 3", description="Insufficient milestone detail")
-        ],
-        actions=[
-            Action("flag_timeline_issues", parameters={
-                'issue_type': 'unrealistic_timeline',
-                'suggest_extension': True,
-                'require_milestones': True
-            }),
-            Action("require_detailed_milestones", parameters={
-                'min_milestones': 3,
-                'quarterly_reviews': True,
-                'progress_indicators': True
-            }),
-            Action("suggest_timeline_optimization", parameters={
-                'realistic_duration': True,
-                'milestone_planning': True,
-                'risk_mitigation': True
-            })
-        ],
-        tags=['grant', 'timeline', 'planning']
+        description="Validate budget realism with AUD currency"
     ),
     
     Rule(
-        name="validate_grant_evaluation_plan",
-        description="Ensure grants include proper evaluation and monitoring plans",
-        priority=RulePriority.HIGH,
-        context_types=[ContextType.BUSINESS_PROCESS],
-        conditions=[
-            Condition("grant.evaluation_plan.length < 100", description="Insufficient evaluation plan"),
-            Condition("grant.monitoring_indicators.count < 2", description="Insufficient monitoring indicators")
-        ],
+        name="sdg_alignment_requirement",
+        conditions=[Condition("grant.sdg_alignment.length == 0")],
         actions=[
-            Action("require_evaluation_plan", parameters={
-                'min_length': 300,
-                'methodology': True,
-                'data_collection': True,
-                'analysis_plan': True
-            }),
-            Action("require_monitoring_indicators", parameters={
-                'min_indicators': 3,
-                'baseline_measurement': True,
-                'progress_tracking': True,
-                'outcome_measurement': True
-            }),
-            Action("suggest_evaluation_framework", parameters={
-                'ToC': 'theory_of_change',
-                'CEMP': 'common_evaluation',
-                'SDG': 'sustainable_development_goals'
-            })
+            Action("require_sdg_alignment"),
+            Action("suggest_relevant_sdgs"),
+            Action("explain_sdg_importance")
         ],
-        tags=['grant', 'evaluation', 'monitoring']
-    ),
-    
-    Rule(
-        name="validate_grant_sustainability",
-        description="Ensure grants include sustainability and long-term impact considerations",
         priority=RulePriority.MEDIUM,
-        context_types=[ContextType.BUSINESS_PROCESS],
-        conditions=[
-            Condition("grant.sustainability_plan.length < 100", description="Insufficient sustainability plan"),
-            Condition("grant.long_term_impact.length < 50", description="Insufficient long-term impact consideration")
-        ],
-        actions=[
-            Action("require_sustainability_plan", parameters={
-                'min_length': 200,
-                'sustainability_factors': ['financial', 'institutional', 'community'],
-                'long_term_vision': True
-            }),
-            Action("require_long_term_impact", parameters={
-                'min_length': 150,
-                'sustainability_indicators': True,
-                'scaling_potential': True,
-                'partnership_continuation': True
-            }),
-            Action("suggest_sustainability_metrics", parameters={
-                'financial_sustainability': ['revenue_generation', 'cost_recovery', 'funding_diversification'],
-                'institutional_sustainability': ['capacity_building', 'organizational_growth', 'policy_influence'],
-                'community_sustainability': ['community_ownership', 'behavior_change', 'knowledge_retention']
-            })
-        ],
-        tags=['grant', 'sustainability', 'long_term']
+        description="Require SDG alignment for all grants"
     ),
     
     Rule(
-        name="validate_grant_risk_management",
-        description="Ensure grants include proper risk assessment and mitigation strategies",
+        name="sustainability_plan_validation",
+        conditions=[
+            Condition("grant.sustainability_plan == 'missing'"),
+            Condition("grant.budget > 500000")
+        ],
+        actions=[
+            Action("require_sustainability_plan"),
+            Action("provide_sustainability_template"),
+            Action("explain_sustainability_importance")
+        ],
         priority=RulePriority.MEDIUM,
-        context_types=[ContextType.BUSINESS_PROCESS],
-        conditions=[
-            Condition("grant.risk_assessment.length < 100", description="Insufficient risk assessment"),
-            Condition("grant.risk_mitigation.count < 2", description="Insufficient risk mitigation strategies")
-        ],
-        actions=[
-            Action("require_risk_assessment", parameters={
-                'min_length': 200,
-                'risk_categories': ['operational', 'financial', 'reputational', 'external'],
-                'probability_impact': True
-            }),
-            Action("require_risk_mitigation", parameters={
-                'min_strategies': 3,
-                'contingency_plans': True,
-                'monitoring_mechanisms': True
-            }),
-            Action("suggest_risk_mitigation", parameters={
-                'operational_risks': ['backup_plans', 'resource_diversification', 'capacity_building'],
-                'financial_risks': ['budget_reserves', 'funding_diversification', 'cost_controls'],
-                'reputational_risks': ['stakeholder_engagement', 'transparency', 'quality_assurance'],
-                'external_risks': ['partnership_backups', 'geographic_diversification', 'policy_advocacy']
-            })
-        ],
-        tags=['grant', 'risk', 'mitigation']
+        description="Require sustainability plan for large grants"
     ),
     
     Rule(
-        name="validate_grant_partnerships",
-        description="Ensure grants include appropriate partnership and collaboration strategies",
+        name="risk_mitigation_requirement",
+        conditions=[
+            Condition("grant.risk_mitigation == 'inadequate'"),
+            Condition("grant.complexity_score > 0.7")
+        ],
+        actions=[
+            Action("require_risk_mitigation_plan"),
+            Action("suggest_risk_mitigation_strategies"),
+            Action("request_risk_assessment")
+        ],
         priority=RulePriority.MEDIUM,
-        context_types=[ContextType.BUSINESS_PROCESS],
-        conditions=[
-            Condition("grant.partnerships.count < 1", description="No partnerships specified"),
-            Condition("grant.type in ['global', 'capacity_building', 'research']", description="Partnership-focused grant type")
-        ],
-        actions=[
-            Action("require_partnership_strategy", parameters={
-                'min_partnerships': 1,
-                'partnership_justification': True,
-                'roles_responsibilities': True
-            }),
-            Action("suggest_partnership_types", parameters={
-                'research': ['academic_institutions', 'research_organizations', 'policy_partners'],
-                'capacity_building': ['local_organizations', 'training_partners', 'mentorship_programs'],
-                'global': ['international_organizations', 'local_implementers', 'knowledge_partners']
-            }),
-            Action("validate_partnership_viability", parameters={
-                'partner_capacity': True,
-                'alignment_of_interests': True,
-                'sustainability': True
-            })
-        ],
-        tags=['grant', 'partnerships', 'collaboration']
+        description="Require risk mitigation for complex grants"
     ),
     
     Rule(
-        name="validate_grant_innovation",
-        description="Ensure grants demonstrate innovation and novel approaches",
+        name="partnership_validation",
+        conditions=[
+            Condition("grant.partnerships.length < 1"),
+            Condition("grant.scope == 'regional'")
+        ],
+        actions=[
+            Action("suggest_partnership_opportunities"),
+            Action("explain_partnership_benefits"),
+            Action("provide_partnership_examples")
+        ],
         priority=RulePriority.LOW,
-        context_types=[ContextType.BUSINESS_PROCESS],
+        description="Suggest partnerships for regional grants"
+    ),
+    
+    Rule(
+        name="innovation_scoring",
         conditions=[
-            Condition("grant.innovation_score < 0.6", description="Insufficient innovation demonstrated"),
-            Condition("grant.type in ['research', 'pilot', 'innovation']", description="Innovation-focused grant type")
+            Condition("grant.innovation_score < 6.0"),
+            Condition("grant.funding_type == 'research'")
         ],
         actions=[
-            Action("require_innovation_justification", parameters={
-                'min_length': 150,
-                'novel_approaches': True,
-                'methodology_innovation': True,
-                'technology_innovation': True
-            }),
-            Action("suggest_innovation_areas", parameters={
-                'methodology': ['novel_research_methods', 'innovative_evaluation_approaches'],
-                'technology': ['digital_solutions', 'data_analytics', 'remote_delivery'],
-                'partnerships': ['cross_sector_collaboration', 'unusual_partnerships'],
-                'delivery': ['innovative_delivery_models', 'community_driven_approaches']
-            }),
-            Action("validate_innovation_impact", parameters={
-                'scaling_potential': True,
-                'knowledge_contribution': True,
-                'replicability': True
-            })
+            Action("flag_low_innovation_score"),
+            Action("suggest_innovation_enhancements"),
+            Action("request_innovation_justification")
         ],
-        tags=['grant', 'innovation', 'novelty']
+        priority=RulePriority.MEDIUM,
+        description="Evaluate innovation score for research grants"
+    ),
+    
+    Rule(
+        name="aud_currency_validation",
+        conditions=[
+            Condition("grant.currency != 'AUD'"),
+            Condition("grant.budget > 0")
+        ],
+        actions=[
+            Action("convert_to_aud"),
+            Action("display_aud_format"),
+            Action("update_currency_references"),
+            Action("validate_exchange_rates")
+        ],
+        priority=RulePriority.HIGH,
+        description="Ensure all grant amounts are in AUD"
+    ),
+    
+    Rule(
+        name="uk_spelling_validation",
+        conditions=[
+            Condition("grant.description.contains_american_spelling == True"),
+            Condition("grant.status in ['draft', 'submitted']")
+        ],
+        actions=[
+            Action("convert_to_uk_spelling"),
+            Action("validate_spelling_consistency"),
+            Action("update_documentation"),
+            Action("maintain_uk_terminology")
+        ],
+        priority=RulePriority.MEDIUM,
+        description="Ensure all grant documentation uses UK spelling"
+    ),
+    
+    Rule(
+        name="grant_evaluation_completeness",
+        conditions=[
+            Condition("grant.evaluation_criteria.length < 3"),
+            Condition("grant.budget > 250000")
+        ],
+        actions=[
+            Action("require_evaluation_criteria"),
+            Action("suggest_evaluation_frameworks"),
+            Action("provide_evaluation_templates")
+        ],
+        priority=RulePriority.MEDIUM,
+        description="Require comprehensive evaluation criteria for large grants"
+    ),
+    
+    Rule(
+        name="timeline_realism_check",
+        conditions=[
+            Condition("grant.timeline_months < 6"),
+            Condition("grant.complexity_score > 0.8")
+        ],
+        actions=[
+            Action("flag_unrealistic_timeline"),
+            Action("suggest_timeline_extension"),
+            Action("request_timeline_justification"),
+            Action("provide_timeline_guidance")
+        ],
+        priority=RulePriority.MEDIUM,
+        description="Validate timeline realism for complex grants"
+    ),
+    
+    Rule(
+        name="stakeholder_engagement_requirement",
+        conditions=[
+            Condition("grant.stakeholder_engagement == 'minimal'"),
+            Condition("grant.community_impact == 'high'")
+        ],
+        actions=[
+            Action("require_stakeholder_engagement_plan"),
+            Action("suggest_engagement_strategies"),
+            Action("provide_engagement_examples")
+        ],
+        priority=RulePriority.LOW,
+        description="Require stakeholder engagement for high-impact grants"
+    ),
+    
+    Rule(
+        name="data_management_plan_requirement",
+        conditions=[
+            Condition("grant.data_management_plan == 'missing'"),
+            Condition("grant.data_intensive == True")
+        ],
+        actions=[
+            Action("require_data_management_plan"),
+            Action("provide_dmp_template"),
+            Action("explain_dmp_importance")
+        ],
+        priority=RulePriority.MEDIUM,
+        description="Require data management plan for data-intensive grants"
+    ),
+    
+    Rule(
+        name="ethical_approval_validation",
+        conditions=[
+            Condition("grant.ethical_approval == 'pending'"),
+            Condition("grant.human_subjects == True")
+        ],
+        actions=[
+            Action("require_ethical_approval"),
+            Action("suggest_ethical_guidelines"),
+            Action("provide_approval_process")
+        ],
+        priority=RulePriority.HIGH,
+        description="Require ethical approval for human subjects research"
+    ),
+    
+    Rule(
+        name="budget_breakdown_validation",
+        conditions=[
+            Condition("grant.budget_breakdown.detail_level < 0.7"),
+            Condition("grant.budget > 100000")
+        ],
+        actions=[
+            Action("require_detailed_budget_breakdown"),
+            Action("provide_budget_template"),
+            Action("suggest_budget_categories")
+        ],
+        priority=RulePriority.MEDIUM,
+        description="Require detailed budget breakdown for significant grants"
+    ),
+    
+    Rule(
+        name="impact_measurement_framework",
+        conditions=[
+            Condition("grant.impact_measurement_framework == 'missing'"),
+            Condition("grant.impact_focus == 'high'")
+        ],
+        actions=[
+            Action("require_impact_measurement_framework"),
+            Action("suggest_measurement_approaches"),
+            Action("provide_framework_examples")
+        ],
+        priority=RulePriority.MEDIUM,
+        description="Require impact measurement framework for high-impact grants"
     )
 ]
 
 
-def get_grant_rules():
-    """Get all grant lifecycle rules."""
+def get_grant_rules() -> list:
+    """Get all grant lifecycle rules with UK spelling and AUD currency standards."""
     return GRANT_RULES
 
 
-def get_rules_by_grant_type(grant_type: str):
-    """Get grant rules by grant type."""
-    return [rule for rule in GRANT_RULES if grant_type in rule.description or grant_type in str(rule.conditions)]
+def validate_grant_currency(grant_data: dict) -> bool:
+    """
+    Validate that grant currency is in AUD.
+    
+    Args:
+        grant_data: Grant data to validate
+        
+    Returns:
+        True if currency is AUD, False otherwise
+    """
+    if 'currency' in grant_data:
+        return grant_data['currency'].upper() == 'AUD'
+    return True  # Default to AUD if not specified
 
 
-def get_rules_by_priority(priority: RulePriority):
-    """Get grant rules by priority level."""
-    return [rule for rule in GRANT_RULES if rule.priority == priority]
+def format_grant_budget(budget: float) -> str:
+    """
+    Format grant budget in AUD with UK number formatting.
+    
+    Args:
+        budget: Budget amount
+        
+    Returns:
+        Formatted AUD budget string
+    """
+    return f"A${budget:,.2f}"
 
 
-def get_rules_by_phase(phase: str):
-    """Get grant rules by lifecycle phase."""
-    phase_mapping = {
-        'submission': ['completeness', 'budget', 'timeline'],
-        'evaluation': ['impact', 'sdg', 'evaluation'],
-        'implementation': ['monitoring', 'risk', 'partnerships'],
-        'sustainability': ['sustainability', 'long_term', 'innovation']
+def convert_grant_to_uk_spelling(grant_data: dict) -> dict:
+    """
+    Convert grant data to use UK spelling.
+    
+    Args:
+        grant_data: Grant data to convert
+        
+    Returns:
+        Grant data with UK spelling
+    """
+    uk_conversions = {
+        'color': 'colour',
+        'behavior': 'behaviour',
+        'organization': 'organisation',
+        'realize': 'realise',
+        'analyze': 'analyse',
+        'center': 'centre',
+        'meter': 'metre',
+        'program': 'programme',
+        'license': 'licence',
+        'defense': 'defence',
+        'offense': 'offence',
+        'specialize': 'specialise',
+        'standardize': 'standardise',
+        'optimize': 'optimise',
+        'customize': 'customise',
+        'summarize': 'summarise',
+        'categorize': 'categorise',
+        'prioritize': 'prioritise'
     }
     
-    relevant_tags = phase_mapping.get(phase, [])
-    return [rule for rule in GRANT_RULES if any(tag in rule.tags for tag in relevant_tags)] 
+    converted_data = grant_data.copy()
+    
+    # Convert text fields
+    text_fields = ['title', 'description', 'summary', 'objectives', 'methodology']
+    for field in text_fields:
+        if field in converted_data and isinstance(converted_data[field], str):
+            for us_spelling, uk_spelling in uk_conversions.items():
+                converted_data[field] = converted_data[field].replace(us_spelling, uk_spelling)
+    
+    return converted_data
+
+
+def validate_grant_completeness(grant_data: dict) -> dict:
+    """
+    Validate grant application completeness.
+    
+    Args:
+        grant_data: Grant data to validate
+        
+    Returns:
+        Validation results
+    """
+    required_fields = [
+        'grant_id', 'title', 'budget', 'timeline_months', 
+        'impact_metrics', 'sdg_alignment', 'sustainability_plan'
+    ]
+    
+    missing_fields = []
+    for field in required_fields:
+        if field not in grant_data or not grant_data[field]:
+            missing_fields.append(field)
+    
+    return {
+        'complete': len(missing_fields) == 0,
+        'missing_fields': missing_fields,
+        'completeness_score': (len(required_fields) - len(missing_fields)) / len(required_fields)
+    }
+
+
+def calculate_grant_score(grant_data: dict) -> float:
+    """
+    Calculate overall grant score based on various criteria.
+    
+    Args:
+        grant_data: Grant data to score
+        
+    Returns:
+        Overall grant score (0-10)
+    """
+    score = 0.0
+    
+    # Completeness score (30%)
+    completeness = validate_grant_completeness(grant_data)
+    score += completeness['completeness_score'] * 3.0
+    
+    # Impact metrics score (25%)
+    if 'impact_metrics' in grant_data and len(grant_data.get('impact_metrics', [])) > 0:
+        score += 2.5
+    
+    # SDG alignment score (20%)
+    if 'sdg_alignment' in grant_data and len(grant_data.get('sdg_alignment', [])) > 0:
+        score += 2.0
+    
+    # Innovation score (15%)
+    if 'innovation_score' in grant_data:
+        score += min(grant_data['innovation_score'] / 10.0, 1.0) * 1.5
+    
+    # Budget realism score (10%)
+    if 'budget' in grant_data and 'timeline_months' in grant_data:
+        monthly_budget = grant_data['budget'] / grant_data['timeline_months']
+        if monthly_budget < 100000:  # Realistic monthly budget
+            score += 1.0
+    
+    return min(score, 10.0)
+
+
+def generate_grant_recommendations(grant_data: dict) -> list:
+    """
+    Generate recommendations for grant improvement.
+    
+    Args:
+        grant_data: Grant data to analyse
+        
+    Returns:
+        List of recommendations
+    """
+    recommendations = []
+    
+    # Check for missing impact metrics
+    if 'impact_metrics' not in grant_data or len(grant_data.get('impact_metrics', [])) == 0:
+        recommendations.append("Include measurable impact metrics aligned with Movember's mission")
+    
+    # Check for missing SDG alignment
+    if 'sdg_alignment' not in grant_data or len(grant_data.get('sdg_alignment', [])) == 0:
+        recommendations.append("Specify alignment with Sustainable Development Goals (SDGs)")
+    
+    # Check for budget realism
+    if 'budget' in grant_data and 'timeline_months' in grant_data:
+        monthly_budget = grant_data['budget'] / grant_data['timeline_months']
+        if monthly_budget > 200000:
+            recommendations.append("Consider extending timeline or reducing budget for more realistic implementation")
+    
+    # Check for sustainability plan
+    if 'sustainability_plan' not in grant_data or grant_data['sustainability_plan'] == 'missing':
+        recommendations.append("Develop a comprehensive sustainability plan for long-term impact")
+    
+    # Check for stakeholder engagement
+    if 'stakeholder_engagement' not in grant_data or grant_data['stakeholder_engagement'] == 'minimal':
+        recommendations.append("Include stakeholder engagement strategies for community involvement")
+    
+    return recommendations
+
+
+# Export functions for use in other modules
+__all__ = [
+    'GRANT_RULES',
+    'get_grant_rules',
+    'validate_grant_currency',
+    'format_grant_budget',
+    'convert_grant_to_uk_spelling',
+    'validate_grant_completeness',
+    'calculate_grant_score',
+    'generate_grant_recommendations'
+] 

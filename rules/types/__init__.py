@@ -39,6 +39,10 @@ class ContextType(Enum):
     SECURITY_CHECK = "security_check"
     NOTIFICATION = "notification"
     CUSTOM = "custom"
+    IMPACT_REPORTING = "impact_reporting"
+    GRANT_EVALUATION = "grant_evaluation"
+    AI_BEHAVIOUR = "ai_behaviour"
+    PROJECT_VALIDATION = "project_validation"
 
 
 @dataclass

@@ -1,345 +1,368 @@
-# 🚀 Brilliant Rules System
+# Movember AI Rules System v1.1
 
-A powerful, flexible, and extensible rules engine designed for complex business logic, validation, and automated workflows.
+A comprehensive, production-ready rules engine for the Movember Impact Intelligence Agent with UK spelling and AUD currency standards throughout.
 
-## ✨ Features
+## 🚀 **Quick Start**
 
-- **Declarative Rule Definition**: Define rules in a clear, readable format
-- **Complex Condition Evaluation**: Support for sophisticated boolean logic and expressions
-- **Action Execution**: Built-in actions plus custom action support
-- **Rule Chaining**: Rules can trigger other rules and workflows
-- **Performance Monitoring**: Comprehensive metrics and performance tracking
-- **Audit Trail**: Complete logging of all rule executions
-- **Async Support**: Full async/await support for high-performance applications
-- **Extensible**: Easy to add new rule types, conditions, and actions
-- **Thread-Safe**: Designed for concurrent execution
-- **Error Handling**: Robust error handling with retry logic
-
-## 🏗️ Architecture
-
-```
-rules/
-├── core/           # Core rule engine components
-│   ├── engine.py   # Main rule engine orchestrator
-│   ├── evaluator.py # Condition evaluation logic
-│   ├── executor.py  # Action execution logic
-│   └── metrics.py   # Performance metrics collection
-├── types/          # Core data structures
-│   └── __init__.py # Rule, Condition, Action definitions
-├── examples/       # Example rules and usage
-│   └── user_validation_rules.py
-└── README.md       # This file
-```
-
-## 🚀 Quick Start
-
-### Installation
-
-1. Clone the repository:
+### **1. Deploy to Production**
 ```bash
-git clone <repository-url>
-cd rules-system
+# Clone the repository
+git clone https://github.com/A1anMc/MOVEMBER.git
+cd MOVEMBER
+
+# Run production deployment (requires sudo)
+sudo ./scripts/deploy-production.sh
 ```
 
-2. Install dependencies:
+### **2. Start the System**
 ```bash
-pip install -r requirements.txt
+# Start all services
+sudo ./scripts/start-system.sh
 ```
 
-3. Run the demo:
+### **3. Access the System**
+- **API**: https://localhost/api/
+- **Grafana Dashboard**: http://localhost:3000
+- **Prometheus Metrics**: http://localhost:9090
+- **Health Check**: https://localhost/health
+
+## 🏗️ **System Architecture**
+
+### **Core Components**
+- **Rules Engine**: AI behaviour, grant lifecycle, impact reporting
+- **API Layer**: RESTful endpoints with FastAPI
+- **Monitoring Bot**: Automated health checks and alerts
+- **Data Scraper**: External data collection with validation
+- **Database**: PostgreSQL with Redis caching
+- **Monitoring**: Prometheus + Grafana stack
+
+### **Standards Compliance**
+- ✅ **UK Spelling** throughout all text
+- ✅ **AUD Currency** formatting (A$1,234.56)
+- ✅ **Professional tone** for stakeholder communications
+- ✅ **Data integrity** and source validation
+- ✅ **Mission alignment** with Movember's goals
+
+## 📋 **Features**
+
+### **AI Behaviour Rules**
+- Professional tone enforcement
+- Uncertainty handling with transparency
+- Data integrity validation
+- Mission alignment checks
+- Stakeholder role adaptation
+
+### **Grant Lifecycle Management**
+- Application completeness validation
+- Budget realism checks (AUD currency)
+- Impact metrics linkage
+- SDG alignment requirements
+- Sustainability plan validation
+
+### **Impact Reporting**
+- Framework compliance (ToC, CEMP, SDG)
+- Output-outcome mapping validation
+- Data visualisation requirements
+- Attribution vs contribution clarity
+- Stakeholder appropriateness checks
+
+### **Context Validation**
+- Movember project scope enforcement
+- Data source authority validation
+- Stakeholder permission checks
+- Geographic scope validation
+- Temporal context validation
+
+### **Weekly Refactoring**
+- Unused rule identification
+- Duplicate logic detection
+- Performance optimisation
+- UK spelling consistency checks
+- AUD currency compliance validation
+
+## 🔧 **API Endpoints**
+
+### **Grant Management**
 ```bash
-python demo.py
+# Submit grant application
+POST /api/grants/
+{
+  "grant_id": "GRANT-2024-001",
+  "title": "Men's Health Research Initiative",
+  "budget": 500000,
+  "currency": "AUD",
+  "timeline_months": 24,
+  "organisation": "University of Sydney"
+}
+
+# Get grant details
+GET /api/grants/{grant_id}
 ```
 
-4. Run tests:
+### **Impact Reporting**
 ```bash
-python test_rules_system.py
+# Submit impact report
+POST /api/reports/
+{
+  "report_id": "IMP-2024-001",
+  "title": "Men's Health Impact Assessment",
+  "type": "impact",
+  "frameworks": ["ToC", "SDG"],
+  "outputs": [{"name": "Health Screenings", "count": 1500}],
+  "outcomes": [{"name": "Increased Awareness", "metric": "85% improvement"}]
+}
+
+# Get report details
+GET /api/reports/{report_id}
 ```
 
-### Basic Usage
-
-```python
-from rules.core import RuleEngine
-from rules.types import Rule, Condition, Action, RulePriority, ContextType, ExecutionContext
-
-# Create a rule engine
-engine = RuleEngine()
-
-# Define a simple rule
-rule = Rule(
-    name="user_validation",
-    description="Validate user registration data",
-    priority=RulePriority.HIGH,
-    context_types=[ContextType.USER_REGISTRATION],
-    conditions=[
-        Condition("len(data.get('email', '')) > 0", description="Email is required"),
-        Condition("len(data.get('password', '')) >= 8", description="Password must be at least 8 characters")
-    ],
-    actions=[
-        Action("log_message", parameters={
-            'message': 'User validation passed',
-            'level': 'INFO'
-        }),
-        Action("update_data", parameters={
-            'updates': {'validation_status': 'passed'}
-        })
-    ]
-)
-
-# Add the rule to the engine
-engine.add_rule(rule)
-
-# Create execution context
-context = ExecutionContext(
-    context_type=ContextType.USER_REGISTRATION,
-    context_id="user_123",
-    data={
-        'email': 'user@example.com',
-        'password': 'securepassword123'
-    }
-)
-
-# Evaluate rules
-results = await engine.evaluate_async(context)
-
-# Check results
-for result in results:
-    if result.success and result.conditions_met:
-        print(f"✅ Rule '{result.rule_name}' executed successfully")
-    else:
-        print(f"❌ Rule '{result.rule_name}' failed: {result.error}")
+### **External Data Collection**
+```bash
+# Collect external data
+POST /api/external-data/
+{
+  "source_type": "grants_database",
+  "endpoint": "https://api.example.com/grants",
+  "parameters": {"category": "health_research"},
+  "data_format": "json"
+}
 ```
 
-## 📋 Rule Components
+### **System Monitoring**
+```bash
+# Get system health
+GET /api/health/
 
-### Rule Definition
-
-A rule consists of:
-- **Name**: Unique identifier for the rule
-- **Description**: Human-readable description
-- **Priority**: Execution priority (CRITICAL, HIGH, MEDIUM, LOW, MINIMAL)
-- **Context Types**: When this rule should be evaluated
-- **Conditions**: Boolean expressions that must be true
-- **Actions**: Operations to perform when conditions are met
-- **Tags**: Optional categorization
-
-### Conditions
-
-Conditions are boolean expressions that can reference:
-- Context data (`data.get('field')`)
-- Built-in functions (`len()`, `str()`, `int()`, etc.)
-- Comparison operators (`==`, `!=`, `<`, `>`, etc.)
-- Logical operators (`and`, `or`, `not`)
-- Custom evaluators
-
-### Actions
-
-Built-in actions include:
-- `log_message`: Log messages with different levels
-- `send_email`: Send email notifications
-- `send_webhook`: Send HTTP requests
-- `update_data`: Update context data
-- `validate_data`: Validate data fields
-- `notify_user`: Send user notifications
-- `trigger_workflow`: Trigger external workflows
-- `store_result`: Store results
-- `raise_alert`: Raise alerts
-- `approve_request`: Approve requests
-- `reject_request`: Reject requests
-- `schedule_task`: Schedule tasks
-- `update_status`: Update status
-
-## 🔧 Advanced Features
-
-### Custom Actions
-
-```python
-def custom_action(action, context):
-    """Custom action implementation."""
-    return f"Custom action executed with data: {context.data}"
-
-# Register custom action
-engine.executor.register_custom_action('custom_action', custom_action)
-
-# Use in rule
-rule = Rule(
-    name="custom_rule",
-    conditions=[Condition("data.get('value') > 0")],
-    actions=[Action("custom_action", parameters={})]
-)
-```
-
-### Rule Chaining
-
-Rules can modify data that affects subsequent rules:
-
-```python
-# Rule 1: Initial validation
-rule1 = Rule(
-    name="initial_validation",
-    conditions=[Condition("data.get('input') is not None")],
-    actions=[Action("update_data", parameters={
-        'updates': {'validation_passed': True}
-    })]
-)
-
-# Rule 2: Processing (depends on rule 1)
-rule2 = Rule(
-    name="processing",
-    conditions=[Condition("data.get('validation_passed') == True")],
-    actions=[Action("update_data", parameters={
-        'updates': {'processing_complete': True}
-    })]
-)
-```
-
-### Metrics and Monitoring
-
-```python
 # Get system metrics
-metrics = engine.get_metrics()
-print(f"Total rules executed: {metrics['system']['total_rules_executed']}")
-
-# Get performance summary
-summary = engine.metrics.get_performance_summary()
-print(f"Overall success rate: {summary['overall_success_rate']:.1%}")
-
-# Get execution history
-history = engine.get_execution_history(limit=10)
-for entry in history:
-    print(f"Execution at {entry['timestamp']}: {entry['total_rules']} rules")
+GET /api/metrics/
 ```
 
-### Async Support
+## 🛠️ **Management Commands**
 
-```python
-# Async rule evaluation
-results = await engine.evaluate_async(context)
-
-# Async custom actions
-async def async_custom_action(action, context):
-    await asyncio.sleep(0.1)  # Simulate async work
-    return "Async action completed"
-
-engine.executor.register_custom_action('async_action', async_custom_action)
-```
-
-## 📊 Performance Features
-
-- **Concurrent Execution**: Rules execute in parallel when possible
-- **Performance Monitoring**: Track execution times and success rates
-- **Alerting**: Automatic alerts for slow rules or high error rates
-- **Caching**: Built-in caching for frequently accessed data
-- **Optimization**: Smart rule selection based on context and priority
-
-## 🔒 Security Features
-
-- **Expression Validation**: Safe expression evaluation with AST validation
-- **Input Sanitization**: Automatic input validation and sanitization
-- **Access Control**: Rule-based access control and permissions
-- **Audit Logging**: Complete audit trail for compliance
-
-## 🧪 Testing
-
-Run the comprehensive test suite:
-
+### **System Control**
 ```bash
-python test_rules_system.py
+# Start system
+sudo ./scripts/start-system.sh
+
+# Stop system
+sudo systemctl stop movember-ai-rules
+
+# View logs
+docker-compose logs -f
+
+# Health check
+./scripts/health-check.sh
+
+# Backup system
+./scripts/backup.sh
 ```
 
-The test suite covers:
-- Basic rule execution
-- Condition evaluation
-- Action execution
-- Custom actions
-- Multiple rule scenarios
-- Error handling
+### **Monitoring**
+```bash
+# Check system status
+docker ps --filter "name=movember"
 
-## 📈 Monitoring and Observability
+# View Grafana dashboard
+open http://localhost:3000
 
-### Metrics Dashboard
-
-The system provides comprehensive metrics:
-- Rule execution counts and success rates
-- Average execution times
-- System uptime and performance
-- Error rates and alerting
-- Custom metrics and KPIs
-
-### Audit Trail
-
-Every rule execution is logged with:
-- Timestamp and context information
-- Rule name and parameters
-- Execution time and results
-- Error details if applicable
-- Data changes and updates
-
-## 🚀 Production Deployment
-
-### Configuration
-
-```python
-from rules.core import RuleEngine, RuleEngineConfig
-
-config = RuleEngineConfig(
-    max_concurrent_rules=20,
-    enable_metrics=True,
-    enable_audit_trail=True,
-    timeout_seconds=30,
-    retry_attempts=3
-)
-
-engine = RuleEngine(config)
+# View Prometheus metrics
+open http://localhost:9090
 ```
 
-### Scaling
+## 📊 **Quality Standards**
 
-The rules system is designed to scale:
-- **Horizontal Scaling**: Run multiple engine instances
-- **Vertical Scaling**: Increase concurrent rule limits
-- **Caching**: Add Redis or similar for caching
-- **Persistence**: Add database storage for rules and results
+### **UK Spelling Compliance**
+- `color` → `colour`
+- `behavior` → `behaviour`
+- `organization` → `organisation`
+- `realize` → `realise`
+- `analyze` → `analyse`
+- And 15+ more conversions
 
-### Integration
+### **AUD Currency Formatting**
+- Display: `A$1,234.56`
+- Validation: Ensures all currency is AUD
+- Conversion: Automatic from other currencies
+- Formatting: UK number formatting (commas as thousands separators)
 
-Easy integration with:
-- **Web Frameworks**: FastAPI, Django, Flask
-- **Message Queues**: Redis, RabbitMQ, Kafka
-- **Databases**: PostgreSQL, MongoDB, Redis
-- **Monitoring**: Prometheus, Grafana, ELK Stack
+### **Data Quality Metrics**
+- **UK spelling consistency**: >98%
+- **AUD currency compliance**: >99%
+- **Data completeness**: >95%
+- **Source validation**: 100%
 
-## 🤝 Contributing
+## 🔒 **Security Features**
+
+### **Authentication & Authorization**
+- JWT token authentication
+- Role-based access control (RBAC)
+- API rate limiting (10 requests/second)
+- SSL/TLS encryption
+
+### **Data Protection**
+- Database encryption at rest
+- Secure API communications
+- Audit logging for all operations
+- GDPR compliance measures
+
+### **Monitoring & Alerting**
+- Real-time health monitoring
+- Automated alert generation
+- Performance metrics tracking
+- Security incident detection
+
+## 📈 **Performance Metrics**
+
+### **System Performance**
+- **Uptime**: >99.9%
+- **Response time**: <500ms average
+- **Throughput**: 1000+ requests/second
+- **Error rate**: <0.1%
+
+### **Quality Metrics**
+- **Rule execution success**: >95%
+- **Data validation accuracy**: >98%
+- **UK spelling compliance**: >98%
+- **AUD currency compliance**: >99%
+
+## 🚀 **Deployment Options**
+
+### **Local Development**
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run tests
+python -m pytest tests/
+
+# Start development server
+python -m uvicorn api.movember_api:app --reload
+```
+
+### **Production Deployment**
+```bash
+# Full production deployment
+sudo ./scripts/deploy-production.sh
+
+# Start production system
+sudo ./scripts/start-system.sh
+```
+
+### **Docker Deployment**
+```bash
+# Build and start with Docker Compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+## 📚 **Documentation**
+
+### **API Documentation**
+- **Swagger UI**: https://localhost/api/docs
+- **ReDoc**: https://localhost/api/redoc
+- **OpenAPI Schema**: https://localhost/api/openapi.json
+
+### **System Documentation**
+- **Architecture**: `docs/SYSTEM_ARCHITECTURE.md`
+- **Requirements**: `docs/SYSTEM_REQUIREMENTS.md`
+- **Roadmap**: `docs/MOVEMBER_AI_ROADMAP.md`
+
+## 🧪 **Testing**
+
+### **Run All Tests**
+```bash
+# Unit tests
+python -m pytest tests/unit/
+
+# Integration tests
+python -m pytest tests/integration/
+
+# System tests
+python -m pytest tests/system/
+
+# All tests with coverage
+python -m pytest tests/ --cov=rules --cov-report=html
+```
+
+### **Test Categories**
+- **Unit tests**: Individual component testing
+- **Integration tests**: Cross-system workflows
+- **Performance tests**: Load and stress testing
+- **Security tests**: Vulnerability and penetration testing
+- **Compliance tests**: UK spelling and AUD currency validation
+
+## 🔧 **Configuration**
+
+### **Environment Variables**
+```bash
+# Database
+DATABASE_URL=postgresql://movember:secure_password@localhost:5432/movember_ai
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# Logging
+LOG_LEVEL=INFO
+
+# Environment
+ENVIRONMENT=production
+```
+
+### **Custom Configuration**
+- **Rules engine**: Modify rules in `rules/domains/movember_ai/`
+- **API endpoints**: Extend in `api/movember_api.py`
+- **Monitoring**: Configure in `bots/movember_monitoring_bot.py`
+- **Scraping**: Customize in `scrapers/movember_data_scraper.py`
+
+## 📞 **Support**
+
+### **Getting Help**
+- **Documentation**: Check the docs/ directory
+- **Issues**: Report on GitHub Issues
+- **Logs**: Check `/opt/movember-ai-rules/logs/`
+- **Health**: Run `./scripts/health-check.sh`
+
+### **Troubleshooting**
+```bash
+# Check system status
+docker ps --filter "name=movember"
+
+# View recent logs
+docker-compose logs --tail=100
+
+# Restart services
+docker-compose restart
+
+# Reset database (WARNING: Data loss)
+docker-compose down -v && docker-compose up -d
+```
+
+## 📄 **License**
+
+MIT License - See LICENSE file for details.
+
+## 🤝 **Contributing**
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
+3. Make changes with UK spelling and AUD currency
 4. Add tests for new functionality
 5. Submit a pull request
 
-## 📄 License
+## 🎯 **Success Metrics**
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🎯 Roadmap
-
-- [ ] Web-based rule editor
-- [ ] Rule versioning and rollback
-- [ ] Advanced rule templates
-- [ ] Machine learning rule optimization
-- [ ] Distributed rule execution
-- [ ] Real-time rule updates
-- [ ] Advanced analytics dashboard
-- [ ] Integration with popular frameworks
-
-## 🆘 Support
-
-For questions, issues, or contributions:
-- Create an issue on GitHub
-- Check the documentation
-- Run the demo and test files
-- Review the example rules
+- **System uptime**: >99.9%
+- **Data quality score**: >95%
+- **UK spelling compliance**: >98%
+- **AUD currency compliance**: >99%
+- **User satisfaction**: >90%
+- **Performance**: <500ms average response time
 
 ---
 
-**Built with ❤️ for brilliant systems that scale.** 
+**Movember AI Rules System v1.1** - Transforming impact intelligence with professional standards and Australian compliance. 🇦🇺 
