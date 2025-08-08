@@ -6,7 +6,7 @@ import {
   UserGroupIcon, 
   CurrencyDollarIcon, 
   GlobeAltIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   CogIcon
 } from '@heroicons/react/24/outline';
 import { fetchDashboardData, fetchSystemHealth, fetchMLPredictions } from '../api/dashboard';
@@ -110,7 +110,7 @@ const Dashboard: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-900">
                 Grant Evaluation Performance
               </h2>
-              <TrendingUpIcon className="h-6 w-6 text-green-600" />
+              <ArrowTrendingUpIcon className="h-6 w-6 text-green-600" />
             </div>
             <Chart
               data={dashboardData?.grantEvaluationData}
