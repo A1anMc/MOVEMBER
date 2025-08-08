@@ -35,8 +35,15 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///movember_ai.db")
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Create tables
-Base.metadata.create_all(bind=engine)
+# Note: Tables will be created on application startup to ensure all ORM models are loaded
+
+
+def ensure_tables() -> None:
+    """Ensure ORM tables exist (idempotent)."""
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as exc:
+        logger.error("ensure_tables failed: %s", exc)
 
 
 class GrantData(BaseModel):
@@ -224,6 +231,15 @@ app = FastAPI(
     description="API for Movember AI Rules System with UK spelling and AUD currency standards",
     version="1.1.0"
 )
+
+# Ensure DB tables exist at startup (handles fresh Postgres instances on Render)
+@app.on_event("startup")
+def _init_db() -> None:
+    try:
+        ensure_tables()
+        logger.info("Database tables ensured/created")
+    except Exception as exc:
+        logger.error("Failed to initialize database tables: %s", exc)
 
 # CORS middleware
 app.add_middleware(
@@ -456,6 +472,7 @@ class MovemberAPIService:
     
     def _store_grant_record(self, grant_data: GrantData):
         """Store grant record in database."""
+        ensure_tables()
         record = GrantRecord(
             grant_id=grant_data.grant_id,
             title=grant_data.title,
@@ -471,6 +488,7 @@ class MovemberAPIService:
     
     def _store_impact_report_record(self, report_data: ImpactReportData):
         """Store impact report record in database."""
+        ensure_tables()
         record = ImpactReportRecord(
             report_id=report_data.report_id,
             title=report_data.title,
@@ -484,6 +502,7 @@ class MovemberAPIService:
     
     def _store_health_record(self, health_data: SystemHealthData):
         """Store system health record in database."""
+        ensure_tables()
         record = SystemHealthRecord(
             system_status=health_data.system_status,
             uptime_percentage=health_data.uptime_percentage,
