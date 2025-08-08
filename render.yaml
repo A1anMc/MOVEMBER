@@ -1,4 +1,5 @@
 services:
+  # API Backend
   - type: web
     name: movember-api
     env: python
@@ -14,6 +15,27 @@ services:
         fromDatabase:
           name: movember-db
           property: connectionString
+
+  # React Frontend
+  - type: web
+    name: movember-frontend
+    env: node
+    plan: free
+    autoDeploy: true
+    buildCommand: |
+      cd frontend
+      npm install
+      npm run build
+    startCommand: |
+      cd frontend
+      npm install -g serve
+      serve -s dist -l $PORT
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: REACT_APP_API_URL
+        value: https://movember-api.onrender.com
 
   # Optional: cron job example to trigger scraper (disabled by default)
   # - type: cron
