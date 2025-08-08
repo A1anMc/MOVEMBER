@@ -37,6 +37,17 @@ except ImportError as e:
     RulePriority = None
     RULES_SYSTEM_AVAILABLE = False
 
+# Import grant acquisition system
+try:
+    from grant_acquisition_engine import grant_acquisition_engine
+    from api.grant_acquisition_api import grant_acquisition_router
+    GRANT_ACQUISITION_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Grant acquisition system not available: {e}")
+    grant_acquisition_engine = None
+    grant_acquisition_router = None
+    GRANT_ACQUISITION_AVAILABLE = False
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -307,6 +318,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include grant acquisition router if available
+if GRANT_ACQUISITION_AVAILABLE and grant_acquisition_router:
+    app.include_router(grant_acquisition_router)
+    logger.info("Grant acquisition endpoints included")
+else:
+    logger.warning("Grant acquisition endpoints not available")
 
 # Global variables
 movember_engine = None
