@@ -27,7 +27,7 @@ AI_RULES = [
         priority=RulePriority.HIGH,
         description="Ensure professional tone with UK spelling and AUD currency for executive audiences"
     ),
-    
+
     Rule(
         name="fail_gracefully_on_uncertainty",
         conditions=[Condition("agent.confidence < 0.6")],
@@ -39,7 +39,7 @@ AI_RULES = [
         priority=RulePriority.CRITICAL,
         description="Handle uncertainty professionally with UK spelling"
     ),
-    
+
     Rule(
         name="maintain_data_integrity",
         conditions=[
@@ -55,7 +55,7 @@ AI_RULES = [
         priority=RulePriority.CRITICAL,
         description="Ensure data integrity with proper source validation"
     ),
-    
+
     Rule(
         name="align_with_movember_mission",
         conditions=[
@@ -70,7 +70,7 @@ AI_RULES = [
         priority=RulePriority.HIGH,
         description="Ensure all operations align with Movember's mission"
     ),
-    
+
     Rule(
         name="explain_reasoning_when_asked",
         conditions=[
@@ -86,7 +86,7 @@ AI_RULES = [
         priority=RulePriority.MEDIUM,
         description="Provide clear reasoning with UK spelling when requested"
     ),
-    
+
     Rule(
         name="adapt_to_stakeholder_role",
         conditions=[
@@ -102,7 +102,7 @@ AI_RULES = [
         priority=RulePriority.MEDIUM,
         description="Adapt communication style to stakeholder role with UK spelling"
     ),
-    
+
     Rule(
         name="enforce_professional_standards",
         conditions=[
@@ -119,7 +119,7 @@ AI_RULES = [
         priority=RulePriority.HIGH,
         description="Maintain professional standards with UK spelling and AUD currency"
     ),
-    
+
     Rule(
         name="validate_currency_display",
         conditions=[
@@ -135,7 +135,7 @@ AI_RULES = [
         priority=RulePriority.MEDIUM,
         description="Ensure all currency displays are in AUD with UK formatting"
     ),
-    
+
     Rule(
         name="ensure_uk_spelling_consistency",
         conditions=[
@@ -151,7 +151,7 @@ AI_RULES = [
         priority=RulePriority.MEDIUM,
         description="Convert American spelling to UK spelling throughout"
     ),
-    
+
     Rule(
         name="handle_uncertainty_professionally",
         conditions=[
@@ -167,7 +167,7 @@ AI_RULES = [
         priority=RulePriority.HIGH,
         description="Handle uncertainty professionally with UK spelling"
     ),
-    
+
     Rule(
         name="ensure_mission_alignment",
         conditions=[
@@ -194,10 +194,10 @@ def get_ai_behaviour_rules() -> list:
 def validate_uk_spelling(text: str) -> bool:
     """
     Validate that text uses UK spelling.
-    
+
     Args:
         text: Text to validate
-        
+
     Returns:
         True if text uses UK spelling, False otherwise
     """
@@ -223,23 +223,23 @@ def validate_uk_spelling(text: str) -> bool:
         'categorise': 'categorize',
         'prioritise': 'prioritize'
     }
-    
+
     text_lower = text.lower()
     for uk_spelling, us_spelling in uk_spellings.items():
         if us_spelling in text_lower and uk_spelling not in text_lower:
             return False
-    
+
     return True
 
 
 def validate_aud_currency(amount: float, currency: str) -> bool:
     """
     Validate that currency is displayed in AUD.
-    
+
     Args:
         amount: Amount to validate
         currency: Currency code
-        
+
     Returns:
         True if currency is AUD, False otherwise
     """
@@ -249,10 +249,10 @@ def validate_aud_currency(amount: float, currency: str) -> bool:
 def format_aud_currency(amount: float) -> str:
     """
     Format amount in AUD with UK number formatting.
-    
+
     Args:
         amount: Amount to format
-        
+
     Returns:
         Formatted AUD string
     """
@@ -262,10 +262,10 @@ def format_aud_currency(amount: float) -> str:
 def convert_to_uk_spelling(text: str) -> str:
     """
     Convert American spelling to UK spelling.
-    
+
     Args:
         text: Text to convert
-        
+
     Returns:
         Text with UK spelling
     """
@@ -289,39 +289,39 @@ def convert_to_uk_spelling(text: str) -> str:
         'categorize': 'categorise',
         'prioritize': 'prioritise'
     }
-    
+
     converted_text = text
     for us_spelling, uk_spelling in uk_conversions.items():
         converted_text = converted_text.replace(us_spelling, uk_spelling)
-    
+
     return converted_text
 
 
 def ensure_uk_spelling_and_aud_currency(data: dict) -> dict:
     """
     Ensure all text uses UK spelling and currency is in AUD.
-    
+
     Args:
         data: Data to process
-        
+
     Returns:
         Processed data with UK spelling and AUD currency
     """
     processed_data = data.copy()
-    
+
     # Process text fields for UK spelling
     text_fields = ['title', 'description', 'summary', 'notes', 'comments']
     for field in text_fields:
         if field in processed_data and isinstance(processed_data[field], str):
             processed_data[field] = convert_to_uk_spelling(processed_data[field])
-    
+
     # Process currency fields for AUD
     currency_fields = ['budget', 'amount', 'cost', 'funding', 'expense']
     for field in currency_fields:
         if field in processed_data and isinstance(processed_data[field], (int, float)):
             processed_data[f'{field}_currency'] = 'AUD'
             processed_data[f'{field}_formatted'] = format_aud_currency(processed_data[field])
-    
+
     return processed_data
 
 
@@ -334,4 +334,4 @@ __all__ = [
     'format_aud_currency',
     'convert_to_uk_spelling',
     'ensure_uk_spelling_and_aud_currency'
-] 
+]

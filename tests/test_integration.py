@@ -24,12 +24,12 @@ from rules.types import ExecutionContext, ContextType, RulePriority
 
 class TestMovemberAIRulesIntegration:
     """Integration tests for the Movember AI Rules System."""
-    
+
     @pytest.fixture
     async def engine(self):
         """Create a test engine instance."""
         return create_movember_engine()
-    
+
     @pytest.fixture
     def sample_impact_report(self):
         """Sample impact report data."""
@@ -52,7 +52,7 @@ class TestMovemberAIRulesIntegration:
             "attribution": "clear",
             "data_gaps": []
         }
-    
+
     @pytest.fixture
     def sample_grant_application(self):
         """Sample grant application data."""
@@ -75,7 +75,7 @@ class TestMovemberAIRulesIntegration:
                 "missing": []
             }
         }
-    
+
     @pytest.mark.asyncio
     async def test_complete_impact_reporting_workflow(self, engine, sample_impact_report):
         """Test complete impact reporting workflow."""
@@ -87,24 +87,24 @@ class TestMovemberAIRulesIntegration:
             user_id="test-user",
             timestamp=datetime.now()
         )
-        
+
         # Evaluate rules
         results = await engine.evaluate_context(context, mode="reporting")
-        
+
         # Assertions
         assert results is not None
         assert len(results) > 0
-        
+
         # Check that framework alignment rule was triggered
         framework_rules = [r for r in results if "framework" in r.get("rule_name", "").lower()]
         assert len(framework_rules) > 0
-        
+
         # Check that outputs-outcomes mapping rule was triggered
         mapping_rules = [r for r in results if "output" in r.get("rule_name", "").lower()]
         assert len(mapping_rules) > 0
-        
+
         print(f"Impact reporting workflow completed with {len(results)} rule evaluations")
-    
+
     @pytest.mark.asyncio
     async def test_complete_grant_evaluation_workflow(self, engine, sample_grant_application):
         """Test complete grant evaluation workflow."""
@@ -116,24 +116,24 @@ class TestMovemberAIRulesIntegration:
             user_id="test-user",
             timestamp=datetime.now()
         )
-        
+
         # Evaluate rules
         results = await engine.evaluate_context(context, mode="grant_submission")
-        
+
         # Assertions
         assert results is not None
         assert len(results) > 0
-        
+
         # Check that completeness rule was triggered
         completeness_rules = [r for r in results if "completeness" in r.get("rule_name", "").lower()]
         assert len(completeness_rules) > 0
-        
+
         # Check that impact metrics rule was triggered
         metrics_rules = [r for r in results if "impact" in r.get("rule_name", "").lower()]
         assert len(metrics_rules) > 0
-        
+
         print(f"Grant evaluation workflow completed with {len(results)} rule evaluations")
-    
+
     @pytest.mark.asyncio
     async def test_ai_behaviour_rules_workflow(self, engine):
         """Test AI behaviour rules workflow."""
@@ -155,20 +155,20 @@ class TestMovemberAIRulesIntegration:
             user_id="test-user",
             timestamp=datetime.now()
         )
-        
+
         # Evaluate rules
         results = await engine.evaluate_context(context, mode="ai_behaviour")
-        
+
         # Assertions
         assert results is not None
         assert len(results) > 0
-        
+
         # Check that professional tone rule was triggered
         tone_rules = [r for r in results if "tone" in r.get("rule_name", "").lower()]
         assert len(tone_rules) > 0
-        
+
         print(f"AI behaviour workflow completed with {len(results)} rule evaluations")
-    
+
     @pytest.mark.asyncio
     async def test_context_validation_workflow(self, engine):
         """Test context validation workflow."""
@@ -180,10 +180,10 @@ class TestMovemberAIRulesIntegration:
             user_id="test-user",
             timestamp=datetime.now()
         )
-        
+
         results = await engine.evaluate_context(valid_context, mode="context_validation")
         assert results is not None
-        
+
         # Test invalid context (should be blocked)
         invalid_context = ExecutionContext(
             context_type=ContextType.PROJECT_VALIDATION,
@@ -192,7 +192,7 @@ class TestMovemberAIRulesIntegration:
             user_id="test-user",
             timestamp=datetime.now()
         )
-        
+
         # This should raise an exception or return blocked results
         try:
             results = await engine.evaluate_context(invalid_context, mode="context_validation")
@@ -202,23 +202,23 @@ class TestMovemberAIRulesIntegration:
         except Exception as e:
             # Expected behavior for invalid context
             assert "movember" in str(e).lower() or "context" in str(e).lower()
-        
+
         print("Context validation workflow completed successfully")
-    
+
     @pytest.mark.asyncio
     async def test_weekly_refactoring_workflow(self, engine):
         """Test weekly refactoring workflow."""
         # Run weekly refactor
         refactor_summary = await run_weekly_refactor()
-        
+
         # Assertions
         assert refactor_summary is not None
         assert hasattr(refactor_summary, 'issues_found')
         assert hasattr(refactor_summary, 'recommendations')
         assert hasattr(refactor_summary, 'audit_timestamp')
-        
+
         print(f"Weekly refactoring completed: {refactor_summary.issues_found} issues found")
-    
+
     @pytest.mark.asyncio
     async def test_performance_under_load(self, engine):
         """Test system performance under load."""
@@ -233,7 +233,7 @@ class TestMovemberAIRulesIntegration:
                 timestamp=datetime.now()
             )
             contexts.append(context)
-        
+
         # Execute concurrent evaluations
         start_time = time.time()
         results = await asyncio.gather(*[
@@ -241,14 +241,14 @@ class TestMovemberAIRulesIntegration:
             for context in contexts
         ])
         end_time = time.time()
-        
+
         # Performance assertions
         execution_time = end_time - start_time
         assert execution_time < 5.0  # Should complete within 5 seconds
         assert len(results) == 10  # All requests should complete
-        
+
         print(f"Load test completed: {len(results)} concurrent evaluations in {execution_time:.2f}s")
-    
+
     @pytest.mark.asyncio
     async def test_error_handling_and_recovery(self, engine):
         """Test error handling and recovery mechanisms."""
@@ -260,7 +260,7 @@ class TestMovemberAIRulesIntegration:
             user_id="test-user",
             timestamp=datetime.now()
         )
-        
+
         # Should handle gracefully
         try:
             results = await engine.evaluate_context(invalid_context, mode="reporting")
@@ -269,9 +269,9 @@ class TestMovemberAIRulesIntegration:
         except Exception as e:
             # Should provide meaningful error message
             assert "error" in str(e).lower() or "invalid" in str(e).lower()
-        
+
         print("Error handling test completed successfully")
-    
+
     @pytest.mark.asyncio
     async def test_metrics_and_monitoring(self, engine):
         """Test metrics collection and monitoring."""
@@ -283,24 +283,24 @@ class TestMovemberAIRulesIntegration:
             user_id="test-user",
             timestamp=datetime.now()
         )
-        
+
         await engine.evaluate_context(context, mode="reporting")
-        
+
         # Get metrics
         metrics = engine.get_metrics()
-        
+
         # Assertions
         assert metrics is not None
         assert "system_metrics" in metrics
         assert "rule_metrics" in metrics
-        
+
         # Check that metrics are being collected
         system_metrics = metrics["system_metrics"]
         assert system_metrics["total_executions"] > 0
         assert system_metrics["success_rate"] >= 0.0
-        
+
         print(f"Metrics test completed: {system_metrics['total_executions']} total executions")
-    
+
     @pytest.mark.asyncio
     async def test_rule_priority_handling(self, engine):
         """Test that rules are executed in priority order."""
@@ -322,18 +322,18 @@ class TestMovemberAIRulesIntegration:
             user_id="test-user",
             timestamp=datetime.now()
         )
-        
+
         results = await engine.evaluate_context(context, mode="default")
-        
+
         # Check that critical rules are executed first
         critical_rules = [r for r in results if r.get("priority") == RulePriority.CRITICAL]
         high_rules = [r for r in results if r.get("priority") == RulePriority.HIGH]
-        
+
         # Critical rules should be executed
         assert len(critical_rules) >= 0  # May or may not have critical rules
-        
+
         print(f"Priority handling test completed: {len(results)} rules executed")
-    
+
     @pytest.mark.asyncio
     async def test_async_concurrent_execution(self, engine):
         """Test async concurrent rule execution."""
@@ -348,37 +348,37 @@ class TestMovemberAIRulesIntegration:
                 timestamp=datetime.now()
             )
             contexts.append(context)
-        
+
         # Execute concurrently
         start_time = time.time()
         tasks = [
             engine.evaluate_context(context, mode="reporting")
             for context in contexts
         ]
-        
+
         results = await asyncio.gather(*tasks)
         end_time = time.time()
-        
+
         # Performance check
         execution_time = end_time - start_time
         assert execution_time < 3.0  # Should be faster than sequential
         assert len(results) == 5
-        
+
         print(f"Async execution test completed: {execution_time:.2f}s for 5 concurrent evaluations")
 
 
 class TestMovemberOperations:
     """Test Movember-specific operations."""
-    
+
     @pytest.mark.asyncio
     async def test_validate_movember_operation(self):
         """Test Movember operation validation."""
         # Valid operation
         assert validate_movember_operation("impact_analysis", "movember")
-        
+
         # Invalid operation
         assert not validate_movember_operation("marketing_copy", "other_project")
-    
+
     @pytest.mark.asyncio
     async def test_run_movember_impact_analysis(self):
         """Test Movember impact analysis."""
@@ -387,11 +387,11 @@ class TestMovemberOperations:
             "timeframe": "2024",
             "metrics": ["health_outcomes", "community_engagement"]
         }
-        
+
         results = await run_movember_impact_analysis(sample_data)
         assert results is not None
         assert "analysis" in results
-    
+
     @pytest.mark.asyncio
     async def test_evaluate_grant_application(self):
         """Test grant application evaluation."""
@@ -401,7 +401,7 @@ class TestMovemberOperations:
             "impact_metrics": [{"name": "test", "target": 10}],
             "sdg_alignment": ["SDG3"]
         }
-        
+
         results = await evaluate_grant_application(sample_grant)
         assert results is not None
         assert "evaluation" in results
@@ -409,4 +409,4 @@ class TestMovemberOperations:
 
 if __name__ == "__main__":
     # Run integration tests
-    pytest.main([__file__, "-v"]) 
+    pytest.main([__file__, "-v"])

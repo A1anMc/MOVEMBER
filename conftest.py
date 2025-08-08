@@ -67,4 +67,4 @@ async def engine():
 
 @pytest_asyncio.fixture
 async def integrator():
-    return await create_movember_integrator() 
+    return await create_movember_integrator()

@@ -9,7 +9,7 @@ import json
 def add_sample_data():
     conn = sqlite3.connect("movember_ai.db")
     cursor = conn.cursor()
-    
+
     # Add sample grants
     sample_grants = [
         ("GRANT001", "Men's Health Research Grant", 75000, "AUD", 18, "approved", "Health Research Org", "2024-01-15"),
@@ -23,14 +23,14 @@ def add_sample_data():
         ("GRANT009", "Sleep Health Research", 80000, "AUD", 20, "approved", "Sleep Research", "2024-09-14"),
         ("GRANT010", "Social Connection Program", 40000, "AUD", 10, "approved", "Community Org", "2024-10-25")
     ]
-    
+
     for grant in sample_grants:
         cursor.execute("""
-            INSERT OR REPLACE INTO grants 
+            INSERT OR REPLACE INTO grants
             (grant_id, title, budget, currency, timeline_months, status, organisation, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, grant)
-    
+
     # Check if impact_reports table exists, if not create it
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS impact_reports (
@@ -44,7 +44,7 @@ def add_sample_data():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
-    
+
     # Add sample impact reports
     sample_reports = [
         ("REPORT001", "Men's Health Research Impact", 75000, 18, 500, 85, "2024-07-15"),
@@ -55,19 +55,19 @@ def add_sample_data():
         ("REPORT006", "Sleep Health Research Impact", 80000, 20, 600, 90, "2024-12-14"),
         ("REPORT007", "Social Connection Outcomes", 40000, 10, 250, 75, "2025-01-25")
     ]
-    
+
     for report in sample_reports:
         cursor.execute("""
-            INSERT OR REPLACE INTO impact_reports 
+            INSERT OR REPLACE INTO impact_reports
             (report_id, title, grant_amount, duration_months, participant_count, impact_score, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, report)
-    
+
     conn.commit()
     conn.close()
-    
+
     print("✅ Sample data added successfully!")
     print("📊 Added 10 sample grants and 7 impact reports")
 
 if __name__ == "__main__":
-    add_sample_data() 
+    add_sample_data()

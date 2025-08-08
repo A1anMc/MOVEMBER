@@ -13,13 +13,13 @@ logger = logging.getLogger(__name__)
 
 class EnhancedRecommendationsEngine:
     """Enhanced recommendations engine with theory-backed insights."""
-    
+
     def __init__(self):
         self.sdg_framework = self._load_sdg_framework()
         self.impact_theories = self._load_impact_theories()
         self.stakeholder_strategies = self._load_stakeholder_strategies()
         self.metrics_frameworks = self._load_metrics_frameworks()
-    
+
     def _load_sdg_framework(self) -> Dict[str, Any]:
         """Load Sustainable Development Goals framework."""
         return {
@@ -103,7 +103,7 @@ class EnhancedRecommendationsEngine:
                 "movember_alignment": "Partnerships for mental health advocacy"
             }
         }
-    
+
     def _load_impact_theories(self) -> Dict[str, Any]:
         """Load impact measurement theories and frameworks."""
         return {
@@ -156,7 +156,7 @@ class EnhancedRecommendationsEngine:
                 "movember_application": "Coordinate multiple stakeholders for mental health impact"
             }
         }
-    
+
     def _load_stakeholder_strategies(self) -> Dict[str, Any]:
         """Load stakeholder engagement strategies."""
         return {
@@ -246,7 +246,7 @@ class EnhancedRecommendationsEngine:
                 }
             }
         }
-    
+
     def _load_metrics_frameworks(self) -> Dict[str, Any]:
         """Load comprehensive metrics frameworks."""
         return {
@@ -320,7 +320,7 @@ class EnhancedRecommendationsEngine:
                 ]
             }
         }
-    
+
     def generate_comprehensive_recommendations(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate comprehensive, theory-backed recommendations."""
         recommendations = {
@@ -332,14 +332,14 @@ class EnhancedRecommendationsEngine:
             "theory_frameworks": self._get_relevant_theories(grant_data),
             "dashboard_metrics": self._generate_dashboard_metrics(grant_data)
         }
-        
+
         return recommendations
-    
+
     def _generate_impact_metrics_recommendations(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate theory-backed impact metrics recommendations."""
         category = grant_data.get("category", "")
         target_demographic = grant_data.get("target_demographic", "")
-        
+
         recommendations = {
             "primary_metrics": [],
             "secondary_metrics": [],
@@ -348,7 +348,7 @@ class EnhancedRecommendationsEngine:
             "reporting_frequency": "Monthly",
             "theory_framework": "Theory of Change"
         }
-        
+
         # Mental health specific metrics
         if "mental_health" in category.lower():
             recommendations["primary_metrics"] = [
@@ -379,7 +379,7 @@ class EnhancedRecommendationsEngine:
                 "Service utilization records",
                 "Community surveys"
             ]
-        
+
         # Young men specific considerations
         if "young_men" in target_demographic.lower():
             recommendations["primary_metrics"].extend([
@@ -394,21 +394,21 @@ class EnhancedRecommendationsEngine:
                 "Sports program attendance records",
                 "Peer mentor feedback"
             ])
-        
+
         return recommendations
-    
+
     def _generate_sdg_alignment_recommendations(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate comprehensive SDG alignment recommendations."""
         category = grant_data.get("category", "")
         location = grant_data.get("location", "")
-        
+
         relevant_sdgs = []
         alignment_strategies = {}
-        
+
         # Mental health programs align with multiple SDGs
         if "mental_health" in category.lower():
             relevant_sdgs = ["SDG_3", "SDG_4", "SDG_10", "SDG_11"]
-            
+
             for sdg in relevant_sdgs:
                 sdg_info = self.sdg_framework[sdg]
                 alignment_strategies[sdg] = {
@@ -419,11 +419,11 @@ class EnhancedRecommendationsEngine:
                     "implementation_strategies": self._get_sdg_implementation_strategies(sdg, grant_data),
                     "measurement_approach": self._get_sdg_measurement_approach(sdg, grant_data)
                 }
-        
+
         # Add location-specific SDGs
         if "victoria" in location.lower() or "australia" in location.lower():
             relevant_sdgs.append("SDG_17")  # Partnerships for the Goals
-        
+
         return {
             "primary_sdgs": relevant_sdgs,
             "alignment_strategies": alignment_strategies,
@@ -431,7 +431,7 @@ class EnhancedRecommendationsEngine:
             "integration_approach": "Mainstreaming SDGs into program design",
             "stakeholder_engagement": "Multi-sector partnerships for SDG achievement"
         }
-    
+
     def _get_sdg_implementation_strategies(self, sdg: str, grant_data: Dict[str, Any]) -> List[str]:
         """Get implementation strategies for specific SDGs."""
         strategies = {
@@ -471,9 +471,9 @@ class EnhancedRecommendationsEngine:
                 "Establish funding partnerships"
             ]
         }
-        
+
         return strategies.get(sdg, [])
-    
+
     def _get_sdg_measurement_approach(self, sdg: str, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Get measurement approach for specific SDGs."""
         return {
@@ -489,12 +489,12 @@ class EnhancedRecommendationsEngine:
             "stakeholder_consultation": "Regular engagement with relevant ministries",
             "verification_process": "Independent third-party validation"
         }
-    
+
     def _generate_stakeholder_recommendations(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate comprehensive stakeholder engagement recommendations."""
         category = grant_data.get("category", "")
         location = grant_data.get("location", "")
-        
+
         recommendations = {
             "primary_stakeholders": {},
             "secondary_stakeholders": {},
@@ -502,7 +502,7 @@ class EnhancedRecommendationsEngine:
             "communication_strategy": "Multi-channel approach",
             "capacity_building": "Continuous stakeholder development"
         }
-        
+
         # Mental health specific stakeholder strategies
         if "mental_health" in category.lower():
             recommendations["primary_stakeholders"] = {
@@ -540,7 +540,7 @@ class EnhancedRecommendationsEngine:
                     ]
                 }
             }
-            
+
             recommendations["secondary_stakeholders"] = {
                 "policymakers": {
                     "engagement_approach": "Evidence-based advocacy and policy influence",
@@ -563,15 +563,15 @@ class EnhancedRecommendationsEngine:
                     ]
                 }
             }
-        
+
         return recommendations
-    
+
     def _get_relevant_theories(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Get relevant theoretical frameworks for the grant."""
         category = grant_data.get("category", "")
-        
+
         relevant_theories = {}
-        
+
         if "mental_health" in category.lower():
             relevant_theories = {
                 "primary_framework": self.impact_theories["theory_of_change"],
@@ -582,13 +582,13 @@ class EnhancedRecommendationsEngine:
                 "implementation_approach": "Multi-framework integration",
                 "measurement_strategy": "Theory-driven evaluation"
             }
-        
+
         return relevant_theories
-    
+
     def _generate_dashboard_metrics(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate comprehensive dashboard metrics."""
         category = grant_data.get("category", "")
-        
+
         dashboard_metrics = {
             "real_time_indicators": [
                 "Program participation rates",
@@ -615,13 +615,13 @@ class EnhancedRecommendationsEngine:
                 "Impact pathway diagrams"
             ]
         }
-        
+
         return dashboard_metrics
 
 # Example usage
 if __name__ == "__main__":
     engine = EnhancedRecommendationsEngine()
-    
+
     # Test with sample grant data
     sample_grant = {
         "grant_id": "VIC-2024-001",
@@ -631,6 +631,6 @@ if __name__ == "__main__":
         "location": "Victoria",
         "amount": 50000
     }
-    
+
     recommendations = engine.generate_comprehensive_recommendations(sample_grant)
-    print(json.dumps(recommendations, indent=2)) 
+    print(json.dumps(recommendations, indent=2))

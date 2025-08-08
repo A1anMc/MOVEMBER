@@ -24,7 +24,7 @@ GRANT_RULES = [
         priority=RulePriority.CRITICAL,
         description="Validate grant application completeness with UK spelling and AUD currency"
     ),
-    
+
     Rule(
         name="grant_to_impact_linkage",
         conditions=[Condition("grant.impact_metrics.length < 1")],
@@ -36,7 +36,7 @@ GRANT_RULES = [
         priority=RulePriority.HIGH,
         description="Ensure grants include measurable impact metrics"
     ),
-    
+
     Rule(
         name="budget_realism_validation",
         conditions=[
@@ -52,7 +52,7 @@ GRANT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate budget realism with AUD currency"
     ),
-    
+
     Rule(
         name="sdg_alignment_requirement",
         conditions=[Condition("grant.sdg_alignment.length == 0")],
@@ -64,7 +64,7 @@ GRANT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Require SDG alignment for all grants"
     ),
-    
+
     Rule(
         name="sustainability_plan_validation",
         conditions=[
@@ -79,7 +79,7 @@ GRANT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Require sustainability plan for large grants"
     ),
-    
+
     Rule(
         name="risk_mitigation_requirement",
         conditions=[
@@ -94,7 +94,7 @@ GRANT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Require risk mitigation for complex grants"
     ),
-    
+
     Rule(
         name="partnership_validation",
         conditions=[
@@ -109,7 +109,7 @@ GRANT_RULES = [
         priority=RulePriority.LOW,
         description="Suggest partnerships for regional grants"
     ),
-    
+
     Rule(
         name="innovation_scoring",
         conditions=[
@@ -124,7 +124,7 @@ GRANT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Evaluate innovation score for research grants"
     ),
-    
+
     Rule(
         name="aud_currency_validation",
         conditions=[
@@ -140,7 +140,7 @@ GRANT_RULES = [
         priority=RulePriority.HIGH,
         description="Ensure all grant amounts are in AUD"
     ),
-    
+
     Rule(
         name="uk_spelling_validation",
         conditions=[
@@ -156,7 +156,7 @@ GRANT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Ensure all grant documentation uses UK spelling"
     ),
-    
+
     Rule(
         name="grant_evaluation_completeness",
         conditions=[
@@ -171,7 +171,7 @@ GRANT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Require comprehensive evaluation criteria for large grants"
     ),
-    
+
     Rule(
         name="timeline_realism_check",
         conditions=[
@@ -187,7 +187,7 @@ GRANT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate timeline realism for complex grants"
     ),
-    
+
     Rule(
         name="stakeholder_engagement_requirement",
         conditions=[
@@ -202,7 +202,7 @@ GRANT_RULES = [
         priority=RulePriority.LOW,
         description="Require stakeholder engagement for high-impact grants"
     ),
-    
+
     Rule(
         name="data_management_plan_requirement",
         conditions=[
@@ -217,7 +217,7 @@ GRANT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Require data management plan for data-intensive grants"
     ),
-    
+
     Rule(
         name="ethical_approval_validation",
         conditions=[
@@ -232,7 +232,7 @@ GRANT_RULES = [
         priority=RulePriority.HIGH,
         description="Require ethical approval for human subjects research"
     ),
-    
+
     Rule(
         name="budget_breakdown_validation",
         conditions=[
@@ -247,7 +247,7 @@ GRANT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Require detailed budget breakdown for significant grants"
     ),
-    
+
     Rule(
         name="impact_measurement_framework",
         conditions=[
@@ -273,10 +273,10 @@ def get_grant_rules() -> list:
 def validate_grant_currency(grant_data: dict) -> bool:
     """
     Validate that grant currency is in AUD.
-    
+
     Args:
         grant_data: Grant data to validate
-        
+
     Returns:
         True if currency is AUD, False otherwise
     """
@@ -288,10 +288,10 @@ def validate_grant_currency(grant_data: dict) -> bool:
 def format_grant_budget(budget: float) -> str:
     """
     Format grant budget in AUD with UK number formatting.
-    
+
     Args:
         budget: Budget amount
-        
+
     Returns:
         Formatted AUD budget string
     """
@@ -301,10 +301,10 @@ def format_grant_budget(budget: float) -> str:
 def convert_grant_to_uk_spelling(grant_data: dict) -> dict:
     """
     Convert grant data to use UK spelling.
-    
+
     Args:
         grant_data: Grant data to convert
-        
+
     Returns:
         Grant data with UK spelling
     """
@@ -328,39 +328,39 @@ def convert_grant_to_uk_spelling(grant_data: dict) -> dict:
         'categorize': 'categorise',
         'prioritize': 'prioritise'
     }
-    
+
     converted_data = grant_data.copy()
-    
+
     # Convert text fields
     text_fields = ['title', 'description', 'summary', 'objectives', 'methodology']
     for field in text_fields:
         if field in converted_data and isinstance(converted_data[field], str):
             for us_spelling, uk_spelling in uk_conversions.items():
                 converted_data[field] = converted_data[field].replace(us_spelling, uk_spelling)
-    
+
     return converted_data
 
 
 def validate_grant_completeness(grant_data: dict) -> dict:
     """
     Validate grant application completeness.
-    
+
     Args:
         grant_data: Grant data to validate
-        
+
     Returns:
         Validation results
     """
     required_fields = [
-        'grant_id', 'title', 'budget', 'timeline_months', 
+        'grant_id', 'title', 'budget', 'timeline_months',
         'impact_metrics', 'sdg_alignment', 'sustainability_plan'
     ]
-    
+
     missing_fields = []
     for field in required_fields:
         if field not in grant_data or not grant_data[field]:
             missing_fields.append(field)
-    
+
     return {
         'complete': len(missing_fields) == 0,
         'missing_fields': missing_fields,
@@ -371,74 +371,74 @@ def validate_grant_completeness(grant_data: dict) -> dict:
 def calculate_grant_score(grant_data: dict) -> float:
     """
     Calculate overall grant score based on various criteria.
-    
+
     Args:
         grant_data: Grant data to score
-        
+
     Returns:
         Overall grant score (0-10)
     """
     score = 0.0
-    
+
     # Completeness score (30%)
     completeness = validate_grant_completeness(grant_data)
     score += completeness['completeness_score'] * 3.0
-    
+
     # Impact metrics score (25%)
     if 'impact_metrics' in grant_data and len(grant_data.get('impact_metrics', [])) > 0:
         score += 2.5
-    
+
     # SDG alignment score (20%)
     if 'sdg_alignment' in grant_data and len(grant_data.get('sdg_alignment', [])) > 0:
         score += 2.0
-    
+
     # Innovation score (15%)
     if 'innovation_score' in grant_data:
         score += min(grant_data['innovation_score'] / 10.0, 1.0) * 1.5
-    
+
     # Budget realism score (10%)
     if 'budget' in grant_data and 'timeline_months' in grant_data:
         monthly_budget = grant_data['budget'] / grant_data['timeline_months']
         if monthly_budget < 100000:  # Realistic monthly budget
             score += 1.0
-    
+
     return min(score, 10.0)
 
 
 def generate_grant_recommendations(grant_data: dict) -> list:
     """
     Generate recommendations for grant improvement.
-    
+
     Args:
         grant_data: Grant data to analyse
-        
+
     Returns:
         List of recommendations
     """
     recommendations = []
-    
+
     # Check for missing impact metrics
     if 'impact_metrics' not in grant_data or len(grant_data.get('impact_metrics', [])) == 0:
         recommendations.append("Include measurable impact metrics aligned with Movember's mission")
-    
+
     # Check for missing SDG alignment
     if 'sdg_alignment' not in grant_data or len(grant_data.get('sdg_alignment', [])) == 0:
         recommendations.append("Specify alignment with Sustainable Development Goals (SDGs)")
-    
+
     # Check for budget realism
     if 'budget' in grant_data and 'timeline_months' in grant_data:
         monthly_budget = grant_data['budget'] / grant_data['timeline_months']
         if monthly_budget > 200000:
             recommendations.append("Consider extending timeline or reducing budget for more realistic implementation")
-    
+
     # Check for sustainability plan
     if 'sustainability_plan' not in grant_data or grant_data['sustainability_plan'] == 'missing':
         recommendations.append("Develop a comprehensive sustainability plan for long-term impact")
-    
+
     # Check for stakeholder engagement
     if 'stakeholder_engagement' not in grant_data or grant_data['stakeholder_engagement'] == 'minimal':
         recommendations.append("Include stakeholder engagement strategies for community involvement")
-    
+
     return recommendations
 
 
@@ -452,4 +452,4 @@ __all__ = [
     'validate_grant_completeness',
     'calculate_grant_score',
     'generate_grant_recommendations'
-] 
+]

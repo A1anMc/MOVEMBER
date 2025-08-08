@@ -21,16 +21,16 @@ class CORSRequestHandler(SimpleHTTPRequestHandler):
 def run_server(port=3000):
     """Run the web server."""
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    
+
     server_address = ('', port)
     httpd = HTTPServer(server_address, CORSRequestHandler)
-    
+
     print(f"🌐 Movember Impact Dashboard")
     print(f"📊 Server running at: http://localhost:{port}")
-    print(f"🔗 API endpoint: http://localhost:8000")
+    print(f"🔗 API endpoint: http://localhost: 8000")
     print(f"📱 Open your browser and navigate to: http://localhost:{port}")
     print(f"⏹️  Press Ctrl+C to stop the server")
-    
+
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
@@ -44,5 +44,5 @@ if __name__ == "__main__":
             port = int(sys.argv[1])
         except ValueError:
             print("Invalid port number. Using default port 3000.")
-    
-    run_server(port) 
+
+    run_server(port)

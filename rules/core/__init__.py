@@ -18,12 +18,12 @@ from .metrics import MetricsCollector
 
 __all__ = [
     'RuleEngine',
-    'RuleEngineConfig', 
-    'RuleEvaluator', 
+    'RuleEngineConfig',
+    'RuleEvaluator',
     'ActionExecutor',
     'MetricsCollector'
 ]
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__) 
+logger = logging.getLogger(__name__)

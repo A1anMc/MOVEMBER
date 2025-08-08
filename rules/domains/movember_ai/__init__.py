@@ -32,12 +32,12 @@ class MovemberAIRulesEngine:
     Integrated rules engine for Movember AI operations.
     Provides unified access to all rule categories and systems.
     """
-    
+
     def __init__(self, config: Optional[RuleEngineConfig] = None):
         self.engine = RuleEngine(config or RuleEngineConfig())
         self.integrator = None  # Will be initialized when needed
         self._load_all_rules()
-    
+
     def _load_all_rules(self):
         """Load all rule categories into the engine."""
         from rules.domains.movember_ai.behaviours import AI_RULES
@@ -45,24 +45,24 @@ class MovemberAIRulesEngine:
         from rules.domains.movember_ai.grant_rules import GRANT_RULES
         from rules.domains.movember_ai.context import PROJECT_RULES
         from rules.domains.movember_ai.refactor import REFACTOR_RULES
-        
+
         all_rules = (
             PROJECT_RULES + AI_RULES + GRANT_RULES + IMPACT_REPORT_RULES + REFACTOR_RULES
         )
-        
+
         for rule in all_rules:
             self.engine.add_rule(rule)
-        
+
         logger.info(f"Loaded {len(all_rules)} rules across all categories")
-    
+
     async def evaluate_context(self, context: ExecutionContext, mode: str = "default") -> List[Any]:
         """
         Evaluate rules for a given context with specified mode.
-        
+
         Args:
             context: Execution context containing data and metadata
             mode: Evaluation mode (default, reporting, grant_submission, etc.)
-        
+
         Returns:
             List of rule evaluation results
         """
@@ -73,13 +73,13 @@ class MovemberAIRulesEngine:
             operation_type = 'impact_analysis'
             if not validate_movember_context(project_id, operation_type):
                 raise ValueError("Context must be Movember-related")
-        
+
         # Apply mode-specific filtering
         filtered_rules = self._filter_rules_by_mode(mode)
-        
+
         # Evaluate rules
         results = await self.engine.evaluate_async(context)
-        
+
         # Filter results by mode
         mode_results = [r for r in results if self._is_rule_applicable_for_mode(r, mode)]
 
@@ -96,10 +96,10 @@ class MovemberAIRulesEngine:
             if priority_value is not None:
                 rd['priority'] = priority_value
             serialized_results.append(rd)
-        
+
         logger.info(f"Evaluated {len(serialized_results)} rules in {mode} mode")
         return serialized_results
-    
+
     def _filter_rules_by_mode(self, mode: str) -> List:
         """Filter rules based on evaluation mode."""
         mode_mappings = {
@@ -109,14 +109,14 @@ class MovemberAIRulesEngine:
             "context_validation": ["project_validation"],
             "weekly_maintenance": ["refactoring"]
         }
-        
+
         return mode_mappings.get(mode, [])
-    
+
     def _is_rule_applicable_for_mode(self, result: Any, mode: str) -> bool:
         """Check if a rule result is applicable for the given mode."""
         # This is a simplified check - in practice, you'd have more sophisticated logic
         return True
-    
+
     def get_metrics(self) -> Dict[str, Any]:
         """Get system metrics and performance statistics."""
         if self.engine.metrics:
@@ -134,55 +134,55 @@ class MovemberAIRulesEngine:
                 "performance_thresholds": raw.get("performance_thresholds", {})
             }
         return {"system_metrics": {}, "rule_metrics": {}}
-    
+
     def get_execution_history(self) -> List[Dict]:
         """Get execution history and audit trail."""
         return self.engine.execution_history
-    
+
     async def run_weekly_maintenance(self) -> Any:
         """Run weekly maintenance and refactoring."""
         return await run_weekly_refactor()
-    
-    async def get_integrator(self) -> 'MovemberSystemIntegrator':
+
+    async def get_integrator(self):
         """Get or create the system integrator."""
         if self.integrator is None:
             from rules.domains.movember_ai.integration import create_movember_integrator  # local import to avoid circular
             self.integrator = await create_movember_integrator()
         return self.integrator
-    
+
     async def process_grant_lifecycle(self, grant_data: Dict) -> Dict:
         """
         Process a grant through the complete lifecycle with all systems integrated.
-        
+
         Args:
             grant_data: Grant application data
-        
+
         Returns:
             Complete grant processing results
         """
         integrator = await self.get_integrator()
         return await integrator.process_grant_lifecycle(grant_data)
-    
+
     async def process_impact_reporting(self, impact_data: Dict) -> Dict:
         """
         Process impact reporting with all systems integrated.
-        
+
         Args:
             impact_data: Impact reporting data
-        
+
         Returns:
             Complete impact processing results
         """
         integrator = await self.get_integrator()
         return await integrator.process_impact_reporting(impact_data)
-    
+
     async def validate_system_integration(self, data: Dict) -> Any:
         """
         Validate integration across all systems.
-        
+
         Args:
             data: Data to validate across systems
-        
+
         Returns:
             Cross-system validation results
         """
@@ -199,11 +199,11 @@ def create_movember_engine(config: Optional[RuleEngineConfig] = None) -> Movembe
 def validate_movember_operation(operation: str, project_id: str) -> bool:
     """
     Validate if an operation is appropriate for the Movember project.
-    
+
     Args:
         operation: Operation to validate
         project_id: Project identifier
-    
+
     Returns:
         True if operation is valid for Movember context
     """
@@ -213,10 +213,10 @@ def validate_movember_operation(operation: str, project_id: str) -> bool:
 async def run_movember_impact_analysis(data: Dict) -> Dict:
     """
     Run comprehensive impact analysis for Movember projects.
-    
+
     Args:
         data: Project data for impact analysis
-    
+
     Returns:
         Impact analysis results
     """
@@ -227,9 +227,9 @@ async def run_movember_impact_analysis(data: Dict) -> Dict:
         data=data,
         timestamp=datetime.now()
     )
-    
+
     results = await engine.evaluate_context(context, mode="reporting")
-    
+
     return {
         "analysis": "comprehensive_impact_analysis",
         "results": results,
@@ -241,10 +241,10 @@ async def run_movember_impact_analysis(data: Dict) -> Dict:
 async def evaluate_grant_application(grant_data: Dict) -> Dict:
     """
     Evaluate a grant application using the integrated rules system.
-    
+
     Args:
         grant_data: Grant application data
-    
+
     Returns:
         Grant evaluation results
     """
@@ -255,9 +255,9 @@ async def evaluate_grant_application(grant_data: Dict) -> Dict:
         data=grant_data,
         timestamp=datetime.now()
     )
-    
+
     results = await engine.evaluate_context(context, mode="grant_submission")
-    
+
     return {
         "evaluation": "comprehensive_grant_evaluation",
         "results": results,
@@ -269,7 +269,7 @@ async def evaluate_grant_application(grant_data: Dict) -> Dict:
 async def run_weekly_refactor() -> Any:
     """
     Run weekly refactoring and maintenance tasks.
-    
+
     Returns:
         Refactoring summary and recommendations
     """
@@ -307,4 +307,4 @@ __all__ = [
     'process_grant_with_integration',
     'process_impact_with_integration',
     'validate_system_integration'
-] 
+]

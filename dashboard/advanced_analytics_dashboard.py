@@ -38,12 +38,12 @@ class AnalyticsInsight:
 
 class AdvancedAnalyticsDashboard:
     """Advanced analytics dashboard with ML insights."""
-    
+
     def __init__(self, api_base_url: str = "https://movember-api.onrender.com"):
         self.api_base_url = api_base_url
         self.insights_history: List[AnalyticsInsight] = []
         self.analytics_cache = {}
-        
+
     async def generate_comprehensive_analytics(self) -> Dict[str, Any]:
         """Generate comprehensive analytics report."""
         try:
@@ -58,19 +58,19 @@ class AdvancedAnalyticsDashboard:
                 "risk_assessment": await self._generate_risk_assessment(),
                 "optimization_recommendations": await self._generate_optimization_recommendations()
             }
-            
+
             return analytics_report
-            
+
         except Exception as e:
             logger.error(f"Failed to generate analytics: {e}")
             return {"error": str(e)}
-    
+
     async def _generate_predictive_analytics(self) -> Dict[str, Any]:
         """Generate predictive analytics insights."""
         try:
             # Get historical data
             historical_data = await self._get_historical_data()
-            
+
             predictive_insights = {
                 "grant_approval_prediction": {
                     "model_accuracy": 0.87,
@@ -125,19 +125,19 @@ class AdvancedAnalyticsDashboard:
                     "trend_direction": "improving"
                 }
             }
-            
+
             return predictive_insights
-            
+
         except Exception as e:
             logger.error(f"Failed to generate predictive analytics: {e}")
             return {"error": str(e)}
-    
+
     async def _generate_descriptive_analytics(self) -> Dict[str, Any]:
         """Generate descriptive analytics insights."""
         try:
             # Get current system metrics
             system_metrics = await self._get_system_metrics()
-            
+
             descriptive_insights = {
                 "grant_evaluation_summary": {
                     "total_grants_evaluated": system_metrics.get("total_grants", 0),
@@ -176,13 +176,13 @@ class AdvancedAnalyticsDashboard:
                     "other_states": system_metrics.get("other_count", 0)
                 }
             }
-            
+
             return descriptive_insights
-            
+
         except Exception as e:
             logger.error(f"Failed to generate descriptive analytics: {e}")
             return {"error": str(e)}
-    
+
     async def _generate_prescriptive_analytics(self) -> Dict[str, Any]:
         """Generate prescriptive analytics insights."""
         try:
@@ -252,13 +252,13 @@ class AdvancedAnalyticsDashboard:
                     }
                 ]
             }
-            
+
             return prescriptive_insights
-            
+
         except Exception as e:
             logger.error(f"Failed to generate prescriptive analytics: {e}")
             return {"error": str(e)}
-    
+
     async def _generate_diagnostic_analytics(self) -> Dict[str, Any]:
         """Generate diagnostic analytics insights."""
         try:
@@ -304,13 +304,13 @@ class AdvancedAnalyticsDashboard:
                     "validity": "96%"
                 }
             }
-            
+
             return diagnostic_insights
-            
+
         except Exception as e:
             logger.error(f"Failed to generate diagnostic analytics: {e}")
             return {"error": str(e)}
-    
+
     async def _generate_ml_insights(self) -> Dict[str, Any]:
         """Generate machine learning insights."""
         try:
@@ -360,13 +360,13 @@ class AdvancedAnalyticsDashboard:
                     "timeline_feasibility": "Well-planned timelines increase success probability by 30%"
                 }
             }
-            
+
             return ml_insights
-            
+
         except Exception as e:
             logger.error(f"Failed to generate ML insights: {e}")
             return {"error": str(e)}
-    
+
     async def _generate_trend_analysis(self) -> Dict[str, Any]:
         """Generate trend analysis insights."""
         try:
@@ -402,13 +402,13 @@ class AdvancedAnalyticsDashboard:
                     "partnership_growth": "25% per quarter"
                 }
             }
-            
+
             return trend_analysis
-            
+
         except Exception as e:
             logger.error(f"Failed to generate trend analysis: {e}")
             return {"error": str(e)}
-    
+
     async def _generate_risk_assessment(self) -> Dict[str, Any]:
         """Generate risk assessment insights."""
         try:
@@ -464,13 +464,13 @@ class AdvancedAnalyticsDashboard:
                 "overall_risk_score": "Low",
                 "risk_trend": "Decreasing"
             }
-            
+
             return risk_assessment
-            
+
         except Exception as e:
             logger.error(f"Failed to generate risk assessment: {e}")
             return {"error": str(e)}
-    
+
     async def _generate_optimization_recommendations(self) -> Dict[str, Any]:
         """Generate optimization recommendations."""
         try:
@@ -524,13 +524,13 @@ class AdvancedAnalyticsDashboard:
                     }
                 ]
             }
-            
+
             return optimization_recommendations
-            
+
         except Exception as e:
             logger.error(f"Failed to generate optimization recommendations: {e}")
             return {"error": str(e)}
-    
+
     async def _get_historical_data(self) -> Dict[str, Any]:
         """Get historical data for analytics."""
         try:
@@ -545,7 +545,7 @@ class AdvancedAnalyticsDashboard:
         except Exception as e:
             logger.error(f"Failed to get historical data: {e}")
             return {}
-    
+
     async def _get_system_metrics(self) -> Dict[str, Any]:
         """Get current system metrics."""
         try:
@@ -560,30 +560,30 @@ class AdvancedAnalyticsDashboard:
 async def main():
     """Test the advanced analytics dashboard."""
     dashboard = AdvancedAnalyticsDashboard()
-    
+
     # Generate comprehensive analytics
     analytics_report = await dashboard.generate_comprehensive_analytics()
-    
+
     print("\n" + "="*80)
     print("ADVANCED ANALYTICS DASHBOARD REPORT")
     print("="*80)
     print(f"Timestamp: {analytics_report.get('timestamp', 'N/A')}")
-    
+
     # Print key insights
     if "predictive_analytics" in analytics_report:
         pred_analytics = analytics_report["predictive_analytics"]
         print(f"\nPredictive Analytics:")
         print(f"- Grant approval prediction accuracy: {pred_analytics.get('grant_approval_prediction', {}).get('model_accuracy', 0):.2f}")
         print(f"- Impact prediction accuracy: {pred_analytics.get('impact_prediction', {}).get('model_accuracy', 0):.2f}")
-    
+
     if "ml_insights" in analytics_report:
         ml_insights = analytics_report["ml_insights"]
         print(f"\nMachine Learning Insights:")
         print(f"- Grant evaluation model F1 score: {ml_insights.get('model_performance', {}).get('grant_evaluation_model', {}).get('f1_score', 0):.2f}")
         print(f"- Impact prediction R² score: {ml_insights.get('model_performance', {}).get('impact_prediction_model', {}).get('r2_score', 0):.2f}")
-    
+
     print("\nAdvanced analytics dashboard ready for comprehensive insights!")
     print("="*80)
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

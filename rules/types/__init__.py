@@ -11,7 +11,7 @@ from enum import Enum
 
 __all__ = [
     'Rule',
-    'Condition', 
+    'Condition',
     'Action',
     'RuleResult',
     'ExecutionContext',
@@ -52,7 +52,7 @@ class Condition:
     description: Optional[str] = None
     parameters: Dict[str, Any] = field(default_factory=dict)
     custom_evaluator: Optional[Callable] = None
-    
+
     def __post_init__(self):
         if not self.description:
             self.description = f"Condition: {self.expression}"
@@ -67,7 +67,7 @@ class Action:
     custom_executor: Optional[Callable] = None
     retry_on_failure: bool = False
     max_retries: int = 3
-    
+
     def __post_init__(self):
         if not self.description:
             self.description = f"Action: {self.name}"
@@ -82,7 +82,7 @@ class ActionResult:
     error: Optional[str] = None
     execution_time: float = 0.0
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -105,7 +105,7 @@ class RuleResult:
     error: Optional[str] = None
     execution_time: float = 0.0
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -129,7 +129,7 @@ class ExecutionContext:
     session_id: Optional[str] = None
     timestamp: datetime = field(default_factory=datetime.now)
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -158,11 +158,11 @@ class Rule:
     version: str = "1.0.0"
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
-    
+
     def __post_init__(self):
         if not self.description:
             self.description = f"Rule: {self.name}"
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -194,7 +194,7 @@ class Rule:
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Rule':
         """Create a rule from dictionary."""
@@ -226,4 +226,4 @@ class Rule:
             ] if data.get('context_types') else None,
             tags=data.get('tags', []),
             version=data.get('version', '1.0.0')
-        ) 
+        )

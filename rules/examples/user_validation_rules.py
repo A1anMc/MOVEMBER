@@ -9,7 +9,7 @@ from rules.types import Rule, Condition, Action, RulePriority, ContextType
 
 def create_user_validation_rules():
     """Create a set of user validation rules."""
-    
+
     # Rule 1: Basic user data validation
     basic_validation_rule = Rule(
         name="basic_user_validation",
@@ -33,7 +33,7 @@ def create_user_validation_rules():
         ],
         tags=['validation', 'user', 'registration']
     )
-    
+
     # Rule 2: Email format validation
     email_validation_rule = Rule(
         name="email_format_validation",
@@ -41,7 +41,7 @@ def create_user_validation_rules():
         priority=RulePriority.MEDIUM,
         context_types=[ContextType.USER_REGISTRATION],
         conditions=[
-            Condition("re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$', data.get('email', ''))", 
+            Condition("re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$', data.get('email', ''))",
                      description="Email must match standard format")
         ],
         actions=[
@@ -55,7 +55,7 @@ def create_user_validation_rules():
         ],
         tags=['validation', 'email']
     )
-    
+
     # Rule 3: Password strength validation
     password_strength_rule = Rule(
         name="password_strength_validation",
@@ -79,7 +79,7 @@ def create_user_validation_rules():
         ],
         tags=['validation', 'password', 'security']
     )
-    
+
     # Rule 4: Age-based restrictions
     age_restriction_rule = Rule(
         name="age_restriction_validation",
@@ -100,7 +100,7 @@ def create_user_validation_rules():
         ],
         tags=['validation', 'age', 'restrictions']
     )
-    
+
     # Rule 5: Duplicate email check (simulated)
     duplicate_email_rule = Rule(
         name="duplicate_email_check",
@@ -108,7 +108,7 @@ def create_user_validation_rules():
         priority=RulePriority.CRITICAL,
         context_types=[ContextType.USER_REGISTRATION],
         conditions=[
-            Condition("data.get('email') not in ['existing@example.com', 'admin@example.com']", 
+            Condition("data.get('email') not in ['existing@example.com', 'admin@example.com']",
                      description="Email is not already registered")
         ],
         actions=[
@@ -122,7 +122,7 @@ def create_user_validation_rules():
         ],
         tags=['validation', 'email', 'duplicate']
     )
-    
+
     # Rule 6: Welcome email for successful registration
     welcome_email_rule = Rule(
         name="welcome_email_rule",
@@ -151,7 +151,7 @@ def create_user_validation_rules():
         ],
         tags=['email', 'welcome', 'registration']
     )
-    
+
     # Rule 7: Failed validation handling
     failed_validation_rule = Rule(
         name="failed_validation_handling",
@@ -159,7 +159,7 @@ def create_user_validation_rules():
         priority=RulePriority.HIGH,
         context_types=[ContextType.USER_REGISTRATION],
         conditions=[
-            Condition("data.get('validation_status') != 'basic_passed' or data.get('email_valid') != True", 
+            Condition("data.get('validation_status') != 'basic_passed' or data.get('email_valid') != True",
                      description="Validation failed")
         ],
         actions=[
@@ -178,7 +178,7 @@ def create_user_validation_rules():
         ],
         tags=['error', 'validation', 'handling']
     )
-    
+
     return [
         basic_validation_rule,
         email_validation_rule,
@@ -192,7 +192,7 @@ def create_user_validation_rules():
 
 def create_login_rules():
     """Create rules for user login validation."""
-    
+
     # Rule 1: Login attempt validation
     login_validation_rule = Rule(
         name="login_validation",
@@ -202,7 +202,7 @@ def create_login_rules():
         conditions=[
             Condition("len(data.get('email', '')) > 0", description="Email is required"),
             Condition("len(data.get('password', '')) > 0", description="Password is required"),
-            Condition("data.get('email') in ['user@example.com', 'admin@example.com']", 
+            Condition("data.get('email') in ['user@example.com', 'admin@example.com']",
                      description="User exists in system")
         ],
         actions=[
@@ -216,7 +216,7 @@ def create_login_rules():
         ],
         tags=['login', 'authentication']
     )
-    
+
     # Rule 2: Failed login handling
     failed_login_rule = Rule(
         name="failed_login_handling",
@@ -224,7 +224,7 @@ def create_login_rules():
         priority=RulePriority.MEDIUM,
         context_types=[ContextType.USER_LOGIN],
         conditions=[
-            Condition("data.get('email') not in ['user@example.com', 'admin@example.com'] or data.get('password') != 'correct_password'", 
+            Condition("data.get('email') not in ['user@example.com', 'admin@example.com'] or data.get('password') != 'correct_password'",
                      description="Invalid credentials")
         ],
         actions=[
@@ -243,13 +243,13 @@ def create_login_rules():
         ],
         tags=['login', 'security', 'error']
     )
-    
+
     return [login_validation_rule, failed_login_rule]
 
 
 def create_security_rules():
     """Create security-related rules."""
-    
+
     # Rule 1: Rate limiting for login attempts
     rate_limit_rule = Rule(
         name="login_rate_limiting",
@@ -270,7 +270,7 @@ def create_security_rules():
         ],
         tags=['security', 'rate_limiting', 'login']
     )
-    
+
     # Rule 2: Suspicious activity detection
     suspicious_activity_rule = Rule(
         name="suspicious_activity_detection",
@@ -298,5 +298,5 @@ def create_security_rules():
         ],
         tags=['security', 'monitoring', 'alert']
     )
-    
-    return [rate_limit_rule, suspicious_activity_rule] 
+
+    return [rate_limit_rule, suspicious_activity_rule]

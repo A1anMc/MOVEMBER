@@ -27,7 +27,7 @@ REFACTOR_RULES = [
         priority=RulePriority.MEDIUM,
         description="Flag unused rules for review with UK spelling standards"
     ),
-    
+
     Rule(
         name="check_duplicate_logic",
         conditions=[Condition("rule.similarity_score >= 0.9")],
@@ -39,7 +39,7 @@ REFACTOR_RULES = [
         priority=RulePriority.MEDIUM,
         description="Identify and merge duplicate rule logic"
     ),
-    
+
     Rule(
         name="enforce_weekly_review",
         conditions=[Condition("day_of_week == 'Friday'")],
@@ -51,7 +51,7 @@ REFACTOR_RULES = [
         priority=RulePriority.HIGH,
         description="Enforce weekly refactoring schedule"
     ),
-    
+
     Rule(
         name="validate_uk_spelling_consistency",
         conditions=[
@@ -66,7 +66,7 @@ REFACTOR_RULES = [
         priority=RulePriority.MEDIUM,
         description="Ensure all rules use UK spelling consistently"
     ),
-    
+
     Rule(
         name="validate_aud_currency_standards",
         conditions=[
@@ -81,7 +81,7 @@ REFACTOR_RULES = [
         priority=RulePriority.MEDIUM,
         description="Ensure all currency references are in AUD"
     ),
-    
+
     Rule(
         name="optimise_rule_performance",
         conditions=[
@@ -96,7 +96,7 @@ REFACTOR_RULES = [
         priority=RulePriority.HIGH,
         description="Optimise underperforming rules"
     ),
-    
+
     Rule(
         name="validate_rule_dependencies",
         conditions=[
@@ -111,7 +111,7 @@ REFACTOR_RULES = [
         priority=RulePriority.MEDIUM,
         description="Simplify complex rule dependencies"
     ),
-    
+
     Rule(
         name="check_rule_coverage",
         conditions=[
@@ -126,7 +126,7 @@ REFACTOR_RULES = [
         priority=RulePriority.MEDIUM,
         description="Improve rule coverage for important rules"
     ),
-    
+
     Rule(
         name="validate_rule_consistency",
         conditions=[
@@ -141,7 +141,7 @@ REFACTOR_RULES = [
         priority=RulePriority.HIGH,
         description="Ensure consistency across critical rules"
     ),
-    
+
     Rule(
         name="cleanup_obsolete_rules",
         conditions=[
@@ -156,7 +156,7 @@ REFACTOR_RULES = [
         priority=RulePriority.LOW,
         description="Remove obsolete and underperforming rules"
     ),
-    
+
     Rule(
         name="validate_rule_documentation",
         conditions=[
@@ -171,7 +171,7 @@ REFACTOR_RULES = [
         priority=RulePriority.MEDIUM,
         description="Improve documentation for complex rules"
     ),
-    
+
     Rule(
         name="optimise_rule_priorities",
         conditions=[
@@ -186,7 +186,7 @@ REFACTOR_RULES = [
         priority=RulePriority.MEDIUM,
         description="Optimise rule priority assignments"
     ),
-    
+
     Rule(
         name="validate_rule_security",
         conditions=[
@@ -201,7 +201,7 @@ REFACTOR_RULES = [
         priority=RulePriority.HIGH,
         description="Enhance security for sensitive rules"
     ),
-    
+
     Rule(
         name="check_rule_scalability",
         conditions=[
@@ -216,7 +216,7 @@ REFACTOR_RULES = [
         priority=RulePriority.MEDIUM,
         description="Improve scalability for frequently used rules"
     ),
-    
+
     Rule(
         name="validate_rule_maintainability",
         conditions=[
@@ -249,20 +249,20 @@ class RefactorSummary:
 
 class RuleRefactorEngine:
     """Engine for managing rule refactoring and optimisation."""
-    
+
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.refactor_history = []
-    
+
     async def run_weekly_refactor(self) -> RefactorSummary:
         """
         Run weekly refactoring process.
-        
+
         Returns:
             Summary of refactoring results
         """
         self.logger.info("Starting weekly refactoring process")
-        
+
         issues_found = 0
         rules_optimised = 0
         rules_removed = 0
@@ -270,45 +270,45 @@ class RuleRefactorEngine:
         recommendations = []
         uk_spelling_fixes = 0
         aud_currency_fixes = 0
-        
+
         # Check for unused rules
         unused_rules = await self._identify_unused_rules()
         if unused_rules:
             issues_found += len(unused_rules)
             recommendations.append(f"Consider removing {len(unused_rules)} unused rules")
-        
+
         # Check for duplicate logic
         duplicate_rules = await self._identify_duplicate_logic()
         if duplicate_rules:
             issues_found += len(duplicate_rules)
             recommendations.append(f"Merge {len(duplicate_rules)} duplicate rule sets")
-        
+
         # Validate UK spelling consistency
         spelling_issues = await self._validate_uk_spelling()
         uk_spelling_fixes = len(spelling_issues)
         if spelling_issues:
             issues_found += uk_spelling_fixes
             recommendations.append("Convert American spelling to UK spelling throughout")
-        
+
         # Validate AUD currency standards
         currency_issues = await self._validate_aud_currency()
         aud_currency_fixes = len(currency_issues)
         if currency_issues:
             issues_found += aud_currency_fixes
             recommendations.append("Ensure all currency references are in AUD")
-        
+
         # Optimise performance
         performance_issues = await self._optimise_rule_performance()
         if performance_issues:
             rules_optimised += len(performance_issues)
             performance_improvements.extend(performance_issues)
-        
+
         # Clean up obsolete rules
         obsolete_rules = await self._identify_obsolete_rules()
         if obsolete_rules:
             rules_removed += len(obsolete_rules)
             recommendations.append(f"Remove {len(obsolete_rules)} obsolete rules")
-        
+
         summary = RefactorSummary(
             issues_found=issues_found,
             rules_optimised=rules_optimised,
@@ -319,12 +319,12 @@ class RuleRefactorEngine:
             uk_spelling_fixes=uk_spelling_fixes,
             aud_currency_fixes=aud_currency_fixes
         )
-        
+
         self.refactor_history.append(summary)
         self.logger.info(f"Weekly refactoring completed: {issues_found} issues found")
-        
+
         return summary
-    
+
     async def _identify_unused_rules(self) -> List[Dict]:
         """Identify rules that haven't been used recently."""
         # Simulate identifying unused rules
@@ -332,7 +332,7 @@ class RuleRefactorEngine:
             {"rule_id": "RULE-001", "last_used": "45 days ago", "reason": "Stale rule"},
             {"rule_id": "RULE-002", "last_used": "60 days ago", "reason": "Unused rule"}
         ]
-    
+
     async def _identify_duplicate_logic(self) -> List[Dict]:
         """Identify rules with duplicate logic."""
         # Simulate identifying duplicate logic
@@ -340,7 +340,7 @@ class RuleRefactorEngine:
             {"rule_id": "RULE-003", "similarity_score": 0.95, "target_rule": "RULE-004"},
             {"rule_id": "RULE-005", "similarity_score": 0.92, "target_rule": "RULE-006"}
         ]
-    
+
     async def _validate_uk_spelling(self) -> List[Dict]:
         """Validate UK spelling consistency across rules."""
         # Simulate finding spelling issues
@@ -348,7 +348,7 @@ class RuleRefactorEngine:
             {"rule_id": "RULE-007", "issue": "American spelling detected", "fix": "Convert to UK spelling"},
             {"rule_id": "RULE-008", "issue": "Inconsistent terminology", "fix": "Standardise UK terminology"}
         ]
-    
+
     async def _validate_aud_currency(self) -> List[Dict]:
         """Validate AUD currency standards across rules."""
         # Simulate finding currency issues
@@ -356,7 +356,7 @@ class RuleRefactorEngine:
             {"rule_id": "RULE-009", "issue": "USD currency detected", "fix": "Convert to AUD"},
             {"rule_id": "RULE-010", "issue": "Missing currency format", "fix": "Add AUD formatting"}
         ]
-    
+
     async def _optimise_rule_performance(self) -> List[str]:
         """Optimise rule performance."""
         # Simulate performance improvements
@@ -365,7 +365,7 @@ class RuleRefactorEngine:
             "Improved success rate for RULE-012 by 25%",
             "Optimised memory usage for RULE-013"
         ]
-    
+
     async def _identify_obsolete_rules(self) -> List[Dict]:
         """Identify obsolete rules for removal."""
         # Simulate identifying obsolete rules
@@ -373,18 +373,18 @@ class RuleRefactorEngine:
             {"rule_id": "RULE-014", "reason": "No longer relevant", "last_used": "120 days ago"},
             {"rule_id": "RULE-015", "reason": "Replaced by newer rule", "last_used": "90 days ago"}
         ]
-    
+
     def get_refactor_history(self) -> List[RefactorSummary]:
         """Get refactoring history."""
         return self.refactor_history
-    
+
     def generate_refactor_report(self, summary: RefactorSummary) -> str:
         """
         Generate a human-readable refactoring report.
-        
+
         Args:
             summary: Refactoring summary
-            
+
         Returns:
             Formatted report string
         """
@@ -400,14 +400,14 @@ class RuleRefactorEngine:
 
 ## Performance Improvements
 """
-        
+
         for improvement in summary.performance_improvements:
             report += f"- {improvement}\n"
-        
+
         report += "\n## Recommendations\n"
         for recommendation in summary.recommendations:
             report += f"- {recommendation}\n"
-        
+
         return report
 
 
@@ -419,7 +419,7 @@ def get_refactor_rules() -> list:
 async def run_weekly_refactor() -> RefactorSummary:
     """
     Run weekly refactoring process.
-    
+
     Returns:
         Summary of refactoring results
     """
@@ -430,10 +430,10 @@ async def run_weekly_refactor() -> RefactorSummary:
 def validate_rule_uk_spelling(rule_text: str) -> bool:
     """
     Validate that rule text uses UK spelling.
-    
+
     Args:
         rule_text: Rule text to validate
-        
+
     Returns:
         True if text uses UK spelling, False otherwise
     """
@@ -459,22 +459,22 @@ def validate_rule_uk_spelling(rule_text: str) -> bool:
         'categorise': 'categorize',
         'prioritise': 'prioritize'
     }
-    
+
     rule_text_lower = rule_text.lower()
     for uk_spelling, us_spelling in uk_spellings.items():
         if us_spelling in rule_text_lower and uk_spelling not in rule_text_lower:
             return False
-    
+
     return True
 
 
 def validate_rule_aud_currency(rule_data: dict) -> bool:
     """
     Validate that rule currency references are in AUD.
-    
+
     Args:
         rule_data: Rule data to validate
-        
+
     Returns:
         True if currency is AUD, False otherwise
     """
@@ -486,10 +486,10 @@ def validate_rule_aud_currency(rule_data: dict) -> bool:
 def convert_rule_to_uk_spelling(rule_text: str) -> str:
     """
     Convert rule text to use UK spelling.
-    
+
     Args:
         rule_text: Rule text to convert
-        
+
     Returns:
         Rule text with UK spelling
     """
@@ -513,21 +513,21 @@ def convert_rule_to_uk_spelling(rule_text: str) -> str:
         'categorize': 'categorise',
         'prioritize': 'prioritise'
     }
-    
+
     converted_text = rule_text
     for us_spelling, uk_spelling in uk_conversions.items():
         converted_text = converted_text.replace(us_spelling, uk_spelling)
-    
+
     return converted_text
 
 
 def format_rule_currency(amount: float) -> str:
     """
     Format currency amount in AUD with UK number formatting.
-    
+
     Args:
         amount: Amount to format
-        
+
     Returns:
         Formatted AUD string
     """
@@ -545,4 +545,4 @@ __all__ = [
     'validate_rule_aud_currency',
     'convert_rule_to_uk_spelling',
     'format_rule_currency'
-] 
+]

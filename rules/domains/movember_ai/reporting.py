@@ -21,7 +21,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.CRITICAL,
         description="Require framework alignment with UK spelling and AUD currency"
     ),
-    
+
     Rule(
         name="block_if_outputs_without_outcomes",
         conditions=[
@@ -36,7 +36,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.CRITICAL,
         description="Ensure outputs are linked to measurable outcomes"
     ),
-    
+
     Rule(
         name="require_data_visualisation",
         conditions=[
@@ -51,7 +51,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Require data visualisation for impact reports"
     ),
-    
+
     Rule(
         name="clarify_attribution_vs_contribution",
         conditions=[Condition("report.attribution == 'unclear'")],
@@ -63,7 +63,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.HIGH,
         description="Clarify attribution vs contribution distinction"
     ),
-    
+
     Rule(
         name="flag_data_gaps",
         conditions=[
@@ -78,7 +78,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Flag and address data gaps in impact reports"
     ),
-    
+
     Rule(
         name="validate_stakeholder_appropriateness",
         conditions=[
@@ -93,7 +93,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Ensure reports are appropriate for target audience"
     ),
-    
+
     Rule(
         name="require_baseline_comparison",
         conditions=[
@@ -108,7 +108,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.HIGH,
         description="Require baseline data for impact measurement"
     ),
-    
+
     Rule(
         name="validate_impact_metrics",
         conditions=[
@@ -123,7 +123,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate sufficient impact metrics"
     ),
-    
+
     Rule(
         name="ensure_uk_spelling_in_reports",
         conditions=[
@@ -139,7 +139,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Ensure all impact reports use UK spelling"
     ),
-    
+
     Rule(
         name="validate_aud_currency_in_reports",
         conditions=[
@@ -155,7 +155,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.HIGH,
         description="Ensure all currency in reports is displayed in AUD"
     ),
-    
+
     Rule(
         name="require_methodology_description",
         conditions=[
@@ -170,7 +170,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Require detailed methodology for research impact reports"
     ),
-    
+
     Rule(
         name="validate_statistical_significance",
         conditions=[
@@ -185,7 +185,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate statistical significance for large datasets"
     ),
-    
+
     Rule(
         name="ensure_ethical_reporting",
         conditions=[
@@ -200,7 +200,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.HIGH,
         description="Ensure ethical considerations in impact reports"
     ),
-    
+
     Rule(
         name="validate_longitudinal_tracking",
         conditions=[
@@ -215,7 +215,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate longitudinal tracking for long-term projects"
     ),
-    
+
     Rule(
         name="ensure_stakeholder_engagement",
         conditions=[
@@ -230,7 +230,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.LOW,
         description="Ensure stakeholder engagement in community impact reports"
     ),
-    
+
     Rule(
         name="validate_cost_effectiveness",
         conditions=[
@@ -245,7 +245,7 @@ IMPACT_REPORT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate cost effectiveness analysis for high-cost projects"
     ),
-    
+
     Rule(
         name="ensure_sustainability_indicators",
         conditions=[
@@ -271,10 +271,10 @@ def get_impact_report_rules() -> list:
 def validate_report_currency(report_data: dict) -> bool:
     """
     Validate that report currency is in AUD.
-    
+
     Args:
         report_data: Report data to validate
-        
+
     Returns:
         True if currency is AUD, False otherwise
     """
@@ -286,10 +286,10 @@ def validate_report_currency(report_data: dict) -> bool:
 def format_report_currency(amount: float) -> str:
     """
     Format currency amount in AUD with UK number formatting.
-    
+
     Args:
         amount: Amount to format
-        
+
     Returns:
         Formatted AUD string
     """
@@ -299,10 +299,10 @@ def format_report_currency(amount: float) -> str:
 def convert_report_to_uk_spelling(report_data: dict) -> dict:
     """
     Convert report data to use UK spelling.
-    
+
     Args:
         report_data: Report data to convert
-        
+
     Returns:
         Report data with UK spelling
     """
@@ -326,26 +326,26 @@ def convert_report_to_uk_spelling(report_data: dict) -> dict:
         'categorize': 'categorise',
         'prioritize': 'prioritise'
     }
-    
+
     converted_data = report_data.copy()
-    
+
     # Convert text fields
     text_fields = ['title', 'summary', 'methodology', 'conclusions', 'recommendations']
     for field in text_fields:
         if field in converted_data and isinstance(converted_data[field], str):
             for us_spelling, uk_spelling in uk_conversions.items():
                 converted_data[field] = converted_data[field].replace(us_spelling, uk_spelling)
-    
+
     return converted_data
 
 
 def validate_report_completeness(report_data: dict) -> dict:
     """
     Validate impact report completeness.
-    
+
     Args:
         report_data: Report data to validate
-        
+
     Returns:
         Validation results
     """
@@ -353,12 +353,12 @@ def validate_report_completeness(report_data: dict) -> dict:
         'report_id', 'title', 'type', 'frameworks', 'outputs', 'outcomes',
         'stakeholders', 'data_sources', 'visualisations'
     ]
-    
+
     missing_fields = []
     for field in required_fields:
         if field not in report_data or not report_data[field]:
             missing_fields.append(field)
-    
+
     return {
         'complete': len(missing_fields) == 0,
         'missing_fields': missing_fields,
@@ -369,86 +369,86 @@ def validate_report_completeness(report_data: dict) -> dict:
 def calculate_report_quality_score(report_data: dict) -> float:
     """
     Calculate impact report quality score.
-    
+
     Args:
         report_data: Report data to score
-        
+
     Returns:
         Quality score (0-10)
     """
     score = 0.0
-    
+
     # Completeness score (30%)
     completeness = validate_report_completeness(report_data)
     score += completeness['completeness_score'] * 3.0
-    
+
     # Framework alignment score (25%)
     if 'frameworks' in report_data and len(report_data.get('frameworks', [])) > 0:
         score += 2.5
-    
+
     # Output-outcome mapping score (20%)
     if 'outputs' in report_data and 'outcomes' in report_data:
         if len(report_data['outputs']) > 0 and len(report_data['outcomes']) > 0:
             score += 2.0
-    
+
     # Visualisation score (15%)
     if 'visualisations' in report_data and len(report_data.get('visualisations', [])) > 0:
         score += 1.5
-    
+
     # Data quality score (10%)
     if 'data_sources' in report_data and len(report_data.get('data_sources', [])) > 0:
         score += 1.0
-    
+
     return min(score, 10.0)
 
 
 def generate_report_recommendations(report_data: dict) -> list:
     """
     Generate recommendations for impact report improvement.
-    
+
     Args:
         report_data: Report data to analyse
-        
+
     Returns:
         List of recommendations
     """
     recommendations = []
-    
+
     # Check for framework alignment
     if 'frameworks' not in report_data or len(report_data.get('frameworks', [])) == 0:
         recommendations.append("Include alignment with ToC, CEMP, or SDG frameworks")
-    
+
     # Check for output-outcome mapping
     if 'outputs' in report_data and 'outcomes' in report_data:
         if len(report_data['outputs']) > 0 and len(report_data['outcomes']) == 0:
             recommendations.append("Map all outputs to measurable outcomes")
-    
+
     # Check for data visualisation
     if 'visualisations' not in report_data or len(report_data.get('visualisations', [])) == 0:
         recommendations.append("Include data visualisations to enhance impact communication")
-    
+
     # Check for attribution clarity
     if 'attribution' in report_data and report_data['attribution'] == 'unclear':
         recommendations.append("Clarify attribution vs contribution methodology")
-    
+
     # Check for data gaps
     if 'data_gaps' in report_data and len(report_data['data_gaps']) > 0:
         recommendations.append("Address identified data gaps with additional data collection")
-    
+
     # Check for stakeholder appropriateness
     if 'audience' in report_data and report_data['audience'] not in ['executive', 'funder', 'researcher', 'community']:
         recommendations.append("Ensure report complexity is appropriate for target audience")
-    
+
     return recommendations
 
 
 def validate_framework_compliance(report_data: dict) -> dict:
     """
     Validate framework compliance for impact reports.
-    
+
     Args:
         report_data: Report data to validate
-        
+
     Returns:
         Framework compliance results
     """
@@ -459,9 +459,9 @@ def validate_framework_compliance(report_data: dict) -> dict:
         'sdg_compliant': 'SDG' in frameworks,
         'has_framework': len(frameworks) > 0
     }
-    
+
     compliance['overall_compliant'] = compliance['has_framework']
-    
+
     return compliance
 
 
@@ -476,4 +476,4 @@ __all__ = [
     'calculate_report_quality_score',
     'generate_report_recommendations',
     'validate_framework_compliance'
-] 
+]

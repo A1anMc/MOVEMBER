@@ -14,7 +14,7 @@ def check_api_running():
     """Check if the API is running."""
     try:
         import requests
-        response = requests.get('http://localhost:8000/health/', timeout=2)
+        response = requests.get('http://localhost: 8000/health/', timeout=2)
         return response.status_code == 200
     except:
         return False
@@ -22,8 +22,8 @@ def check_api_running():
 def start_api():
     """Start the API server."""
     print("🚀 Starting Movember AI Rules API...")
-    api_process = subprocess.Popen(['python', 'simple_api.py'], 
-                                  stdout=subprocess.PIPE, 
+    api_process = subprocess.Popen(['python', 'simple_api.py'],
+                                  stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE)
     time.sleep(3)  # Wait for API to start
     return api_process
@@ -35,7 +35,7 @@ def start_frontend():
     if not frontend_dir.exists():
         print("❌ Frontend directory not found!")
         return None
-    
+
     os.chdir('frontend')
     frontend_process = subprocess.Popen(['python', '-m', 'http.server', '3000'],
                                        stdout=subprocess.PIPE,
@@ -48,7 +48,7 @@ def main():
     """Main launch function."""
     print("🎯 Movember Impact Dashboard Launcher")
     print("=" * 50)
-    
+
     # Check if API is already running
     if check_api_running():
         print("✅ API server already running")
@@ -60,7 +60,7 @@ def main():
         else:
             print("❌ Failed to start API server")
             return
-    
+
     # Start frontend
     frontend_process = start_frontend()
     if frontend_process:
@@ -70,17 +70,17 @@ def main():
         if api_process:
             api_process.terminate()
         return
-    
+
     print("\n🎉 Dashboard is ready!")
-    print("📊 API: http://localhost:8000")
-    print("🌐 Dashboard: http://localhost:3000")
+    print("📊 API: http://localhost: 8000")
+    print("🌐 Dashboard: http://localhost: 3000")
     print("\n📋 Available endpoints:")
     print("   • /impact/global/ - Global impact data")
     print("   • /impact/executive-summary/ - Executive summary")
     print("   • /impact/dashboard/ - Dashboard data")
     print("   • /impact/category/{category}/ - Category-specific data")
     print("\n⏹️  Press Ctrl+C to stop all servers")
-    
+
     try:
         # Keep the script running
         while True:
@@ -94,4 +94,4 @@ def main():
         print("✅ Servers stopped")
 
 if __name__ == "__main__":
-    main() 
+    main()

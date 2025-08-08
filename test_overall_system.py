@@ -12,7 +12,7 @@ from datetime import datetime
 def test_api_health():
     """Test API health endpoint."""
     try:
-        response = requests.get("http://localhost:8000/health/", timeout=5)
+        response = requests.get("http://localhost: 8000/health/", timeout=5)
         if response.status_code == 200:
             data = response.json()
             print("✅ API Health Check: PASSED")
@@ -31,7 +31,7 @@ def test_api_health():
 def test_impact_measurement():
     """Test impact measurement endpoints."""
     try:
-        response = requests.get("http://localhost:8000/impact/global/", timeout=10)
+        response = requests.get("http://localhost: 8000/impact/global/", timeout=10)
         if response.status_code == 200:
             data = response.json()
             if data.get('status') == 'success':
@@ -55,7 +55,7 @@ def test_impact_measurement():
 def test_cache_system():
     """Test cache system."""
     try:
-        response = requests.get("http://localhost:8000/cache/stats/", timeout=5)
+        response = requests.get("http://localhost: 8000/cache/stats/", timeout=5)
         if response.status_code == 200:
             data = response.json()
             if data.get('status') == 'success':
@@ -78,7 +78,7 @@ def test_cache_system():
 def test_frontend():
     """Test frontend availability."""
     try:
-        response = requests.get("http://localhost:3000", timeout=5)
+        response = requests.get("http://localhost: 3000", timeout=5)
         if response.status_code == 200:
             content = response.text
             if "Movember Impact Dashboard" in content:
@@ -98,7 +98,7 @@ def test_frontend():
 def test_performance_monitoring():
     """Test performance monitoring (if available)."""
     try:
-        response = requests.get("http://localhost:8000/metrics/performance/", timeout=5)
+        response = requests.get("http://localhost: 8000/metrics/performance/", timeout=5)
         if response.status_code == 200:
             data = response.json()
             print("✅ Performance Monitoring: PASSED")
@@ -115,7 +115,7 @@ def test_performance_monitoring():
 def test_available_endpoints():
     """Test what endpoints are available."""
     try:
-        response = requests.get("http://localhost:8000/openapi.json", timeout=5)
+        response = requests.get("http://localhost: 8000/openapi.json", timeout=5)
         if response.status_code == 200:
             data = response.json()
             endpoints = list(data.get('paths', {}).keys())
@@ -136,7 +136,7 @@ def main():
     print("=" * 60)
     print(f"Test Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print()
-    
+
     tests = [
         ("API Health", test_api_health),
         ("Impact Measurement", test_impact_measurement),
@@ -145,19 +145,19 @@ def main():
         ("Performance Monitoring", test_performance_monitoring),
         ("Endpoint Discovery", test_available_endpoints),
     ]
-    
+
     passed = 0
     total = len(tests)
-    
+
     for test_name, test_func in tests:
         print(f"\n🧪 Testing {test_name}...")
         if test_func():
             passed += 1
         print()
-    
+
     print("=" * 60)
     print(f"📊 Test Results: {passed}/{total} tests passed")
-    
+
     if passed == total:
         print("🎉 All systems are working correctly!")
         print("\n✅ Phase 1: Foundation Enhancement - COMPLETED")
@@ -169,10 +169,10 @@ def main():
         print("⚠️  Some minor issues detected but core functionality is operational")
     else:
         print("❌ Multiple systems have issues that need attention")
-    
+
     print(f"\n🎯 System Status: {passed}/{total} components operational")
     return passed == total
 
 if __name__ == "__main__":
     success = main()
-    sys.exit(0 if success else 1) 
+    sys.exit(0 if success else 1)

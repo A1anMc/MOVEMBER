@@ -62,7 +62,7 @@ class DataQualityReport:
 
 class MovemberMonitoringBot:
     """Automated monitoring bot for Movember AI Rules System."""
-    
+
     def __init__(self):
         self.engine = MovemberAIRulesEngine()
         self.db = SessionLocal()
@@ -72,7 +72,7 @@ class MovemberMonitoringBot:
         self.health_check_interval = 60  # 1 minute
         self.data_quality_interval = 3600  # 1 hour
         self.is_running = False
-        
+
         # Monitoring thresholds
         self.thresholds = {
             "success_rate": 0.9,
@@ -84,12 +84,12 @@ class MovemberMonitoringBot:
             "uk_spelling_consistency": 0.95,
             "aud_currency_compliance": 0.95
         }
-    
+
     async def start_monitoring(self):
         """Start the monitoring bot."""
         self.logger.info("Starting Movember Monitoring Bot")
         self.is_running = True
-        
+
         # Start monitoring tasks
         tasks = [
             asyncio.create_task(self._health_monitoring_loop()),
@@ -98,18 +98,18 @@ class MovemberMonitoringBot:
             asyncio.create_task(self._performance_monitoring_loop()),
             asyncio.create_task(self._alert_processing_loop())
         ]
-        
+
         try:
             await asyncio.gather(*tasks)
         except Exception as e:
             self.logger.error(f"Monitoring bot error: {str(e)}")
             self.is_running = False
-    
+
     async def stop_monitoring(self):
         """Stop the monitoring bot."""
         self.logger.info("Stopping Movember Monitoring Bot")
         self.is_running = False
-    
+
     async def _health_monitoring_loop(self):
         """Continuous health monitoring loop."""
         while self.is_running:
@@ -119,7 +119,7 @@ class MovemberMonitoringBot:
             except Exception as e:
                 self.logger.error(f"Health monitoring error: {str(e)}")
                 await asyncio.sleep(30)  # Wait before retry
-    
+
     async def _data_quality_monitoring_loop(self):
         """Continuous data quality monitoring loop."""
         while self.is_running:
@@ -129,7 +129,7 @@ class MovemberMonitoringBot:
             except Exception as e:
                 self.logger.error(f"Data quality monitoring error: {str(e)}")
                 await asyncio.sleep(300)  # Wait before retry
-    
+
     async def _compliance_monitoring_loop(self):
         """Continuous compliance monitoring loop."""
         while self.is_running:
@@ -139,7 +139,7 @@ class MovemberMonitoringBot:
             except Exception as e:
                 self.logger.error(f"Compliance monitoring error: {str(e)}")
                 await asyncio.sleep(300)  # Wait before retry
-    
+
     async def _performance_monitoring_loop(self):
         """Continuous performance monitoring loop."""
         while self.is_running:
@@ -149,7 +149,7 @@ class MovemberMonitoringBot:
             except Exception as e:
                 self.logger.error(f"Performance monitoring error: {str(e)}")
                 await asyncio.sleep(300)  # Wait before retry
-    
+
     async def _alert_processing_loop(self):
         """Process and handle alerts."""
         while self.is_running:
@@ -159,14 +159,14 @@ class MovemberMonitoringBot:
             except Exception as e:
                 self.logger.error(f"Alert processing error: {str(e)}")
                 await asyncio.sleep(60)  # Wait before retry
-    
+
     async def _check_system_health(self):
         """Check system health and generate alerts if needed."""
         try:
             # Get system metrics
             metrics = self.engine.get_metrics()
             system_metrics = metrics.get("system_metrics", {})
-            
+
             # Check success rate
             success_rate = system_metrics.get("success_rate", 1.0)
             if success_rate < self.thresholds["success_rate"]:
@@ -177,7 +177,7 @@ class MovemberMonitoringBot:
                     source="health_monitor",
                     details={"success_rate": success_rate, "threshold": self.thresholds["success_rate"]}
                 )
-            
+
             # Check error rate
             error_rate = 1.0 - success_rate
             if error_rate > self.thresholds["error_rate"]:
@@ -188,7 +188,7 @@ class MovemberMonitoringBot:
                     source="health_monitor",
                     details={"error_rate": error_rate, "threshold": self.thresholds["error_rate"]}
                 )
-            
+
             # Check response time
             avg_response_time = system_metrics.get("average_response_time", 0.0)
             if avg_response_time > self.thresholds["response_time"]:
@@ -199,9 +199,9 @@ class MovemberMonitoringBot:
                     source="health_monitor",
                     details={"response_time": avg_response_time, "threshold": self.thresholds["response_time"]}
                 )
-            
+
             self.logger.info("System health check completed successfully")
-        
+
         except Exception as e:
             self.logger.error(f"Health check error: {str(e)}")
             await self._create_alert(
@@ -211,7 +211,7 @@ class MovemberMonitoringBot:
                 source="health_monitor",
                 details={"error": str(e)}
             )
-    
+
     async def _check_data_quality(self):
         """Check data quality and generate report."""
         try:
@@ -224,16 +224,16 @@ class MovemberMonitoringBot:
                     FROM grants
                     WHERE created_at >= :since
                 """), {"since": datetime.now() - timedelta(hours=24)})
-                
+
                 row = result.fetchone()
                 total_records = row.total_records if row else 0
                 aud_compliant = row.aud_compliant if row else 0
                 spelling_issues = row.spelling_issues if row else 0
-            
+
             # Calculate quality metrics
             aud_currency_compliance = aud_compliant / total_records if total_records > 0 else 1.0
             uk_spelling_consistency = 1.0 - (spelling_issues / total_records if total_records > 0 else 0.0)
-            
+
             # Generate quality report
             report = DataQualityReport(
                 report_id=f"DQ-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
@@ -247,7 +247,7 @@ class MovemberMonitoringBot:
                 recommendations=[],
                 quality_score=min(aud_currency_compliance, uk_spelling_consistency)
             )
-            
+
             # Check compliance thresholds
             if aud_currency_compliance < self.thresholds["aud_currency_compliance"]:
                 await self._create_alert(
@@ -257,7 +257,7 @@ class MovemberMonitoringBot:
                     source="data_quality_monitor",
                     details={"compliance": aud_currency_compliance, "threshold": self.thresholds["aud_currency_compliance"]}
                 )
-            
+
             if uk_spelling_consistency < self.thresholds["uk_spelling_consistency"]:
                 await self._create_alert(
                     alert_type="compliance",
@@ -266,12 +266,12 @@ class MovemberMonitoringBot:
                     source="data_quality_monitor",
                     details={"consistency": uk_spelling_consistency, "threshold": self.thresholds["uk_spelling_consistency"]}
                 )
-            
+
             # Store quality report
             await self._store_quality_report(report)
-            
+
             self.logger.info(f"Data quality check completed: {report.quality_score:.2%} quality score")
-        
+
         except Exception as e:
             self.logger.error(f"Data quality check error: {str(e)}")
             await self._create_alert(
@@ -281,7 +281,7 @@ class MovemberMonitoringBot:
                 source="data_quality_monitor",
                 details={"error": str(e)}
             )
-    
+
     async def _check_compliance_standards(self):
         """Check compliance with UK spelling and AUD currency standards."""
         try:
@@ -289,24 +289,24 @@ class MovemberMonitoringBot:
             rules = self.engine.engine.rules
             uk_spelling_compliant = 0
             aud_currency_compliant = 0
-            
+
             for rule in rules:
                 # Check UK spelling in rule descriptions
                 if hasattr(rule, 'description') and rule.description:
                     if not self._contains_american_spelling(rule.description):
                         uk_spelling_compliant += 1
-                
+
                 # Check AUD currency in rule actions
                 if hasattr(rule, 'actions') and rule.actions:
                     for action in rule.actions:
                         if hasattr(action, 'parameters') and action.parameters:
                             if 'currency' in str(action.parameters) and 'AUD' in str(action.parameters):
                                 aud_currency_compliant += 1
-            
+
             total_rules = len(rules)
             uk_compliance = uk_spelling_compliant / total_rules if total_rules > 0 else 1.0
             aud_compliance = aud_currency_compliant / total_rules if total_rules > 0 else 1.0
-            
+
             # Generate compliance report
             compliance_report = {
                 "timestamp": datetime.now(),
@@ -315,12 +315,12 @@ class MovemberMonitoringBot:
                 "aud_currency_compliance": aud_compliance,
                 "overall_compliance": min(uk_compliance, aud_compliance)
             }
-            
+
             # Store compliance report
             await self._store_compliance_report(compliance_report)
-            
+
             self.logger.info(f"Compliance check completed: {compliance_report['overall_compliance']:.2%} compliance")
-        
+
         except Exception as e:
             self.logger.error(f"Compliance check error: {str(e)}")
             await self._create_alert(
@@ -330,14 +330,14 @@ class MovemberMonitoringBot:
                 source="compliance_monitor",
                 details={"error": str(e)}
             )
-    
+
     async def _check_performance_metrics(self):
         """Check performance metrics and generate alerts if needed."""
         try:
             # Get performance metrics
             metrics = self.engine.get_metrics()
             system_metrics = metrics.get("system_metrics", {})
-            
+
             # Check execution time
             total_executions = system_metrics.get("total_executions", 0)
             if total_executions > 0:
@@ -350,7 +350,7 @@ class MovemberMonitoringBot:
                         source="performance_monitor",
                         details={"execution_time": avg_execution_time, "threshold": self.thresholds["response_time"]}
                     )
-            
+
             # Check rule performance
             rule_metrics = metrics.get("rule_metrics", {})
             for rule_name, rule_data in rule_metrics.items():
@@ -363,9 +363,9 @@ class MovemberMonitoringBot:
                         source="performance_monitor",
                         details={"rule": rule_name, "success_rate": success_rate, "threshold": self.thresholds["success_rate"]}
                     )
-            
+
             self.logger.info("Performance metrics check completed")
-        
+
         except Exception as e:
             self.logger.error(f"Performance check error: {str(e)}")
             await self._create_alert(
@@ -375,7 +375,7 @@ class MovemberMonitoringBot:
                 source="performance_monitor",
                 details={"error": str(e)}
             )
-    
+
     async def _create_alert(self, alert_type: str, severity: str, message: str, source: str, details: Dict):
         """Create and store an alert."""
         alert = MonitoringAlert(
@@ -387,39 +387,39 @@ class MovemberMonitoringBot:
             source=source,
             details=details
         )
-        
+
         self.alerts.append(alert)
-        
+
         # Log alert
         log_level = logging.ERROR if severity == "critical" else logging.WARNING
         self.logger.log(log_level, f"Alert [{severity.upper()}]: {message}")
-        
+
         # Store alert in database
         await self._store_alert(alert)
-        
+
         # Send notification if critical
         if severity == "critical":
             await self._send_critical_alert(alert)
-    
+
     async def _process_alerts(self):
         """Process and resolve alerts."""
         current_time = datetime.now()
-        
+
         for alert in self.alerts[:]:  # Copy list to avoid modification during iteration
             # Auto-resolve alerts older than 24 hours
             if not alert.resolved and (current_time - alert.timestamp) > timedelta(hours=24):
                 alert.resolved = True
                 alert.resolution_time = current_time
-                
+
                 # Update database
                 await self._update_alert_resolution(alert)
-                
+
                 self.logger.info(f"Auto-resolved alert: {alert.alert_id}")
-        
+
         # Clean up old alerts (older than 7 days)
         cutoff_time = current_time - timedelta(days=7)
         self.alerts = [alert for alert in self.alerts if alert.timestamp > cutoff_time]
-    
+
     def _contains_american_spelling(self, text: str) -> bool:
         """Check if text contains American spelling."""
         american_spellings = [
@@ -428,10 +428,10 @@ class MovemberMonitoringBot:
             'specialize', 'standardize', 'optimize', 'customize', 'summarize',
             'categorize', 'prioritize'
         ]
-        
+
         text_lower = text.lower()
         return any(spelling in text_lower for spelling in american_spellings)
-    
+
     async def _store_quality_report(self, report: DataQualityReport):
         """Store data quality report in database."""
         try:
@@ -457,7 +457,7 @@ class MovemberMonitoringBot:
                 })
         except Exception as e:
             self.logger.error(f"Error storing quality report: {str(e)}")
-    
+
     async def _store_compliance_report(self, report: Dict):
         """Store compliance report in database."""
         try:
@@ -480,7 +480,7 @@ class MovemberMonitoringBot:
                 })
         except Exception as e:
             self.logger.error(f"Error storing compliance report: {str(e)}")
-    
+
     async def _store_alert(self, alert: MonitoringAlert):
         """Store alert in database."""
         try:
@@ -506,13 +506,13 @@ class MovemberMonitoringBot:
                 })
         except Exception as e:
             self.logger.error(f"Error storing alert: {str(e)}")
-    
+
     async def _update_alert_resolution(self, alert: MonitoringAlert):
         """Update alert resolution status in database."""
         try:
             with self.db.begin():
                 self.db.execute(text("""
-                    UPDATE monitoring_alerts 
+                    UPDATE monitoring_alerts
                     SET resolved = :resolved, resolution_time = :resolution_time
                     WHERE alert_id = :alert_id
                 """), {
@@ -522,7 +522,7 @@ class MovemberMonitoringBot:
                 })
         except Exception as e:
             self.logger.error(f"Error updating alert resolution: {str(e)}")
-    
+
     async def _send_critical_alert(self, alert: MonitoringAlert):
         """Send critical alert notification."""
         try:
@@ -541,30 +541,30 @@ Details: {json.dumps(alert.details, indent=2)}
 
 Please investigate immediately.
             """
-            
+
             # Log notification (replace with actual notification service)
             self.logger.critical(notification_message)
-            
+
         except Exception as e:
             self.logger.error(f"Error sending critical alert: {str(e)}")
-    
+
     def get_alerts(self, severity: Optional[str] = None, resolved: Optional[bool] = None) -> List[MonitoringAlert]:
         """Get alerts with optional filtering."""
         alerts = self.alerts
-        
+
         if severity:
             alerts = [alert for alert in alerts if alert.severity == severity]
-        
+
         if resolved is not None:
             alerts = [alert for alert in alerts if alert.resolved == resolved]
-        
+
         return alerts
-    
+
     def get_quality_reports(self, hours: int = 24) -> List[DataQualityReport]:
         """Get recent data quality reports."""
         # Implementation for retrieving quality reports from database
         return []
-    
+
     def get_compliance_reports(self, hours: int = 24) -> List[Dict]:
         """Get recent compliance reports."""
         # Implementation for retrieving compliance reports from database
@@ -574,7 +574,7 @@ Please investigate immediately.
 async def main():
     """Main function to run the monitoring bot."""
     bot = MovemberMonitoringBot()
-    
+
     try:
         await bot.start_monitoring()
     except KeyboardInterrupt:
@@ -586,4 +586,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

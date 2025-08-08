@@ -203,4 +203,4 @@ docker-compose.override.yml
 
 # Local development
 .local/
-local/ 
+local/ frontend/node_modules/

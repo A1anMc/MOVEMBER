@@ -202,7 +202,7 @@ class ScraperConfig(BaseModel):
 # Database models
 class GrantRecord(Base):
     __tablename__ = "grants"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     grant_id = Column(String, unique=True, index=True)
     title = Column(String)
@@ -218,7 +218,7 @@ class GrantRecord(Base):
 
 class ImpactReportRecord(Base):
     __tablename__ = "impact_reports"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     report_id = Column(String, unique=True, index=True)
     title = Column(String)
@@ -232,7 +232,7 @@ class ImpactReportRecord(Base):
 
 class SystemHealthRecord(Base):
     __tablename__ = "system_health"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     timestamp = Column(DateTime, default=datetime.now)
     system_status = Column(String)
@@ -268,7 +268,7 @@ async def startup_event():
     try:
         # Create tables
         Base.metadata.create_all(bind=engine)
-        
+
         # Create grant_evaluations table if it doesn't exist
         with engine.begin() as conn:
             conn.execute(text("""
@@ -284,7 +284,7 @@ async def startup_event():
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """))
-        
+
         logger.info("Database tables initialized successfully")
     except Exception as e:
         logger.error(f"Error initializing database: {str(e)}")
@@ -315,18 +315,18 @@ health_monitor = None
 
 class MovemberAPIService:
     """Service layer for Movember AI Rules System API."""
-    
+
     def __init__(self):
         self.engine = MovemberAIRulesEngine()
         self.db = SessionLocal()
         self.logger = logging.getLogger(__name__)
-    
+
     async def process_grant_application(self, grant_data: GrantData) -> Dict:
         """Process grant application with rules engine."""
         try:
             # Convert to UK spelling and AUD currency
             processed_data = self._ensure_uk_spelling_and_aud_currency(grant_data.dict())
-            
+
             # Create execution context
             context = ExecutionContext(
                 context_type=ContextType.GRANT_EVALUATION,
@@ -334,13 +334,13 @@ class MovemberAPIService:
                 data=processed_data,
                 timestamp=datetime.now()
             )
-            
+
             # Evaluate rules
             results = await self.engine.evaluate_context(context, mode="grant_submission")
-            
+
             # Store in database
             self._store_grant_record(grant_data)
-            
+
             return {
                 "status": "success",
                 "grant_id": grant_data.grant_id,
@@ -350,17 +350,17 @@ class MovemberAPIService:
                 "currency": "AUD",
                 "spelling_standard": "UK"
             }
-        
+
         except Exception as e:
             self.logger.error(f"Error processing grant application: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error processing grant application: {str(e)}")
-    
+
     async def process_impact_report(self, report_data: ImpactReportData) -> Dict:
         """Process impact report with rules engine."""
         try:
             # Convert to UK spelling and AUD currency
             processed_data = self._ensure_uk_spelling_and_aud_currency(report_data.dict())
-            
+
             # Create execution context
             context = ExecutionContext(
                 context_type=ContextType.IMPACT_REPORTING,
@@ -368,13 +368,13 @@ class MovemberAPIService:
                 data=processed_data,
                 timestamp=datetime.now()
             )
-            
+
             # Evaluate rules
             results = await self.engine.evaluate_context(context, mode="reporting")
-            
+
             # Store in database
             self._store_impact_report_record(report_data)
-            
+
             return {
                 "status": "success",
                 "report_id": report_data.report_id,
@@ -385,11 +385,11 @@ class MovemberAPIService:
                 "currency": "AUD",
                 "spelling_standard": "UK"
             }
-        
+
         except Exception as e:
             self.logger.error(f"Error processing impact report: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error processing impact report: {str(e)}")
-    
+
     async def collect_external_data(self, request: ExternalDataRequest) -> Dict:
         """Collect data from external sources."""
         try:
@@ -400,13 +400,13 @@ class MovemberAPIService:
                     headers=request.authentication,
                     timeout=request.timeout
                 )
-                
+
                 if response.status_code == 200:
                     data = response.json()
-                    
+
                     # Apply UK spelling and AUD currency conversion
                     processed_data = self._ensure_uk_spelling_and_aud_currency(data)
-                    
+
                     return {
                         "status": "success",
                         "source": request.source_type,
@@ -417,46 +417,46 @@ class MovemberAPIService:
                     }
                 else:
                     raise HTTPException(status_code=response.status_code, detail="External API error")
-        
+
         except Exception as e:
             self.logger.error(f"Error collecting external data: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error collecting external data: {str(e)}")
-    
+
     async def run_web_scraper(self, config: ScraperConfig) -> Dict:
         """Run web scraper with specified configuration."""
         try:
             import requests
             from bs4 import BeautifulSoup
-            
+
             # Make request with rate limiting
             await asyncio.sleep(1 / config.rate_limit)
-            
+
             headers = {
                 "User-Agent": config.user_agent
             }
-            
+
             if config.authentication:
                 headers.update(config.authentication)
-            
+
             response = requests.get(config.target_url, headers=headers)
             soup = BeautifulSoup(response.content, 'html.parser')
-            
+
             # Extract data using selectors
             extracted_data = {}
             for field, selector in config.selectors.items():
                 elements = soup.select(selector)
                 if elements:
                     extracted_data[field] = [elem.get_text(strip=True) for elem in elements]
-            
+
             # Apply data mapping
             mapped_data = {}
             for source_field, target_field in config.data_mapping.items():
                 if source_field in extracted_data:
                     mapped_data[target_field] = extracted_data[source_field]
-            
+
             # Apply UK spelling and AUD currency conversion
             processed_data = self._ensure_uk_spelling_and_aud_currency(mapped_data)
-            
+
             return {
                 "status": "success",
                 "url": config.target_url,
@@ -465,17 +465,17 @@ class MovemberAPIService:
                 "currency": "AUD",
                 "spelling_standard": "UK"
             }
-        
+
         except Exception as e:
             self.logger.error(f"Error running web scraper: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error running web scraper: {str(e)}")
-    
+
     async def monitor_system_health(self) -> SystemHealthData:
         """Monitor system health and performance."""
         try:
             # Get system metrics
             metrics = self.engine.get_metrics()
-            
+
             # Calculate health indicators
             health_data = SystemHealthData(
                 system_status="healthy",
@@ -496,38 +496,38 @@ class MovemberAPIService:
                 uk_spelling_consistency=1.0,
                 aud_currency_compliance=1.0
             )
-            
+
             # Store health record
             self._store_health_record(health_data)
-            
+
             return health_data
-        
+
         except Exception as e:
             self.logger.error(f"Error monitoring system health: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error monitoring system health: {str(e)}")
-    
+
     def _ensure_uk_spelling_and_aud_currency(self, data: Dict) -> Dict:
         """Ensure data uses UK spelling and AUD currency."""
         # Import conversion functions
         from rules.domains.movember_ai.behaviours import convert_to_uk_spelling, format_aud_currency
-        
+
         processed_data = data.copy()
-        
+
         # Process text fields for UK spelling
         text_fields = ['title', 'description', 'summary', 'notes', 'comments', 'methodology', 'conclusions', 'recommendations']
         for field in text_fields:
             if field in processed_data and isinstance(processed_data[field], str):
                 processed_data[field] = convert_to_uk_spelling(processed_data[field])
-        
+
         # Process currency fields for AUD
         currency_fields = ['budget', 'amount', 'cost', 'funding', 'expense', 'total_cost']
         for field in currency_fields:
             if field in processed_data and isinstance(processed_data[field], (int, float)):
                 processed_data[f'{field}_currency'] = 'AUD'
                 processed_data[f'{field}_formatted'] = format_aud_currency(processed_data[field])
-        
+
         return processed_data
-    
+
     def _store_grant_record(self, grant_data: GrantData):
         """Store grant record in database."""
         ensure_tables()
@@ -543,7 +543,7 @@ class MovemberAPIService:
         )
         self.db.add(record)
         self.db.commit()
-    
+
     def _store_impact_report_record(self, report_data: ImpactReportData):
         """Store impact report record in database."""
         ensure_tables()
@@ -557,7 +557,7 @@ class MovemberAPIService:
         )
         self.db.add(record)
         self.db.commit()
-    
+
     def _store_health_record(self, health_data: SystemHealthData):
         """Store system health record in database."""
         ensure_tables()
@@ -582,27 +582,27 @@ class MovemberAPIService:
         )
         self.db.add(record)
         self.db.commit()
-    
+
     def _generate_grant_recommendations(self, grant_data: Dict) -> List[str]:
         """Generate recommendations for grant improvement."""
         from rules.domains.movember_ai.grant_rules import generate_grant_recommendations
         return generate_grant_recommendations(grant_data)
-    
+
     def _calculate_grant_score(self, grant_data: Dict) -> float:
         """Calculate grant score."""
         from rules.domains.movember_ai.grant_rules import calculate_grant_score
         return calculate_grant_score(grant_data)
-    
+
     def _calculate_report_quality_score(self, report_data: Dict) -> float:
         """Calculate report quality score."""
         from rules.domains.movember_ai.reporting import calculate_report_quality_score
         return calculate_report_quality_score(report_data)
-    
+
     def _validate_framework_compliance(self, report_data: Dict) -> Dict:
         """Validate framework compliance."""
         from rules.domains.movember_ai.reporting import validate_framework_compliance
         return validate_framework_compliance(report_data)
-    
+
     def _generate_report_recommendations(self, report_data: Dict) -> List[str]:
         """Generate recommendations for report improvement."""
         from rules.domains.movember_ai.reporting import generate_report_recommendations
@@ -668,7 +668,7 @@ async def ai_grant_assistant(grant_data: dict):
         budget = grant_data.get("budget", 0)
         timeline_months = grant_data.get("timeline_months", 12)
         organisation = grant_data.get("organisation", "")
-        
+
         # AI-powered analysis and suggestions
         suggestions = {
             "title_enhancement": "",
@@ -682,43 +682,43 @@ async def ai_grant_assistant(grant_data: dict):
             "success_factors": [],
             "overall_score": 0
         }
-        
+
         # Analyze title and suggest improvements
         if title:
             if len(title) < 30:
                 suggestions["title_enhancement"] = f"Consider expanding '{title}' to be more specific and impactful. Include key outcomes or target population."
             elif "men" not in title.lower() and "male" not in title.lower():
                 suggestions["title_enhancement"] = "Consider explicitly mentioning men's health focus to align with Movember's mission."
-        
+
         # Analyze description and provide improvements
         if description:
             description_score = 0
             improvements = []
-            
+
             # Check for key elements
             if "impact" not in description.lower():
                 improvements.append("Add specific impact metrics and outcomes")
                 description_score += 0.1
-            
+
             if "measure" not in description.lower() and "evaluate" not in description.lower():
                 improvements.append("Include evaluation and measurement strategies")
                 description_score += 0.1
-            
+
             if "community" not in description.lower() and "partnership" not in description.lower():
                 improvements.append("Mention community partnerships and engagement")
                 description_score += 0.1
-            
+
             if "sustainable" not in description.lower():
                 improvements.append("Address sustainability and long-term impact")
                 description_score += 0.1
-            
+
             if "evidence" not in description.lower() and "research" not in description.lower():
                 improvements.append("Include evidence-based approaches and research backing")
                 description_score += 0.1
-            
+
             suggestions["description_improvements"] = improvements
             suggestions["overall_score"] += description_score
-        
+
         # Budget optimization suggestions
         if budget > 0:
             if budget < 50000:
@@ -727,7 +727,7 @@ async def ai_grant_assistant(grant_data: dict):
                 suggestions["budget_optimization"] = "Large budget - ensure detailed cost breakdown and strong justification for each line item."
             else:
                 suggestions["budget_optimization"] = "Budget appears reasonable. Ensure detailed cost breakdown and value for money."
-        
+
         # Timeline suggestions
         if timeline_months < 6:
             suggestions["timeline_suggestions"] = "Short timeline - ensure objectives are realistic and achievable within this timeframe."
@@ -735,7 +735,7 @@ async def ai_grant_assistant(grant_data: dict):
             suggestions["timeline_suggestions"] = "Long timeline - consider breaking into phases with clear milestones and deliverables."
         else:
             suggestions["timeline_suggestions"] = "Timeline appears reasonable. Include clear milestones and progress indicators."
-        
+
         # Generate impact metrics suggestions
         suggestions["impact_metrics"] = [
             "Number of men reached and engaged",
@@ -744,7 +744,7 @@ async def ai_grant_assistant(grant_data: dict):
             "Partnership and collaboration indicators",
             "Long-term sustainability measures"
         ]
-        
+
         # SDG alignment suggestions
         suggestions["sdg_alignment"] = [
             "SDG 3: Good Health and Well-being (primary)",
@@ -752,7 +752,7 @@ async def ai_grant_assistant(grant_data: dict):
             "SDG 10: Reduced Inequalities (health equity)",
             "SDG 17: Partnerships for the Goals (collaboration)"
         ]
-        
+
         # Stakeholder engagement strategies
         suggestions["stakeholder_strategies"] = [
             "Engage local health professionals and clinics",
@@ -761,7 +761,7 @@ async def ai_grant_assistant(grant_data: dict):
             "Collaborate with local government and health services",
             "Include family and community involvement strategies"
         ]
-        
+
         # Risk mitigation strategies
         suggestions["risk_mitigation"] = [
             "Address potential barriers to men's participation",
@@ -770,7 +770,7 @@ async def ai_grant_assistant(grant_data: dict):
             "Consider seasonal factors and timing",
             "Plan for sustainability beyond grant period"
         ]
-        
+
         # Success factors
         suggestions["success_factors"] = [
             "Clear, measurable objectives and outcomes",
@@ -780,18 +780,18 @@ async def ai_grant_assistant(grant_data: dict):
             "Sustainability and long-term impact focus",
             "Alignment with Movember's mission and values"
         ]
-        
+
         # Calculate overall improvement score
         base_score = 0.5
         improvement_score = min(0.4, suggestions["overall_score"])
         suggestions["overall_score"] = round(base_score + improvement_score, 2)
-        
+
         return {
             "status": "success",
             "suggestions": suggestions,
             "grant_data": grant_data
         }
-        
+
     except Exception as e:
         logger.error(f"Error in AI grant assistant: {str(e)}")
         return {"status": "error", "message": str(e)}
@@ -812,7 +812,7 @@ async def evaluate_grant(grant_data: dict):
         organisation = grant_data.get("organisation", "")
         contact_person = grant_data.get("contact_person", "")
         email = grant_data.get("email", "")
-        
+
         # Create evaluation context
         context = {
             "grant_id": grant_id,
@@ -826,7 +826,7 @@ async def evaluate_grant(grant_data: dict):
             "evaluation_timestamp": datetime.now().isoformat(),
             "context_type": "GRANT_EVALUATION"
         }
-        
+
         # Run rules engine evaluation
         if RULES_SYSTEM_AVAILABLE and MovemberAIRulesEngine:
             try:
@@ -837,7 +837,7 @@ async def evaluate_grant(grant_data: dict):
                 evaluation_results = {"status": "error", "message": "Rules engine unavailable"}
         else:
             evaluation_results = {"status": "mock", "message": "Rules engine not available"}
-        
+
         # Generate ML predictions (mock for now)
         ml_predictions = {
             "approval_probability": round(random.uniform(0.6, 0.95), 3),
@@ -846,7 +846,7 @@ async def evaluate_grant(grant_data: dict):
             "stakeholder_engagement": round(random.uniform(0.6, 0.9), 3),
             "risk_assessment": round(random.uniform(0.1, 0.4), 3)
         }
-        
+
         # Calculate overall score
         overall_score = (
             ml_predictions["approval_probability"] * 0.3 +
@@ -855,7 +855,7 @@ async def evaluate_grant(grant_data: dict):
             ml_predictions["stakeholder_engagement"] * 0.15 +
             (1 - ml_predictions["risk_assessment"]) * 0.1
         )
-        
+
         # Determine recommendation
         if overall_score >= 0.8:
             recommendation = "STRONG_APPROVE"
@@ -865,7 +865,7 @@ async def evaluate_grant(grant_data: dict):
             recommendation = "CONDITIONAL_APPROVE"
         else:
             recommendation = "REJECT"
-        
+
         # Store evaluation in database
         evaluation_record = {
             "grant_id": grant_id,
@@ -876,18 +876,18 @@ async def evaluate_grant(grant_data: dict):
             "rules_evaluation": evaluation_results,
             "grant_data": grant_data
         }
-        
+
         # Save to database (simplified)
         with engine.begin() as conn:
             conn.execute(
                 text("""
-                    INSERT INTO grant_evaluations 
+                    INSERT INTO grant_evaluations
                     (grant_id, evaluation_timestamp, overall_score, recommendation, ml_predictions, rules_evaluation, grant_data)
                     VALUES (:grant_id, :evaluation_timestamp, :overall_score, :recommendation, :ml_predictions, :rules_evaluation, :grant_data)
                 """),
                 evaluation_record
             )
-        
+
         return {
             "status": "success",
             "grant_id": grant_id,
@@ -897,7 +897,7 @@ async def evaluate_grant(grant_data: dict):
             "rules_evaluation": evaluation_results,
             "evaluation_timestamp": context["evaluation_timestamp"]
         }
-        
+
     except Exception as e:
         logger.error(f"Error evaluating grant: {str(e)}")
         return {"status": "error", "message": str(e)}
@@ -952,7 +952,7 @@ async def get_grant_evaluations(limit: int = 10, offset: int = 0):
     try:
         with engine.begin() as conn:
             result = conn.execute(text("""
-                SELECT 
+                SELECT
                     grant_id,
                     evaluation_timestamp,
                     overall_score,
@@ -961,11 +961,11 @@ async def get_grant_evaluations(limit: int = 10, offset: int = 0):
                     rules_evaluation,
                     grant_data,
                     created_at
-                FROM grant_evaluations 
-                ORDER BY created_at DESC 
+                FROM grant_evaluations
+                ORDER BY created_at DESC
                 LIMIT :limit OFFSET :offset
             """), {"limit": limit, "offset": offset})
-            
+
             evaluations = []
             for row in result:
                 evaluations.append({
@@ -978,13 +978,13 @@ async def get_grant_evaluations(limit: int = 10, offset: int = 0):
                     "grant_data": row.grant_data,
                     "created_at": row.created_at.isoformat() if row.created_at else None
                 })
-            
+
             return {
                 "status": "success",
                 "evaluations": evaluations,
                 "total": len(evaluations)
             }
-            
+
     except Exception as e:
         logger.error(f"Error retrieving grant evaluations: {str(e)}")
         return {"status": "error", "message": str(e)}
@@ -992,4 +992,4 @@ async def get_grant_evaluations(limit: int = 10, offset: int = 0):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    uvicorn.run(app, host="0.0.0.0", port=8000)

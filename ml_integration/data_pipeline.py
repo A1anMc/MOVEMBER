@@ -41,19 +41,19 @@ class MLDataPoint:
 
 class EnhancedDataPipeline:
     """Enhanced data pipeline for ML model training."""
-    
+
     def __init__(self, database_url: str = None):
         self.database_url = database_url or os.getenv('DATABASE_URL', 'sqlite:///ml_data.db')
         self.engine = create_engine(self.database_url)
         self.data_cache = {}
         self.feature_columns = self._define_feature_columns()
         self.label_columns = self._define_label_columns()
-        
+
     def _define_feature_columns(self) -> Dict[str, List[str]]:
         """Define feature columns for different ML tasks."""
         return {
             "grant_evaluation": [
-                "amount", "timeline_months", "category_encoded", 
+                "amount", "timeline_months", "category_encoded",
                 "target_demographic_encoded", "location_encoded",
                 "organisation_size", "contact_experience_level",
                 "description_length", "has_budget_breakdown",
@@ -82,7 +82,7 @@ class EnhancedDataPipeline:
                 "feedback_mechanisms", "capacity_building_activities"
             ]
         }
-    
+
     def _define_label_columns(self) -> Dict[str, List[str]]:
         """Define label columns for different ML tasks."""
         return {
@@ -106,12 +106,12 @@ class EnhancedDataPipeline:
                 "sustainability_indicators"
             ]
         }
-    
+
     async def collect_grant_data(self, grant_data: Dict[str, Any]) -> MLDataPoint:
         """Collect and structure grant data for ML training."""
         features = self._extract_grant_features(grant_data)
         labels = self._extract_grant_labels(grant_data)
-        
+
         return MLDataPoint(
             grant_id=grant_data.get("grant_id", ""),
             timestamp=datetime.now(),
@@ -125,20 +125,20 @@ class EnhancedDataPipeline:
             },
             source=DataSource.GRANT_APPLICATIONS
         )
-    
+
     def _extract_grant_features(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Extract features from grant data."""
         features = {}
-        
+
         # Basic features
         features["amount"] = float(grant_data.get("amount", 0))
         features["timeline_months"] = int(grant_data.get("timeline_months", 0))
-        
+
         # Categorical encoding
         features["category_encoded"] = self._encode_category(grant_data.get("category", ""))
         features["target_demographic_encoded"] = self._encode_demographic(grant_data.get("target_demographic", ""))
         features["location_encoded"] = self._encode_location(grant_data.get("location", ""))
-        
+
         # Derived features
         features["organisation_size"] = self._estimate_organisation_size(grant_data.get("organisation", ""))
         features["contact_experience_level"] = self._estimate_contact_experience(grant_data.get("contact_person", ""))
@@ -148,27 +148,27 @@ class EnhancedDataPipeline:
         features["has_stakeholder_plan"] = self._check_stakeholder_plan(grant_data)
         features["has_impact_metrics"] = self._check_impact_metrics(grant_data)
         features["has_sdg_alignment"] = self._check_sdg_alignment(grant_data)
-        
+
         # Temporal features
         submission_date = datetime.strptime(grant_data.get("submission_date", "2024-01-01"), "%Y-%m-%d")
         features["submission_month"] = submission_date.month
         features["submission_day_of_week"] = submission_date.weekday()
-        
+
         return features
-    
+
     def _extract_grant_labels(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Extract labels from grant data."""
         labels = {}
-        
+
         # Calculate scores based on rules engine evaluation
         evaluation_results = grant_data.get("evaluation_results", [])
-        
+
         # Overall score (normalized 0-1)
         labels["overall_score"] = grant_data.get("score", 0) / 10.0
-        
+
         # Approval probability (based on score threshold)
         labels["approval_probability"] = 1.0 if grant_data.get("score", 0) >= 7.0 else 0.5 if grant_data.get("score", 0) >= 5.0 else 0.0
-        
+
         # Risk level (0=low, 1=medium, 2=high)
         score = grant_data.get("score", 0)
         if score >= 7.0:
@@ -177,7 +177,7 @@ class EnhancedDataPipeline:
             labels["risk_level"] = 1  # Medium risk
         else:
             labels["risk_level"] = 2  # High risk
-        
+
         # Impact potential (based on amount and category)
         amount = grant_data.get("amount", 0)
         category = grant_data.get("category", "")
@@ -187,7 +187,7 @@ class EnhancedDataPipeline:
             labels["impact_potential"] = 0.7
         else:
             labels["impact_potential"] = 0.4
-        
+
         # Sustainability score (based on timeline and stakeholder engagement)
         timeline = grant_data.get("timeline_months", 0)
         if timeline >= 24:
@@ -196,9 +196,9 @@ class EnhancedDataPipeline:
             labels["sustainability_score"] = 0.7
         else:
             labels["sustainability_score"] = 0.5
-        
+
         return labels
-    
+
     def _encode_category(self, category: str) -> int:
         """Encode category as integer."""
         category_mapping = {
@@ -209,7 +209,7 @@ class EnhancedDataPipeline:
             "research": 5
         }
         return category_mapping.get(category.lower(), 0)
-    
+
     def _encode_demographic(self, demographic: str) -> int:
         """Encode demographic as integer."""
         demographic_mapping = {
@@ -220,7 +220,7 @@ class EnhancedDataPipeline:
             "children": 5
         }
         return demographic_mapping.get(demographic.lower(), 0)
-    
+
     def _encode_location(self, location: str) -> int:
         """Encode location as integer."""
         location_mapping = {
@@ -234,7 +234,7 @@ class EnhancedDataPipeline:
             "australian_capital_territory": 8
         }
         return location_mapping.get(location.lower().replace(" ", "_"), 0)
-    
+
     def _estimate_organisation_size(self, organisation: str) -> int:
         """Estimate organisation size based on name patterns."""
         org_lower = organisation.lower()
@@ -244,7 +244,7 @@ class EnhancedDataPipeline:
             return 2  # Medium
         else:
             return 1  # Small
-    
+
     def _estimate_contact_experience(self, contact: str) -> int:
         """Estimate contact experience level."""
         contact_lower = contact.lower()
@@ -254,30 +254,30 @@ class EnhancedDataPipeline:
             return 2  # Medium experience
         else:
             return 1  # Low experience
-    
+
     def _check_stakeholder_plan(self, grant_data: Dict[str, Any]) -> int:
         """Check if grant has stakeholder engagement plan."""
         description = grant_data.get("description", "").lower()
         keywords = ["stakeholder", "community", "partnership", "engagement"]
         return 1 if any(keyword in description for keyword in keywords) else 0
-    
+
     def _check_impact_metrics(self, grant_data: Dict[str, Any]) -> int:
         """Check if grant has impact metrics."""
         description = grant_data.get("description", "").lower()
         keywords = ["impact", "outcome", "measurement", "evaluation", "metrics"]
         return 1 if any(keyword in description for keyword in keywords) else 0
-    
+
     def _check_sdg_alignment(self, grant_data: Dict[str, Any]) -> int:
         """Check if grant has SDG alignment."""
         description = grant_data.get("description", "").lower()
         keywords = ["sdg", "sustainable development", "goal", "target"]
         return 1 if any(keyword in description for keyword in keywords) else 0
-    
+
     async def collect_rule_evaluation_data(self, evaluation_results: List[Dict[str, Any]]) -> MLDataPoint:
         """Collect rule evaluation data for ML training."""
         features = self._extract_rule_features(evaluation_results)
         labels = self._extract_rule_labels(evaluation_results)
-        
+
         return MLDataPoint(
             grant_id="rule_evaluation",
             timestamp=datetime.now(),
@@ -290,53 +290,53 @@ class EnhancedDataPipeline:
             },
             source=DataSource.RULE_EVALUATIONS
         )
-    
+
     def _extract_rule_features(self, evaluation_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Extract features from rule evaluation results."""
         features = {}
-        
+
         # Rule execution statistics
         features["total_rules"] = len(evaluation_results)
         features["triggered_rules"] = len([r for r in evaluation_results if r.get("conditions_met", False)])
         features["success_rate"] = len([r for r in evaluation_results if r.get("success", False)]) / len(evaluation_results) if evaluation_results else 0
-        
+
         # Rule category distribution
         rule_categories = {}
         for result in evaluation_results:
             rule_name = result.get("rule_name", "")
             category = self._categorize_rule(rule_name)
             rule_categories[category] = rule_categories.get(category, 0) + 1
-        
+
         features["validation_rules"] = rule_categories.get("validation", 0)
         features["impact_rules"] = rule_categories.get("impact", 0)
         features["stakeholder_rules"] = rule_categories.get("stakeholder", 0)
         features["performance_rules"] = rule_categories.get("performance", 0)
-        
+
         # Execution time statistics
         execution_times = [r.get("execution_time", 0) for r in evaluation_results]
         features["avg_execution_time"] = np.mean(execution_times) if execution_times else 0
         features["max_execution_time"] = np.max(execution_times) if execution_times else 0
-        
+
         return features
-    
+
     def _extract_rule_labels(self, evaluation_results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Extract labels from rule evaluation results."""
         labels = {}
-        
+
         # Overall evaluation quality
         success_count = len([r for r in evaluation_results if r.get("success", False)])
         labels["evaluation_quality"] = success_count / len(evaluation_results) if evaluation_results else 0
-        
+
         # Rule effectiveness
         triggered_rules = [r for r in evaluation_results if r.get("conditions_met", False)]
         labels["rule_effectiveness"] = len(triggered_rules) / len(evaluation_results) if evaluation_results else 0
-        
+
         # System performance
         avg_time = np.mean([r.get("execution_time", 0) for r in evaluation_results]) if evaluation_results else 0
         labels["system_performance"] = 1.0 if avg_time < 0.1 else 0.5 if avg_time < 0.5 else 0.0
-        
+
         return labels
-    
+
     def _categorize_rule(self, rule_name: str) -> str:
         """Categorize rule based on name."""
         rule_lower = rule_name.lower()
@@ -350,7 +350,7 @@ class EnhancedDataPipeline:
             return "performance"
         else:
             return "other"
-    
+
     async def store_ml_data(self, data_point: MLDataPoint) -> bool:
         """Store ML data point in database."""
         try:
@@ -363,46 +363,46 @@ class EnhancedDataPipeline:
                 **data_point.labels,
                 "metadata": json.dumps(data_point.metadata)
             }
-            
+
             df = pd.DataFrame([df_data])
-            
+
             # Store in database
             table_name = f"ml_data_{data_point.source.value}"
             df.to_sql(table_name, self.engine, if_exists='append', index=False)
-            
+
             logger.info(f"Stored ML data point for {data_point.grant_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to store ML data: {e}")
             return False
-    
+
     async def get_training_data(self, task: str, limit: int = 1000) -> pd.DataFrame:
         """Get training data for specific ML task."""
         try:
             # Get data from all relevant tables
             tables = ["ml_data_grant_applications", "ml_data_rule_evaluations"]
             all_data = []
-            
+
             for table in tables:
                 query = f"SELECT * FROM {table} LIMIT {limit}"
                 df = pd.read_sql(query, self.engine)
                 all_data.append(df)
-            
+
             # Combine data
             combined_df = pd.concat(all_data, ignore_index=True)
-            
+
             # Select relevant features and labels
             features = self.feature_columns.get(task, [])
             labels = self.label_columns.get(task, [])
-            
+
             # Filter columns
             available_columns = combined_df.columns.tolist()
             selected_features = [col for col in features if col in available_columns]
             selected_labels = [col for col in labels if col in available_columns]
-            
+
             return combined_df[selected_features + selected_labels]
-            
+
         except Exception as e:
             logger.error(f"Failed to get training data: {e}")
             return pd.DataFrame()
@@ -410,7 +410,7 @@ class EnhancedDataPipeline:
 async def main():
     """Test the enhanced data pipeline."""
     pipeline = EnhancedDataPipeline()
-    
+
     # Test with sample grant data
     sample_grant = {
         "grant_id": "ML-TEST-001",
@@ -432,17 +432,17 @@ async def main():
             {"rule_name": "check_sdg_alignment", "success": True, "conditions_met": True, "execution_time": 0.01}
         ]
     }
-    
+
     # Collect and store data
     grant_data_point = await pipeline.collect_grant_data(sample_grant)
     await pipeline.store_ml_data(grant_data_point)
-    
+
     rule_data_point = await pipeline.collect_rule_evaluation_data(sample_grant["evaluation_results"])
     await pipeline.store_ml_data(rule_data_point)
-    
+
     print("✅ Enhanced data pipeline ready for ML training!")
     print(f"Features collected: {len(grant_data_point.features)}")
     print(f"Labels generated: {len(grant_data_point.labels)}")
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

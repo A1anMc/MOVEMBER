@@ -37,18 +37,18 @@ class DashboardMetric:
 
 class ComprehensiveDashboard:
     """Comprehensive dashboard system with theory-backed insights."""
-    
+
     def __init__(self, api_base_url: str = "https://movember-api.onrender.com"):
         self.api_base_url = api_base_url
         self.metrics_history: Dict[str, List[DashboardMetric]] = {}
         self.recommendations_engine = None  # Will be imported from enhanced_recommendations
-    
+
     async def generate_comprehensive_report(self, grant_id: str) -> Dict[str, Any]:
         """Generate comprehensive dashboard report for a grant."""
         try:
             # Get grant data
             grant_data = await self._get_grant_data(grant_id)
-            
+
             # Generate comprehensive report
             report = {
                 "grant_id": grant_id,
@@ -61,13 +61,13 @@ class ComprehensiveDashboard:
                 "recommendations": await self._generate_actionable_recommendations(grant_data),
                 "visualization_data": await self._generate_visualization_data(grant_data)
             }
-            
+
             return report
-            
+
         except Exception as e:
             logger.error(f"Failed to generate comprehensive report: {e}")
             return {"error": str(e)}
-    
+
     async def _get_grant_data(self, grant_id: str) -> Dict[str, Any]:
         """Get grant data from API."""
         try:
@@ -78,11 +78,11 @@ class ComprehensiveDashboard:
         except Exception as e:
             logger.error(f"Failed to get grant data: {e}")
             return {}
-    
+
     async def _generate_impact_metrics_report(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate comprehensive impact metrics report."""
         category = grant_data.get("category", "")
-        
+
         impact_metrics = {
             "primary_metrics": [],
             "secondary_metrics": [],
@@ -92,7 +92,7 @@ class ComprehensiveDashboard:
             "reporting_frequency": "Monthly",
             "quality_assurance": []
         }
-        
+
         # Mental health specific metrics
         if "mental_health" in category.lower():
             impact_metrics["primary_metrics"] = [
@@ -142,7 +142,7 @@ class ComprehensiveDashboard:
                     "quality_indicators": ["Stigma reduction", "Awareness levels"]
                 }
             ]
-            
+
             impact_metrics["secondary_metrics"] = [
                 {
                     "name": "Quality of Life Measures (WHOQOL-BREF)",
@@ -185,7 +185,7 @@ class ComprehensiveDashboard:
                     "data_source": "Stigma assessment tools"
                 }
             ]
-            
+
             impact_metrics["theory_backing"] = {
                 "primary_framework": "Theory of Change",
                 "supporting_theories": [
@@ -207,7 +207,7 @@ class ComprehensiveDashboard:
                     "Peer support integration"
                 ]
             }
-            
+
             impact_metrics["data_collection_methods"] = [
                 "Standardized screening tools",
                 "Qualitative interviews",
@@ -217,7 +217,7 @@ class ComprehensiveDashboard:
                 "Mobile app analytics",
                 "Social media engagement tracking"
             ]
-            
+
             impact_metrics["quality_assurance"] = [
                 "Data validation protocols",
                 "Inter-rater reliability checks",
@@ -225,14 +225,14 @@ class ComprehensiveDashboard:
                 "Stakeholder feedback integration",
                 "Continuous improvement processes"
             ]
-        
+
         return impact_metrics
-    
+
     async def _generate_sdg_alignment_report(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate comprehensive SDG alignment report."""
         category = grant_data.get("category", "")
         location = grant_data.get("location", "")
-        
+
         sdg_report = {
             "primary_sdgs": [],
             "alignment_strategies": {},
@@ -241,7 +241,7 @@ class ComprehensiveDashboard:
             "stakeholder_consultation": {},
             "verification_process": {}
         }
-        
+
         # Mental health programs align with multiple SDGs
         if "mental_health" in category.lower():
             sdg_report["primary_sdgs"] = [
@@ -339,7 +339,7 @@ class ComprehensiveDashboard:
                     ]
                 }
             ]
-            
+
             # Add location-specific SDGs
             if "victoria" in location.lower() or "australia" in location.lower():
                 sdg_report["primary_sdgs"].append({
@@ -365,7 +365,7 @@ class ComprehensiveDashboard:
                         "Establish funding partnerships"
                     ]
                 })
-            
+
             sdg_report["measurement_framework"] = {
                 "data_sources": [
                     "UN SDG Indicators Database",
@@ -378,20 +378,20 @@ class ComprehensiveDashboard:
                 "verification_process": "Independent third-party validation",
                 "stakeholder_consultation": "Regular engagement with relevant ministries"
             }
-            
+
             sdg_report["reporting_requirements"] = {
                 "national_reporting": "Annual SDG progress reports",
                 "international_reporting": "UN SDG reporting framework",
                 "stakeholder_communication": "Regular updates to partners and funders",
                 "public_disclosure": "Transparent reporting on website and social media"
             }
-        
+
         return sdg_report
-    
+
     async def _generate_stakeholder_report(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate comprehensive stakeholder engagement report."""
         category = grant_data.get("category", "")
-        
+
         stakeholder_report = {
             "primary_stakeholders": {},
             "secondary_stakeholders": {},
@@ -401,7 +401,7 @@ class ComprehensiveDashboard:
             "capacity_building": {},
             "partnership_opportunities": {}
         }
-        
+
         # Mental health specific stakeholder strategies
         if "mental_health" in category.lower():
             stakeholder_report["primary_stakeholders"] = {
@@ -487,7 +487,7 @@ class ComprehensiveDashboard:
                     ]
                 }
             }
-            
+
             stakeholder_report["secondary_stakeholders"] = {
                 "policymakers": {
                     "description": "Government officials and policy influencers",
@@ -546,7 +546,7 @@ class ComprehensiveDashboard:
                     ]
                 }
             }
-            
+
             stakeholder_report["engagement_strategies"] = {
                 "participatory_approach": "Co-design and co-creation with stakeholders",
                 "capacity_building": "Continuous stakeholder development and training",
@@ -554,7 +554,7 @@ class ComprehensiveDashboard:
                 "transparency": "Open communication and information sharing",
                 "sustainability": "Long-term relationship building and maintenance"
             }
-            
+
             stakeholder_report["communication_plan"] = {
                 "primary_channels": [
                     "Regular stakeholder meetings",
@@ -579,13 +579,13 @@ class ComprehensiveDashboard:
                     "Resource sharing"
                 ]
             }
-        
+
         return stakeholder_report
-    
+
     async def _generate_theory_frameworks_report(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate theory frameworks report."""
         category = grant_data.get("category", "")
-        
+
         theory_report = {
             "primary_frameworks": [],
             "supporting_theories": [],
@@ -594,7 +594,7 @@ class ComprehensiveDashboard:
             "evidence_base": [],
             "research_gaps": []
         }
-        
+
         # Mental health specific theories
         if "mental_health" in category.lower():
             theory_report["primary_frameworks"] = [
@@ -624,7 +624,7 @@ class ComprehensiveDashboard:
                     "measurement_approach": "Economic valuation of social outcomes"
                 }
             ]
-            
+
             theory_report["supporting_theories"] = [
                 {
                     "name": "Social Cognitive Theory",
@@ -647,10 +647,10 @@ class ComprehensiveDashboard:
                     "key_concepts": ["Emotional support", "Instrumental support", "Informational support"]
                 }
             ]
-            
+
             theory_report["implementation_approach"] = "Multi-framework integration with evidence-based practice"
             theory_report["measurement_strategy"] = "Theory-driven evaluation with mixed methods approach"
-            
+
             theory_report["evidence_base"] = [
                 "Randomized controlled trials in mental health",
                 "Systematic reviews of mental health interventions",
@@ -658,7 +658,7 @@ class ComprehensiveDashboard:
                 "Longitudinal studies of mental health outcomes",
                 "Qualitative research on mental health experiences"
             ]
-            
+
             theory_report["research_gaps"] = [
                 "Long-term impact of mental health interventions",
                 "Cultural adaptation of evidence-based practices",
@@ -666,9 +666,9 @@ class ComprehensiveDashboard:
                 "Implementation science in mental health",
                 "Digital mental health interventions"
             ]
-        
+
         return theory_report
-    
+
     async def _generate_performance_indicators(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate performance indicators for dashboard."""
         return {
@@ -697,11 +697,11 @@ class ComprehensiveDashboard:
                 "Scalability evaluation"
             ]
         }
-    
+
     async def _generate_actionable_recommendations(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate actionable recommendations with implementation guidance."""
         category = grant_data.get("category", "")
-        
+
         recommendations = {
             "immediate_actions": [],
             "short_term_goals": [],
@@ -710,7 +710,7 @@ class ComprehensiveDashboard:
             "implementation_guidance": {},
             "success_metrics": []
         }
-        
+
         # Mental health specific recommendations
         if "mental_health" in category.lower():
             recommendations["immediate_actions"] = [
@@ -733,7 +733,7 @@ class ComprehensiveDashboard:
                     "expected_outcome": "Comprehensive SDG tracking system"
                 }
             ]
-            
+
             recommendations["short_term_goals"] = [
                 {
                     "goal": "Implement evidence-based mental health interventions",
@@ -751,7 +751,7 @@ class ComprehensiveDashboard:
                     "success_indicators": ["Data collection protocols", "Real-time dashboards", "Stakeholder reporting"]
                 }
             ]
-            
+
             recommendations["medium_term_strategies"] = [
                 {
                     "strategy": "Scale evidence-based interventions",
@@ -772,7 +772,7 @@ class ComprehensiveDashboard:
                     "expected_impact": "Improved program effectiveness across organizations"
                 }
             ]
-            
+
             recommendations["long_term_vision"] = [
                 {
                     "vision": "System-level change in mental health service delivery",
@@ -793,7 +793,7 @@ class ComprehensiveDashboard:
                     "expected_impact": "Global mental health improvements"
                 }
             ]
-            
+
             recommendations["implementation_guidance"] = {
                 "project_management": "Agile methodology with stakeholder involvement",
                 "capacity_building": "Continuous learning and skill development",
@@ -801,7 +801,7 @@ class ComprehensiveDashboard:
                 "risk_management": "Proactive identification and mitigation",
                 "sustainability_planning": "Long-term viability and impact maintenance"
             }
-            
+
             recommendations["success_metrics"] = [
                 "Improved mental health outcomes",
                 "Increased service utilization",
@@ -809,9 +809,9 @@ class ComprehensiveDashboard:
                 "Sustainable funding model",
                 "Policy influence and system change"
             ]
-        
+
         return recommendations
-    
+
     async def _generate_visualization_data(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate data for dashboard visualizations."""
         return {
@@ -856,28 +856,28 @@ class ComprehensiveDashboard:
 async def main():
     """Test the comprehensive dashboard system."""
     dashboard = ComprehensiveDashboard()
-    
+
     # Test with sample grant
     report = await dashboard.generate_comprehensive_report("VIC-2024-001")
-    
+
     print("\n" + "="*80)
     print("COMPREHENSIVE DASHBOARD REPORT")
     print("="*80)
     print(f"Grant ID: {report.get('grant_id', 'N/A')}")
     print(f"Timestamp: {report.get('timestamp', 'N/A')}")
-    
+
     # Print key sections
     if "impact_metrics" in report:
         print(f"\nImpact Metrics: {len(report['impact_metrics'].get('primary_metrics', []))} primary metrics identified")
-    
+
     if "sdg_alignment" in report:
         print(f"SDG Alignment: {len(report['sdg_alignment'].get('primary_sdgs', []))} SDGs aligned")
-    
+
     if "stakeholder_engagement" in report:
         print(f"Stakeholder Engagement: {len(report['stakeholder_engagement'].get('primary_stakeholders', {}))} primary stakeholder groups")
-    
+
     print("\nDashboard system ready for comprehensive reporting!")
     print("="*80)
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

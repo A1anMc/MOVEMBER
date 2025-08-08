@@ -16,7 +16,7 @@ class RealDataCollector:
     def __init__(self):
         self.db_path = "movember_ai.db"
         self.logger = logging.getLogger(__name__)
-        
+
         # Real data source configurations
         self.data_sources = {
             'grants': {
@@ -80,15 +80,15 @@ class RealDataCollector:
                 }
             }
         }
-    
+
     async def collect_real_grants_data(self):
         """Collect real grant data from multiple sources"""
         collected_data = []
-        
+
         for source_name, config in self.data_sources['grants'].items():
             try:
                 self.logger.info(f"Collecting from {source_name}...")
-                
+
                 # Simulate real API calls (replace with actual implementations)
                 if source_name == 'grantconnect':
                     data = await self._collect_grantconnect_data(config)
@@ -96,24 +96,24 @@ class RealDataCollector:
                     data = await self._collect_charity_commission_data(config)
                 elif source_name == 'research_council':
                     data = await self._collect_research_council_data(config)
-                
+
                 if data:
                     collected_data.extend(data)
                     self.logger.info(f"Collected {len(data)} records from {source_name}")
-                
+
             except Exception as e:
                 self.logger.error(f"Error collecting from {source_name}: {e}")
-        
+
         return collected_data
-    
+
     async def collect_real_research_data(self):
         """Collect real research data from academic sources"""
         collected_data = []
-        
+
         for source_name, config in self.data_sources['research'].items():
             try:
                 self.logger.info(f"Collecting research from {source_name}...")
-                
+
                 # Simulate real API calls
                 if source_name == 'pubmed':
                     data = await self._collect_pubmed_data(config)
@@ -121,24 +121,24 @@ class RealDataCollector:
                     data = await self._collect_researchgate_data(config)
                 elif source_name == 'arxiv':
                     data = await self._collect_arxiv_data(config)
-                
+
                 if data:
                     collected_data.extend(data)
                     self.logger.info(f"Collected {len(data)} research records from {source_name}")
-                
+
             except Exception as e:
                 self.logger.error(f"Error collecting research from {source_name}: {e}")
-        
+
         return collected_data
-    
+
     async def collect_real_impact_data(self):
         """Collect real impact measurement data"""
         collected_data = []
-        
+
         for source_name, config in self.data_sources['impact'].items():
             try:
                 self.logger.info(f"Collecting impact data from {source_name}...")
-                
+
                 # Simulate real API calls
                 if source_name == 'sdg_database':
                     data = await self._collect_sdg_data(config)
@@ -146,16 +146,16 @@ class RealDataCollector:
                     data = await self._collect_who_data(config)
                 elif source_name == 'unicef_data':
                     data = await self._collect_unicef_data(config)
-                
+
                 if data:
                     collected_data.extend(data)
                     self.logger.info(f"Collected {len(data)} impact records from {source_name}")
-                
+
             except Exception as e:
                 self.logger.error(f"Error collecting impact data from {source_name}: {e}")
-        
+
         return collected_data
-    
+
     async def _collect_grantconnect_data(self, config):
         """Collect data from Grants.gov (simulated)"""
         # This would be replaced with actual API calls
@@ -181,7 +181,7 @@ class RealDataCollector:
                 'collected_at': datetime.now().isoformat()
             }
         ]
-    
+
     async def _collect_charity_commission_data(self, config):
         """Collect data from Charity Commission (simulated)"""
         return [
@@ -196,7 +196,7 @@ class RealDataCollector:
                 'collected_at': datetime.now().isoformat()
             }
         ]
-    
+
     async def _collect_research_council_data(self, config):
         """Collect data from UK Research Councils (simulated)"""
         return [
@@ -211,7 +211,7 @@ class RealDataCollector:
                 'collected_at': datetime.now().isoformat()
             }
         ]
-    
+
     async def _collect_pubmed_data(self, config):
         """Collect research data from PubMed (simulated)"""
         return [
@@ -225,7 +225,7 @@ class RealDataCollector:
                 'collected_at': datetime.now().isoformat()
             }
         ]
-    
+
     async def _collect_sdg_data(self, config):
         """Collect SDG impact data (simulated)"""
         return [
@@ -239,12 +239,12 @@ class RealDataCollector:
                 'collected_at': datetime.now().isoformat()
             }
         ]
-    
+
     def store_real_data(self, data, data_type):
         """Store real data in the database"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         # Create real data tables if they don't exist
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS real_grants (
@@ -259,7 +259,7 @@ class RealDataCollector:
                 collected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
-        
+
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS real_research (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -272,7 +272,7 @@ class RealDataCollector:
                 collected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
-        
+
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS real_impact (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -285,24 +285,24 @@ class RealDataCollector:
                 collected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
-        
+
         # Store data based on type
         if data_type == 'grants':
             for item in data:
                 cursor.execute("""
-                    INSERT OR REPLACE INTO real_grants 
+                    INSERT OR REPLACE INTO real_grants
                     (source, grant_id, title, budget, currency, deadline, category, collected_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
-                    item['source'], item['grant_id'], item['title'], 
+                    item['source'], item['grant_id'], item['title'],
                     item.get('budget', 0), item.get('currency', 'USD'),
                     item.get('deadline'), item.get('category'), item['collected_at']
                 ))
-        
+
         elif data_type == 'research':
             for item in data:
                 cursor.execute("""
-                    INSERT OR REPLACE INTO real_research 
+                    INSERT OR REPLACE INTO real_research
                     (source, publication_id, title, abstract, authors, journal, collected_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, (
@@ -310,11 +310,11 @@ class RealDataCollector:
                     item.get('abstract', ''), item.get('authors', ''),
                     item.get('journal', ''), item['collected_at']
                 ))
-        
+
         elif data_type == 'impact':
             for item in data:
                 cursor.execute("""
-                    INSERT OR REPLACE INTO real_impact 
+                    INSERT OR REPLACE INTO real_impact
                     (source, indicator_id, country, value, year, goal, collected_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, (
@@ -322,30 +322,30 @@ class RealDataCollector:
                     item.get('value', 0), item.get('year', 2024),
                     item.get('goal', ''), item['collected_at']
                 ))
-        
+
         conn.commit()
         conn.close()
-        
+
         self.logger.info(f"Stored {len(data)} {data_type} records in database")
 
 async def main():
     """Main function to collect real data"""
     collector = RealDataCollector()
-    
+
     # Collect real data from all sources
     grants_data = await collector.collect_real_grants_data()
     research_data = await collector.collect_real_research_data()
     impact_data = await collector.collect_real_impact_data()
-    
+
     # Store the data
     collector.store_real_data(grants_data, 'grants')
     collector.store_real_data(research_data, 'research')
     collector.store_real_data(impact_data, 'impact')
-    
+
     print(f"✅ Collected real data:")
     print(f"  - Grants: {len(grants_data)} records")
     print(f"  - Research: {len(research_data)} records")
     print(f"  - Impact: {len(impact_data)} records")
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

@@ -64,7 +64,7 @@ def get_db_connection():
 def init_advanced_tables():
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     # Create ML predictions table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS ml_predictions (
@@ -76,7 +76,7 @@ def init_advanced_tables():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
-    
+
     # Create analytics cache table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS analytics_cache (
@@ -86,7 +86,7 @@ def init_advanced_tables():
             cache_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
-    
+
     conn.commit()
     conn.close()
 
@@ -139,9 +139,9 @@ async def predict_grant_success(request: GrantPredictionRequest):
             'duration_months': request.duration_months,
             'team_size': request.team_size
         }
-        
+
         prediction = ml_engine.predict_grant_success(grant_data)
-        
+
         # Store prediction
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -156,7 +156,7 @@ async def predict_grant_success(request: GrantPredictionRequest):
         ))
         conn.commit()
         conn.close()
-        
+
         return {
             "prediction": prediction,
             "input_data": grant_data,
@@ -175,9 +175,9 @@ async def predict_impact_outcome(request: ImpactPredictionRequest):
             'duration_months': request.duration_months,
             'participant_count': request.participant_count
         }
-        
+
         prediction = ml_engine.predict_impact_outcome(project_data)
-        
+
         # Store prediction
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -192,7 +192,7 @@ async def predict_impact_outcome(request: ImpactPredictionRequest):
         ))
         conn.commit()
         conn.close()
-        
+
         return {
             "prediction": prediction,
             "input_data": project_data,
@@ -208,9 +208,9 @@ async def get_analytics(request: AnalyticsRequest):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         analytics = {}
-        
+
         # Grant analytics
         cursor.execute("SELECT COUNT(*), SUM(budget_amount) FROM grants")
         grant_count, total_budget = cursor.fetchone()
@@ -219,7 +219,7 @@ async def get_analytics(request: AnalyticsRequest):
             'total_budget': total_budget or 0,
             'average_budget': (total_budget or 0) / (grant_count or 1)
         }
-        
+
         # Report analytics
         cursor.execute("SELECT COUNT(*), AVG(impact_score) FROM impact_reports")
         report_count, avg_impact = cursor.fetchone()
@@ -227,23 +227,23 @@ async def get_analytics(request: AnalyticsRequest):
             'total_count': report_count or 0,
             'average_impact_score': avg_impact or 0
         }
-        
+
         # ML predictions analytics
         cursor.execute("SELECT COUNT(*) FROM ml_predictions")
         prediction_count = cursor.fetchone()[0]
         analytics['predictions'] = {
             'total_predictions': prediction_count
         }
-        
+
         # Compliance analytics
         analytics['compliance'] = {
             'uk_spelling_compliance': True,
             'aud_currency_compliance': True,
             'last_check': datetime.now().isoformat()
         }
-        
+
         conn.close()
-        
+
         return {
             "analytics": analytics,
             "timestamp": datetime.now().isoformat()
@@ -257,7 +257,7 @@ async def optimise_rules(request: RuleOptimisationRequest):
     """Get rule optimisation recommendations"""
     try:
         optimisations = ml_engine.optimise_rules()
-        
+
         return {
             "optimisations": optimisations,
             "rule_name": request.rule_name,
@@ -274,14 +274,14 @@ async def get_prediction_history():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         cursor.execute("""
             SELECT prediction_type, input_data, prediction_result, confidence_score, created_at
             FROM ml_predictions
             ORDER BY created_at DESC
             LIMIT 50
         """)
-        
+
         predictions = []
         for row in cursor.fetchall():
             predictions.append({
@@ -291,9 +291,9 @@ async def get_prediction_history():
                 'confidence_score': row[3],
                 'created_at': row[4]
             })
-        
+
         conn.close()
-        
+
         return {
             "predictions": predictions,
             "total_count": len(predictions)
@@ -312,9 +312,9 @@ async def train_ml_models(background_tasks: BackgroundTasks):
             logger.info("ML models trained successfully")
         except Exception as e:
             logger.error(f"Error training ML models: {e}")
-    
+
     background_tasks.add_task(train_models)
-    
+
     return {
         "message": "ML model training started in background",
         "status": "training",
@@ -323,4 +323,4 @@ async def train_ml_models(background_tasks: BackgroundTasks):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001) 
+    uvicorn.run(app, host="0.0.0.0", port=8001)

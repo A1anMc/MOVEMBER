@@ -71,16 +71,16 @@ class ImpactReport:
 
 class MovemberImpactMeasurement:
     """High-level impact measurement system for Movember."""
-    
+
     def __init__(self, db_path: str = "movember_impact.db"):
         self.db_path = db_path
         self.init_database()
-        
+
     def init_database(self):
         """Initialize the impact measurement database."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         # Create impact metrics table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS impact_metrics (
@@ -100,7 +100,7 @@ class MovemberImpactMeasurement:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
-        
+
         # Create impact reports table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS impact_reports (
@@ -119,7 +119,7 @@ class MovemberImpactMeasurement:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
-        
+
         # Create global impact summary table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS global_impact_summary (
@@ -132,15 +132,15 @@ class MovemberImpactMeasurement:
                 last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
-        
+
         conn.commit()
         conn.close()
         logger.info("Impact measurement database initialized")
-    
+
     async def measure_global_impact(self) -> Dict[str, Any]:
         """Measure Movember's global impact across all categories."""
         logger.info("Measuring global Movember impact")
-        
+
         impact_data = {
             "mens_health_awareness": await self._measure_mens_health_awareness(),
             "mental_health": await self._measure_mental_health_impact(),
@@ -153,10 +153,10 @@ class MovemberImpactMeasurement:
             "advocacy": await self._measure_advocacy_impact(),
             "education": await self._measure_education_impact()
         }
-        
+
         # Calculate overall impact score
         overall_score = self._calculate_overall_impact_score(impact_data)
-        
+
         return {
             "measurement_period": {
                 "start": datetime.now().replace(day=1).isoformat(),
@@ -170,7 +170,7 @@ class MovemberImpactMeasurement:
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-    
+
     async def _measure_mens_health_awareness(self) -> Dict[str, Any]:
         """Measure men's health awareness impact."""
         return {
@@ -191,7 +191,7 @@ class MovemberImpactMeasurement:
                 "Requires enhanced digital engagement strategies"
             ]
         }
-    
+
     async def _measure_mental_health_impact(self) -> Dict[str, Any]:
         """Measure mental health impact."""
         return {
@@ -212,7 +212,7 @@ class MovemberImpactMeasurement:
                 "Requires enhanced follow-up care programmes"
             ]
         }
-    
+
     async def _measure_prostate_cancer_impact(self) -> Dict[str, Any]:
         """Measure prostate cancer impact."""
         return {
@@ -233,7 +233,7 @@ class MovemberImpactMeasurement:
                 "Requires enhanced screening accessibility in rural areas"
             ]
         }
-    
+
     async def _measure_testicular_cancer_impact(self) -> Dict[str, Any]:
         """Measure testicular cancer impact."""
         return {
@@ -254,7 +254,7 @@ class MovemberImpactMeasurement:
                 "Requires enhanced educational materials for diverse communities"
             ]
         }
-    
+
     async def _measure_suicide_prevention_impact(self) -> Dict[str, Any]:
         """Measure suicide prevention impact."""
         return {
@@ -275,7 +275,7 @@ class MovemberImpactMeasurement:
                 "Requires enhanced crisis response capabilities"
             ]
         }
-    
+
     async def _measure_research_funding_impact(self) -> Dict[str, Any]:
         """Measure research funding impact."""
         return {
@@ -297,7 +297,7 @@ class MovemberImpactMeasurement:
                 "Requires enhanced research translation to practice"
             ]
         }
-    
+
     async def _measure_community_engagement_impact(self) -> Dict[str, Any]:
         """Measure community engagement impact."""
         return {
@@ -319,7 +319,7 @@ class MovemberImpactMeasurement:
                 "Requires enhanced local capacity building"
             ]
         }
-    
+
     async def _measure_global_reach_impact(self) -> Dict[str, Any]:
         """Measure global reach impact."""
         return {
@@ -341,7 +341,7 @@ class MovemberImpactMeasurement:
                 "Requires enhanced local language support"
             ]
         }
-    
+
     async def _measure_advocacy_impact(self) -> Dict[str, Any]:
         """Measure advocacy impact."""
         return {
@@ -363,7 +363,7 @@ class MovemberImpactMeasurement:
                 "Requires enhanced stakeholder engagement strategies"
             ]
         }
-    
+
     async def _measure_education_impact(self) -> Dict[str, Any]:
         """Measure education impact."""
         return {
@@ -385,25 +385,25 @@ class MovemberImpactMeasurement:
                 "Requires enhanced digital learning platforms"
             ]
         }
-    
+
     def _calculate_overall_impact_score(self, impact_data: Dict[str, Any]) -> float:
         """Calculate overall impact score across all categories."""
         scores = [category_data["impact_score"] for category_data in impact_data.values()]
         return sum(scores) / len(scores)
-    
+
     def _generate_key_highlights(self, impact_data: Dict[str, Any]) -> List[str]:
         """Generate key highlights from impact data."""
         highlights = []
-        
+
         # Add highlights based on achievements
         for category, data in impact_data.items():
             if data["impact_score"] >= 9.0:
                 highlights.append(f"Exceptional performance in {category.replace('_', ' ')}")
             elif data["impact_score"] >= 8.5:
                 highlights.append(f"Strong performance in {category.replace('_', ' ')}")
-        
+
         return highlights[:5]  # Top 5 highlights
-    
+
     async def _analyze_impact_trends(self) -> Dict[str, Any]:
         """Analyze impact trends over time."""
         return {
@@ -413,20 +413,20 @@ class MovemberImpactMeasurement:
             "areas_for_improvement": ["advocacy", "global_reach"],
             "trend_analysis": "Consistent growth across most impact areas"
         }
-    
+
     def _generate_global_recommendations(self, impact_data: Dict[str, Any]) -> List[str]:
         """Generate global recommendations based on impact data."""
         recommendations = []
-        
+
         # Identify areas needing improvement
         low_performing_areas = [
-            category for category, data in impact_data.items() 
+            category for category, data in impact_data.items()
             if data["impact_score"] < 8.5
         ]
-        
+
         for area in low_performing_areas:
             recommendations.append(f"Enhance {area.replace('_', ' ')} programmes and measurement")
-        
+
         # Add general recommendations
         recommendations.extend([
             "Strengthen cross-category collaboration and learning",
@@ -434,13 +434,13 @@ class MovemberImpactMeasurement:
             "Expand successful programmes to new regions",
             "Develop more targeted interventions for underserved populations"
         ])
-        
+
         return recommendations
-    
+
     async def generate_executive_summary(self) -> Dict[str, Any]:
         """Generate executive summary of Movember's impact."""
         global_impact = await self.measure_global_impact()
-        
+
         return {
             "executive_summary": {
                 "title": "Movember Global Impact Report",
@@ -461,31 +461,31 @@ class MovemberImpactMeasurement:
 async def main():
     """Example usage of the Movember Impact Measurement System."""
     impact_system = MovemberImpactMeasurement()
-    
+
     # Generate comprehensive impact report
     global_impact = await impact_system.measure_global_impact()
-    
+
     print("🎯 Movember Global Impact Measurement")
     print(f"Overall Impact Score: {global_impact['overall_impact_score']:.1f}/10")
     print(f"Measurement Period: {global_impact['measurement_period']['start']} to {global_impact['measurement_period']['end']}")
-    
+
     print("\n📊 Category Breakdown:")
     for category, data in global_impact['category_breakdown'].items():
         print(f"  {category.replace('_', ' ').title()}: {data['impact_score']:.1f}/10")
-    
+
     print(f"\n🎉 Key Highlights:")
     for highlight in global_impact['key_highlights']:
         print(f"  • {highlight}")
-    
+
     print(f"\n📈 Trends:")
     trends = global_impact['trends']
     print(f"  Overall Trend: {trends['overall_trend']}")
     print(f"  Growth Rate: {trends['growth_rate']:.1%}")
-    
+
     print(f"\n💡 Recommendations:")
     for rec in global_impact['recommendations'][:3]:
         print(f"  • {rec}")
-    
+
     # Generate executive summary
     executive_summary = await impact_system.generate_executive_summary()
     print(f"\n📋 Executive Summary:")
@@ -496,4 +496,4 @@ async def main():
     print(f"  Research Projects: {summary['total_research_projects']}")
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

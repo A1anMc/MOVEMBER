@@ -21,7 +21,7 @@ PROJECT_RULES = [
         priority=RulePriority.CRITICAL,
         description="Ensure operations are within Movember project context"
     ),
-    
+
     Rule(
         name="validate_mission_alignment",
         conditions=[
@@ -37,7 +37,7 @@ PROJECT_RULES = [
         priority=RulePriority.HIGH,
         description="Ensure operations align with Movember's mission using UK spelling"
     ),
-    
+
     Rule(
         name="validate_data_source_authority",
         conditions=[
@@ -53,7 +53,7 @@ PROJECT_RULES = [
         priority=RulePriority.CRITICAL,
         description="Validate data source authority and reliability"
     ),
-    
+
     Rule(
         name="validate_currency_standards",
         conditions=[
@@ -69,7 +69,7 @@ PROJECT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Ensure all currency is displayed in AUD"
     ),
-    
+
     Rule(
         name="validate_uk_spelling_consistency",
         conditions=[
@@ -85,7 +85,7 @@ PROJECT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Convert American spelling to UK spelling throughout"
     ),
-    
+
     Rule(
         name="validate_stakeholder_authority",
         conditions=[
@@ -100,7 +100,7 @@ PROJECT_RULES = [
         priority=RulePriority.HIGH,
         description="Validate stakeholder authority for sensitive operations"
     ),
-    
+
     Rule(
         name="validate_geographic_scope",
         conditions=[
@@ -115,7 +115,7 @@ PROJECT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate geographic scope of operations"
     ),
-    
+
     Rule(
         name="validate_temporal_context",
         conditions=[
@@ -130,7 +130,7 @@ PROJECT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate temporal context for long-term operations"
     ),
-    
+
     Rule(
         name="validate_budget_authority",
         conditions=[
@@ -145,7 +145,7 @@ PROJECT_RULES = [
         priority=RulePriority.HIGH,
         description="Validate budget authority for high-cost operations"
     ),
-    
+
     Rule(
         name="validate_data_privacy_compliance",
         conditions=[
@@ -160,7 +160,7 @@ PROJECT_RULES = [
         priority=RulePriority.CRITICAL,
         description="Validate data privacy compliance"
     ),
-    
+
     Rule(
         name="validate_ethical_approval",
         conditions=[
@@ -175,7 +175,7 @@ PROJECT_RULES = [
         priority=RulePriority.CRITICAL,
         description="Validate ethical approval for human subjects research"
     ),
-    
+
     Rule(
         name="validate_partnership_authority",
         conditions=[
@@ -190,7 +190,7 @@ PROJECT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate partnership authority for collaborative operations"
     ),
-    
+
     Rule(
         name="validate_technology_compliance",
         conditions=[
@@ -205,7 +205,7 @@ PROJECT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate technology compliance for advanced operations"
     ),
-    
+
     Rule(
         name="validate_communication_standards",
         conditions=[
@@ -221,7 +221,7 @@ PROJECT_RULES = [
         priority=RulePriority.MEDIUM,
         description="Validate communication standards with UK spelling and AUD currency"
     ),
-    
+
     Rule(
         name="validate_operational_scope",
         conditions=[
@@ -247,11 +247,11 @@ def get_project_rules() -> list:
 def validate_movember_context(project_id: str, operation_type: str) -> bool:
     """
     Validate that operation is within Movember project context.
-    
+
     Args:
         project_id: Project identifier
         operation_type: Type of operation
-        
+
     Returns:
         True if operation is valid for Movember context, False otherwise
     """
@@ -260,23 +260,23 @@ def validate_movember_context(project_id: str, operation_type: str) -> bool:
         'impact_analysis', 'grant_evaluation', 'reporting', 'research',
         'data_analysis', 'stakeholder_communication', 'health_research'
     ]
-    
-    return (project_id.lower() in valid_project_ids and 
+
+    return (project_id.lower() in valid_project_ids and
             operation_type.lower() in valid_operation_types)
 
 
 def validate_currency_standards(data: dict) -> bool:
     """
     Validate that all currency in data is in AUD.
-    
+
     Args:
         data: Data to validate
-        
+
     Returns:
         True if all currency is AUD, False otherwise
     """
     currency_fields = ['budget', 'amount', 'cost', 'funding', 'expense']
-    
+
     for field in currency_fields:
         if field in data:
             if isinstance(data[field], dict) and 'currency' in data[field]:
@@ -285,17 +285,17 @@ def validate_currency_standards(data: dict) -> bool:
             elif isinstance(data[field], (int, float)) and 'currency' in data:
                 if data['currency'].upper() != 'AUD':
                     return False
-    
+
     return True
 
 
 def validate_uk_spelling_standards(text: str) -> bool:
     """
     Validate that text uses UK spelling.
-    
+
     Args:
         text: Text to validate
-        
+
     Returns:
         True if text uses UK spelling, False otherwise
     """
@@ -321,22 +321,22 @@ def validate_uk_spelling_standards(text: str) -> bool:
         'categorise': 'categorize',
         'prioritise': 'prioritize'
     }
-    
+
     text_lower = text.lower()
     for uk_spelling, us_spelling in uk_spellings.items():
         if us_spelling in text_lower and uk_spelling not in text_lower:
             return False
-    
+
     return True
 
 
 def convert_to_uk_spelling(text: str) -> str:
     """
     Convert American spelling to UK spelling.
-    
+
     Args:
         text: Text to convert
-        
+
     Returns:
         Text with UK spelling
     """
@@ -360,21 +360,21 @@ def convert_to_uk_spelling(text: str) -> str:
         'categorize': 'categorise',
         'prioritize': 'prioritise'
     }
-    
+
     converted_text = text
     for us_spelling, uk_spelling in uk_conversions.items():
         converted_text = converted_text.replace(us_spelling, uk_spelling)
-    
+
     return converted_text
 
 
 def format_aud_currency(amount: float) -> str:
     """
     Format amount in AUD with UK number formatting.
-    
+
     Args:
         amount: Amount to format
-        
+
     Returns:
         Formatted AUD string
     """
@@ -384,22 +384,22 @@ def format_aud_currency(amount: float) -> str:
 def validate_context_completeness(context_data: dict) -> dict:
     """
     Validate context data completeness.
-    
+
     Args:
         context_data: Context data to validate
-        
+
     Returns:
         Validation results
     """
     required_fields = [
         'project_id', 'operation_type', 'stakeholder_role', 'data_sources'
     ]
-    
+
     missing_fields = []
     for field in required_fields:
         if field not in context_data or not context_data[field]:
             missing_fields.append(field)
-    
+
     return {
         'complete': len(missing_fields) == 0,
         'missing_fields': missing_fields,
@@ -410,11 +410,11 @@ def validate_context_completeness(context_data: dict) -> dict:
 def validate_authority_level(operation_type: str, stakeholder_role: str) -> bool:
     """
     Validate that stakeholder has appropriate authority for operation.
-    
+
     Args:
         operation_type: Type of operation
         stakeholder_role: Role of stakeholder
-        
+
     Returns:
         True if stakeholder has appropriate authority, False otherwise
     """
@@ -427,7 +427,7 @@ def validate_authority_level(operation_type: str, stakeholder_role: str) -> bool
         'stakeholder_communication': ['executive', 'analyst'],
         'health_research': ['researcher', 'analyst']
     }
-    
+
     required_roles = authority_mapping.get(operation_type, [])
     return stakeholder_role in required_roles
 
@@ -435,40 +435,40 @@ def validate_authority_level(operation_type: str, stakeholder_role: str) -> bool
 def generate_context_recommendations(context_data: dict) -> list:
     """
     Generate recommendations for context improvement.
-    
+
     Args:
         context_data: Context data to analyse
-        
+
     Returns:
         List of recommendations
     """
     recommendations = []
-    
+
     # Check for project context
     if 'project_id' not in context_data or not validate_movember_context(context_data['project_id'], context_data.get('operation_type', '')):
         recommendations.append("Ensure operation is within Movember project context")
-    
+
     # Check for stakeholder authority
     if 'operation_type' in context_data and 'stakeholder_role' in context_data:
         if not validate_authority_level(context_data['operation_type'], context_data['stakeholder_role']):
             recommendations.append("Verify stakeholder has appropriate authority for this operation")
-    
+
     # Check for currency standards
     if not validate_currency_standards(context_data):
         recommendations.append("Ensure all currency is displayed in AUD format")
-    
+
     # Check for UK spelling
     text_fields = ['description', 'notes', 'comments']
     for field in text_fields:
         if field in context_data and isinstance(context_data[field], str):
             if not validate_uk_spelling_standards(context_data[field]):
                 recommendations.append(f"Convert {field} to use UK spelling")
-    
+
     # Check for data source validation
     if 'data_sources' in context_data:
         if not all(source in ['movember_database', 'verified_external'] for source in context_data['data_sources']):
             recommendations.append("Verify all data sources are authorised and reliable")
-    
+
     return recommendations
 
 
@@ -484,4 +484,4 @@ __all__ = [
     'validate_context_completeness',
     'validate_authority_level',
     'generate_context_recommendations'
-] 
+]

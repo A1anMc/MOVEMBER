@@ -48,7 +48,7 @@ rule_cache = get_rule_cache()
 async def performance_middleware(request, call_next):
     """Middleware to track performance metrics."""
     start_time = time.time()
-    
+
     # Record request start
     await metrics_collector.record_performance_metric(
         PerformanceMetric(
@@ -60,13 +60,13 @@ async def performance_middleware(request, call_next):
             context={"path": request.url.path, "method": request.method}
         )
     )
-    
+
     # Process request
     response = await call_next(request)
-    
+
     # Calculate response time
     response_time = (time.time() - start_time) * 1000  # Convert to milliseconds
-    
+
     # Record response metrics
     await metrics_collector.record_performance_metric(
         PerformanceMetric(
@@ -78,11 +78,11 @@ async def performance_middleware(request, call_next):
             context={"path": request.url.path, "method": request.method, "status_code": response.status_code}
         )
     )
-    
+
     # Add performance headers
     response.headers["X-Response-Time"] = f"{response_time:.2f}ms"
     response.headers["X-Cache-Hit"] = "false"  # Will be updated by cache-aware endpoints
-    
+
     return response
 
 # Add performance monitoring endpoints
@@ -92,7 +92,7 @@ async def get_performance_metrics():
     try:
         real_time_metrics = await metrics_collector.get_real_time_metrics()
         cache_stats = rule_cache.get_stats()
-        
+
         return {
             "status": "success",
             "data": {
@@ -110,7 +110,7 @@ async def get_performance_summary(hours: int = 24):
     """Get performance summary for specified time period."""
     try:
         summary = await metrics_collector.get_performance_summary(hours)
-        
+
         return {
             "status": "success",
             "data": summary
@@ -123,7 +123,7 @@ async def optimize_cache():
     """Optimize cache based on usage patterns."""
     try:
         optimization_result = await rule_cache.optimize()
-        
+
         return {
             "status": "success",
             "data": optimization_result
@@ -136,7 +136,7 @@ async def clear_cache():
     """Clear all cache entries."""
     try:
         await rule_cache.clear()
-        
+
         return {
             "status": "success",
             "message": "Cache cleared successfully"
@@ -149,7 +149,7 @@ async def get_cache_stats():
     """Get cache performance statistics."""
     try:
         stats = rule_cache.get_stats()
-        
+
         return {
             "status": "success",
             "data": stats
@@ -164,13 +164,13 @@ async def advanced_health_check():
     try:
         # Get system health
         system_health = await metrics_collector.collect_system_metrics()
-        
+
         # Get cache stats
         cache_stats = rule_cache.get_stats()
-        
+
         # Get active alerts
         alerts = await metrics_collector._get_active_alerts()
-        
+
         return {
             "status": "healthy",
             "timestamp": datetime.now().isoformat(),
@@ -225,7 +225,7 @@ def init_database():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         # Create grants table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS grants (
@@ -242,7 +242,7 @@ def init_database():
                 data_json TEXT
             )
         ''')
-        
+
         # Create impact reports table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS impact_reports (
@@ -257,7 +257,7 @@ def init_database():
                 data_json TEXT
             )
         ''')
-        
+
         conn.commit()
         conn.close()
         logger.info("Database initialized successfully")
@@ -315,7 +315,7 @@ async def health_check():
         db_status = "healthy"
     except Exception as e:
         db_status = f"error: {str(e)}"
-    
+
     return HealthResponse(
         status="healthy",
         timestamp=datetime.now().isoformat(),
@@ -332,18 +332,18 @@ async def create_grant(grant: GrantRequest):
         # Validate UK spelling
         if not validate_uk_spelling(grant.description):
             raise HTTPException(status_code=400, detail="Text must use UK spelling")
-        
+
         # Validate AUD currency
         if not validate_aud_currency(grant.currency):
             raise HTTPException(status_code=400, detail="Currency must be AUD")
-        
+
         # Generate grant ID
         grant_id = f"GRANT_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        
+
         # Store in database
         conn = sqlite3.connect('movember_ai.db')
         cursor = conn.cursor()
-        
+
         cursor.execute('''
             INSERT INTO grants (grant_id, title, budget, currency, timeline_months, organisation, data_json)
             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -356,10 +356,10 @@ async def create_grant(grant: GrantRequest):
             grant.organisation,
             json.dumps(grant.dict())
         ))
-        
+
         conn.commit()
         conn.close()
-        
+
         return {
             "message": "Grant created successfully",
             "grant_id": grant_id,
@@ -367,7 +367,7 @@ async def create_grant(grant: GrantRequest):
             "uk_spelling_validated": True,
             "aud_currency_validated": True
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -380,10 +380,10 @@ async def list_grants():
     try:
         conn = sqlite3.connect('movember_ai.db')
         cursor = conn.cursor()
-        
+
         cursor.execute('SELECT * FROM grants ORDER BY created_at DESC')
         rows = cursor.fetchall()
-        
+
         grants = []
         for row in rows:
             grants.append({
@@ -398,10 +398,10 @@ async def list_grants():
                 "created_at": row[8],
                 "budget_formatted": format_aud_currency(row[3]) if row[3] else "A$0.00"
             })
-        
+
         conn.close()
         return {"grants": grants, "total": len(grants)}
-        
+
     except Exception as e:
         logger.error(f"Error listing grants: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -413,14 +413,14 @@ async def create_impact_report(report: ImpactReportRequest):
         # Validate UK spelling
         if not validate_uk_spelling(report.description):
             raise HTTPException(status_code=400, detail="Text must use UK spelling")
-        
+
         # Generate report ID
         report_id = f"REPORT_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        
+
         # Store in database
         conn = sqlite3.connect('movember_ai.db')
         cursor = conn.cursor()
-        
+
         cursor.execute('''
             INSERT INTO impact_reports (report_id, title, type, frameworks, data_json)
             VALUES (?, ?, ?, ?, ?)
@@ -431,17 +431,17 @@ async def create_impact_report(report: ImpactReportRequest):
             json.dumps(report.frameworks),
             json.dumps(report.dict())
         ))
-        
+
         conn.commit()
         conn.close()
-        
+
         return {
             "message": "Impact report created successfully",
             "report_id": report_id,
             "uk_spelling_validated": True,
             "frameworks": report.frameworks
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -454,17 +454,17 @@ async def get_metrics():
     try:
         conn = sqlite3.connect('movember_ai.db')
         cursor = conn.cursor()
-        
+
         # Count grants
         cursor.execute('SELECT COUNT(*) FROM grants')
         grant_count = cursor.fetchone()[0]
-        
+
         # Count reports
         cursor.execute('SELECT COUNT(*) FROM impact_reports')
         report_count = cursor.fetchone()[0]
-        
+
         conn.close()
-        
+
         return {
             "system_metrics": {
                 "total_grants": grant_count,
@@ -475,7 +475,7 @@ async def get_metrics():
             },
             "timestamp": datetime.now().isoformat()
         }
-        
+
     except Exception as e:
         logger.error(f"Error getting metrics: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -488,25 +488,25 @@ async def get_projects(framework_alignment: str = None, sdg_tags: str = None):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         query = "SELECT * FROM grants"
         params = []
-        
+
         if framework_alignment:
             query += " WHERE data_json LIKE ?"
             params.append(f"%{framework_alignment}%")
-        
+
         if sdg_tags:
             if "WHERE" in query:
                 query += " AND data_json LIKE ?"
             else:
                 query += " WHERE data_json LIKE ?"
             params.append(f"%{sdg_tags}%")
-        
+
         cursor.execute(query, params)
         projects = cursor.fetchall()
         conn.close()
-        
+
         return {
             "projects": [
                 {
@@ -529,7 +529,7 @@ async def create_project(project: dict):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         cursor.execute("""
             INSERT INTO grants (grant_id, title, budget, currency, timeline_months, status, organisation, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -543,11 +543,11 @@ async def create_project(project: dict):
             project.get('organisation', 'Unknown'),
             datetime.now().isoformat()
         ))
-        
+
         project_id = cursor.lastrowid
         conn.commit()
         conn.close()
-        
+
         return {
             "message": "Project created successfully",
             "project_id": project_id
@@ -561,16 +561,16 @@ async def get_portfolio_summary():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
+
         # Get summary statistics
         cursor.execute("SELECT COUNT(*), SUM(budget), AVG(budget) FROM grants")
         total_projects, total_budget, avg_budget = cursor.fetchone()
-        
+
         cursor.execute("SELECT status, COUNT(*) FROM grants GROUP BY status")
         status_breakdown = dict(cursor.fetchall())
-        
+
         conn.close()
-        
+
         return {
             "portfolio_summary": {
                 "total_projects": total_projects or 0,
@@ -777,11 +777,11 @@ async def get_global_impact():
                 ]
             }
         }
-        
+
         # Calculate overall impact score
         scores = [data["impact_score"] for data in impact_data.values()]
         overall_score = sum(scores) / len(scores)
-        
+
         # Generate key highlights
         highlights = []
         for category, data in impact_data.items():
@@ -789,7 +789,7 @@ async def get_global_impact():
                 highlights.append(f"Exceptional performance in {category.replace('_', ' ')}")
             elif data["impact_score"] >= 8.5:
                 highlights.append(f"Strong performance in {category.replace('_', ' ')}")
-        
+
         # Generate trends
         trends = {
             "overall_trend": "positive",
@@ -798,7 +798,7 @@ async def get_global_impact():
             "areas_for_improvement": ["advocacy", "global_reach"],
             "trend_analysis": "Consistent growth across most impact areas"
         }
-        
+
         # Generate recommendations
         recommendations = [
             "Strengthen cross-category collaboration and learning",
@@ -806,7 +806,7 @@ async def get_global_impact():
             "Expand successful programmes to new regions",
             "Develop more targeted interventions for underserved populations"
         ]
-        
+
         global_impact = {
             "measurement_period": {
                 "start": datetime.now().replace(day=1).isoformat(),
@@ -820,7 +820,7 @@ async def get_global_impact():
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-        
+
         return {
             "status": "success",
             "data": global_impact,
@@ -835,10 +835,10 @@ async def get_executive_summary():
     """Get executive summary of Movember's impact."""
     try:
         from movember_impact_measurement import MovemberImpactMeasurement
-        
+
         impact_system = MovemberImpactMeasurement()
         executive_summary = await impact_system.generate_executive_summary()
-        
+
         return {
             "status": "success",
             "data": executive_summary,
@@ -853,10 +853,10 @@ async def get_category_impact(category_name: str):
     """Get impact measurement for a specific category."""
     try:
         from movember_impact_measurement import MovemberImpactMeasurement, ImpactCategory
-        
+
         impact_system = MovemberImpactMeasurement()
         global_impact = await impact_system.measure_global_impact()
-        
+
         # Convert category name to enum
         category_map = {
             "mens_health_awareness": "mens_health_awareness",
@@ -870,15 +870,15 @@ async def get_category_impact(category_name: str):
             "advocacy": "advocacy",
             "education": "education"
         }
-        
+
         if category_name not in category_map:
             raise HTTPException(status_code=404, detail=f"Category '{category_name}' not found")
-        
+
         category_data = global_impact["category_breakdown"].get(category_name)
-        
+
         if not category_data:
             raise HTTPException(status_code=404, detail=f"No data available for category '{category_name}'")
-        
+
         return {
             "status": "success",
             "category": category_name,
@@ -896,10 +896,10 @@ async def get_impact_dashboard():
     """Get comprehensive impact dashboard data."""
     try:
         from movember_impact_measurement import MovemberImpactMeasurement
-        
+
         impact_system = MovemberImpactMeasurement()
         global_impact = await impact_system.measure_global_impact()
-        
+
         # Create dashboard data
         dashboard_data = {
             "overview": {
@@ -909,7 +909,7 @@ async def get_impact_dashboard():
                 "currency": "AUD"
             },
             "category_scores": {
-                category: data["impact_score"] 
+                category: data["impact_score"]
                 for category, data in global_impact["category_breakdown"].items()
             },
             "key_metrics": {
@@ -924,7 +924,7 @@ async def get_impact_dashboard():
             "recommendations": global_impact["recommendations"][:5],
             "spelling_standard": "UK"
         }
-        
+
         return {
             "status": "success",
             "data": dashboard_data
@@ -942,4 +942,4 @@ async def startup_event():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
+    uvicorn.run(app, host="0.0.0.0", port=8000)
