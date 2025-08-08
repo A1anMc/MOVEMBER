@@ -10,13 +10,9 @@ import json
 import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional, Union
-from dataclasses import dataclass
-import httpx
 import aiohttp
-from bs4 import BeautifulSoup
 import pandas as pd
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
 import requests
 from urllib.parse import urljoin, urlparse
 import re
@@ -39,6 +35,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 @dataclass
 class ScrapingConfig:
+
+
     """Configuration for data scraping."""
     target_url: str
     selectors: Dict[str, str]
@@ -56,6 +54,8 @@ class ScrapingConfig:
 
 @dataclass
 class ScrapedData:
+
+
     """Structure for scraped data."""
     source_url: str
     timestamp: datetime
@@ -73,6 +73,8 @@ class MovemberDataScraper:
     """Data scraper for Movember AI Rules System."""
 
     def __init__(self):
+
+
         self.db = SessionLocal()
         self.logger = logging.getLogger(__name__)
         self.session = None
@@ -309,6 +311,8 @@ class MovemberDataScraper:
             return []
 
     def _construct_page_url(self, base_url: str, page: int, pagination_config: Dict) -> str:
+
+
         """Construct URL for specific page number."""
         if pagination_config.get("type") == "query_param":
             param_name = pagination_config.get("param_name", "page")
@@ -416,6 +420,8 @@ class MovemberDataScraper:
         return processed_data
 
     def _convert_to_aud_currency(self, value: str) -> str:
+
+
         """Convert currency values to AUD format."""
         try:
             # Extract numeric value
@@ -473,6 +479,8 @@ class MovemberDataScraper:
         }
 
     def _contains_american_spelling(self, text: str) -> bool:
+
+
         """Check if text contains American spelling."""
         american_spellings = [
             'color', 'behavior', 'organization', 'realize', 'analyze',
@@ -485,6 +493,8 @@ class MovemberDataScraper:
         return any(spelling in text_lower for spelling in american_spellings)
 
     def _is_aud_currency(self, value: str) -> bool:
+
+
         """Check if value is in AUD currency format."""
         return "A$" in value or "AUD" in value.upper()
 
@@ -518,10 +528,14 @@ class MovemberDataScraper:
             self.logger.error(f"Error storing scraped data: {str(e)}")
 
     def get_scraping_history(self) -> List[ScrapedData]:
+
+
         """Get scraping history."""
         return self.scraping_history
 
     def create_grants_scraping_config(self, target_url: str) -> ScrapingConfig:
+
+
         """Create configuration for scraping grants data."""
         return ScrapingConfig(
             target_url=target_url,
@@ -549,6 +563,8 @@ class MovemberDataScraper:
         )
 
     def create_research_scraping_config(self, target_url: str) -> ScrapingConfig:
+
+
         """Create configuration for scraping research data."""
         return ScrapingConfig(
             target_url=target_url,
@@ -576,6 +592,8 @@ class MovemberDataScraper:
         )
 
     def create_impact_scraping_config(self, target_url: str) -> ScrapingConfig:
+
+
         """Create configuration for scraping impact data."""
         return ScrapingConfig(
             target_url=target_url,

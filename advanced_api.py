@@ -5,14 +5,11 @@ Enhanced endpoints with ML integration and analytics
 """
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
 import json
 import sqlite3
 from datetime import datetime
 import logging
-import asyncio
-from ml_integration import MovemberMLEngine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -35,6 +32,8 @@ app.add_middleware(
 
 # Pydantic models
 class GrantPredictionRequest(BaseModel):
+
+
     budget_amount: float
     duration_months: int
     team_size: int
@@ -42,6 +41,8 @@ class GrantPredictionRequest(BaseModel):
     target_audience: str
 
 class ImpactPredictionRequest(BaseModel):
+
+
     grant_amount: float
     duration_months: int
     participant_count: int
@@ -49,19 +50,27 @@ class ImpactPredictionRequest(BaseModel):
     intervention_type: str
 
 class AnalyticsRequest(BaseModel):
+
+
     start_date: Optional[str] = None
     end_date: Optional[str] = None
     metrics: List[str] = ["grants", "reports", "impact"]
 
 class RuleOptimisationRequest(BaseModel):
+
+
     rule_name: str
     performance_threshold: float = 0.7
 
 # Database functions
 def get_db_connection():
+
+
     return sqlite3.connect("movember_ai.db")
 
 def init_advanced_tables():
+
+
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -306,6 +315,8 @@ async def get_prediction_history():
 async def train_ml_models(background_tasks: BackgroundTasks):
     """Train ML models in background"""
     def train_models():
+
+
         try:
             ml_engine.train_grant_success_predictor()
             ml_engine.train_impact_prediction_model()

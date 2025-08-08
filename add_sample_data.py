@@ -4,9 +4,10 @@ Add sample data for ML training
 """
 import sqlite3
 from datetime import datetime, timedelta
-import json
 
 def add_sample_data():
+
+
     conn = sqlite3.connect("movember_ai.db")
     cursor = conn.cursor()
 

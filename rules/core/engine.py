@@ -10,7 +10,6 @@ import logging
 import time
 from datetime import datetime
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
 
 from .evaluator import RuleEvaluator
 from .executor import ActionExecutor
@@ -22,6 +21,8 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class RuleEngineConfig:
+
+
     """Configuration for the rule engine."""
     max_concurrent_rules: int = 10
     enable_metrics: bool = True
@@ -43,6 +44,8 @@ class RuleEngine:
     """
 
     def __init__(self, config: Optional[RuleEngineConfig] = None):
+
+
         self.config = config or RuleEngineConfig()
         self.rules: Dict[str, Rule] = {}
         self.evaluator = RuleEvaluator()
@@ -56,6 +59,8 @@ class RuleEngine:
         )
 
     def add_rule(self, rule: Rule) -> None:
+
+
         """Add a rule to the engine."""
         if rule.name in self.rules:
             logger.warning(f"Rule '{rule.name}' already exists, overwriting")
@@ -64,11 +69,15 @@ class RuleEngine:
         logger.info(f"Added rule: {rule.name}")
 
     def add_rules(self, rules: List[Rule]) -> None:
+
+
         """Add multiple rules to the engine."""
         for rule in rules:
             self.add_rule(rule)
 
     def remove_rule(self, rule_name: str) -> bool:
+
+
         """Remove a rule from the engine."""
         if rule_name in self.rules:
             del self.rules[rule_name]
@@ -77,10 +86,14 @@ class RuleEngine:
         return False
 
     def get_rule(self, rule_name: str) -> Optional[Rule]:
+
+
         """Get a rule by name."""
         return self.rules.get(rule_name)
 
     def list_rules(self) -> List[str]:
+
+
         """List all rule names."""
         return list(self.rules.keys())
 
@@ -130,10 +143,14 @@ class RuleEngine:
         return rule_results
 
     def evaluate(self, context: ExecutionContext) -> List[RuleResult]:
+
+
         """Evaluate all applicable rules synchronously."""
         return asyncio.run(self.evaluate_async(context))
 
     def _find_applicable_rules(self, context: ExecutionContext) -> List[Rule]:
+
+
         """Find rules that are applicable to the current context."""
         applicable_rules = []
 
@@ -147,6 +164,8 @@ class RuleEngine:
         return applicable_rules
 
     def _is_rule_applicable(self, rule: Rule, context: ExecutionContext) -> bool:
+
+
         """Check if a rule is applicable to the current context."""
         # Check if rule is enabled
         if not rule.enabled:
@@ -218,6 +237,8 @@ class RuleEngine:
             )
 
     def _record_audit_trail(self, context: ExecutionContext, results: List[RuleResult], total_time: float) -> None:
+
+
         """Record execution details for audit trail."""
         audit_entry = {
             'timestamp': datetime.now().isoformat(),
@@ -236,22 +257,30 @@ class RuleEngine:
             self.execution_history = self.execution_history[-1000:]
 
     def get_execution_history(self, limit: int = 100) -> List[Dict]:
+
+
         """Get recent execution history."""
         return self.execution_history[-limit:]
 
     def get_metrics(self) -> Optional[Dict]:
+
+
         """Get current metrics if enabled."""
         if self.metrics:
             return self.metrics.get_metrics()
         return None
 
     def clear_history(self) -> None:
+
+
         """Clear execution history."""
         self.execution_history.clear()
         if self.metrics:
             self.metrics.reset()
 
     def shutdown(self) -> None:
+
+
         """Shutdown the rule engine and cleanup resources."""
         self.thread_pool.shutdown(wait=True)
         logger.info("Rule engine shutdown complete")

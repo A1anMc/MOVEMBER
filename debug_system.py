@@ -19,14 +19,20 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class SystemDebugger:
+
+
     """Debugging framework for the Movember AI Rules System."""
 
     def __init__(self):
+
+
         self.issues = []
         self.fixes_applied = []
         self.system_status = {}
 
     def run_full_diagnostic(self):
+
+
         """Run comprehensive system diagnostics."""
         logger.info("🔍 Starting Movember AI Rules System Diagnostics...")
 
@@ -44,6 +50,8 @@ class SystemDebugger:
         self.generate_diagnostic_report()
 
     def check_environment(self):
+
+
         """Check Python environment and paths."""
         logger.info("🐍 Checking Python environment...")
 
@@ -83,6 +91,8 @@ class SystemDebugger:
                     logger.error(f"❌ Failed to create directory {dir_name}: {e}")
 
     def check_dependencies(self):
+
+
         """Check required Python packages."""
         logger.info("📦 Checking dependencies...")
 
@@ -106,6 +116,8 @@ class SystemDebugger:
             logger.info("💡 Run: pip install " + " ".join(missing_packages))
 
     def check_database(self):
+
+
         """Check database integrity."""
         logger.info("💾 Checking database...")
 
@@ -146,6 +158,8 @@ class SystemDebugger:
             logger.error(f"❌ Database error: {e}")
 
     def check_api(self):
+
+
         """Check API health."""
         logger.info("🌐 Checking API...")
 
@@ -169,6 +183,8 @@ class SystemDebugger:
             self.system_status['api'] = 'error'
 
     def check_monitoring(self):
+
+
         """Check monitoring bot status."""
         logger.info("🤖 Checking monitoring bot...")
 
@@ -187,6 +203,8 @@ class SystemDebugger:
             self.system_status['monitoring'] = 'unknown'
 
     def check_scraper(self):
+
+
         """Check data scraper status."""
         logger.info("🕷️ Checking data scraper...")
 
@@ -205,6 +223,8 @@ class SystemDebugger:
             self.system_status['scraper'] = 'unknown'
 
     def check_logs(self):
+
+
         """Check log files."""
         logger.info("📁 Checking log files...")
 
@@ -224,6 +244,8 @@ class SystemDebugger:
                 logger.info(f"ℹ️ Log file {log_file}: not created yet")
 
     def check_permissions(self):
+
+
         """Check file permissions."""
         logger.info("🔐 Checking file permissions...")
 
@@ -249,6 +271,8 @@ class SystemDebugger:
                 logger.warning(f"⚠️ Script not found: {script}")
 
     def generate_diagnostic_report(self):
+
+
         """Generate comprehensive diagnostic report."""
         logger.info("📊 Generating diagnostic report...")
 
@@ -305,6 +329,8 @@ class SystemDebugger:
         logger.info("✅ Diagnostic report saved to debug_report.json")
 
 def main():
+
+
     """Main debugging function."""
     debugger = SystemDebugger()
     debugger.run_full_diagnostic()

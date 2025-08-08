@@ -8,17 +8,25 @@ import os
 import sys
 
 class CORSRequestHandler(SimpleHTTPRequestHandler):
+
+
     def end_headers(self):
+
+
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         super().end_headers()
 
     def do_OPTIONS(self):
+
+
         self.send_response(200)
         self.end_headers()
 
 def run_server(port=3000):
+
+
     """Run the web server."""
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 

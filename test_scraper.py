@@ -6,7 +6,6 @@ Demonstrates the scraping functionality
 
 import asyncio
 import logging
-from data_scraper import MovemberDataScraper
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

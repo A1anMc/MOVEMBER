@@ -4,28 +4,23 @@ Advanced ML Engine for Movember AI Rules System - Phase 2
 Machine learning integration with predictive analytics and intelligent rule optimization
 """
 
-import asyncio
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional, Tuple
-from dataclasses import dataclass
 import logging
-import json
-import sqlite3
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 import joblib
 import os
-from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
 @dataclass
 class PredictionResult:
+
+
     """Prediction result with confidence and metadata."""
     prediction: float
     confidence: float
@@ -36,6 +31,8 @@ class PredictionResult:
 
 @dataclass
 class RuleOptimization:
+
+
     """Rule optimization recommendation."""
     rule_name: str
     current_performance: float
@@ -45,9 +42,13 @@ class RuleOptimization:
     reasoning: str
 
 class AdvancedMLEngine:
+
+
     """Advanced ML engine for predictive analytics and rule optimization."""
 
     def __init__(self, models_dir: str = "ml_models"):
+
+
         self.models_dir = models_dir
         self.models = {}
         self.scalers = {}
@@ -63,6 +64,8 @@ class AdvancedMLEngine:
         logger.info("Advanced ML Engine initialized")
 
     def _initialize_models(self):
+
+
         """Initialize ML models for different prediction tasks."""
         # Grant success prediction model
         self.models['grant_success'] = RandomForestClassifier(
@@ -204,6 +207,8 @@ class AdvancedMLEngine:
             raise
 
     def _extract_grant_features(self, grant_data: Dict[str, Any]) -> List[float]:
+
+
         """Extract features for grant success prediction."""
         return [
             grant_data.get('budget', 0) / 100000,  # Normalized budget
@@ -219,6 +224,8 @@ class AdvancedMLEngine:
         ]
 
     def _extract_impact_features(self, project_data: Dict[str, Any]) -> List[float]:
+
+
         """Extract features for impact outcome prediction."""
         return [
             project_data.get('funding_amount', 0) / 1000000,  # Normalized funding
@@ -234,6 +241,8 @@ class AdvancedMLEngine:
         ]
 
     def _extract_rule_features(self, rule_data: Dict[str, Any]) -> List[float]:
+
+
         """Extract features for rule performance prediction."""
         return [
             rule_data.get('execution_count', 0) / 1000,  # Normalized execution count
@@ -249,6 +258,8 @@ class AdvancedMLEngine:
         ]
 
     def _extract_risk_features(self, project_data: Dict[str, Any]) -> List[float]:
+
+
         """Extract features for risk assessment."""
         return [
             project_data.get('budget_volatility', 0.0),
@@ -264,6 +275,8 @@ class AdvancedMLEngine:
         ]
 
     def _get_grant_feature_names(self) -> List[str]:
+
+
         """Get feature names for grant prediction."""
         return [
             'normalized_budget', 'normalized_timeline', 'team_size',
@@ -273,6 +286,8 @@ class AdvancedMLEngine:
         ]
 
     def _get_impact_feature_names(self) -> List[str]:
+
+
         """Get feature names for impact prediction."""
         return [
             'normalized_funding', 'normalized_duration', 'participant_count',
@@ -282,6 +297,8 @@ class AdvancedMLEngine:
         ]
 
     def _get_risk_feature_names(self) -> List[str]:
+
+
         """Get feature names for risk assessment."""
         return [
             'budget_volatility', 'timeline_risk', 'team_stability',
@@ -359,6 +376,8 @@ class AdvancedMLEngine:
             self.feature_importance[model_name] = model.feature_importances_.tolist()
 
     def _calculate_confidence(self, model: Any, features: List[float]) -> float:
+
+
         """Calculate prediction confidence."""
         try:
             if hasattr(model, 'predict_proba'):
@@ -368,12 +387,14 @@ class AdvancedMLEngine:
             else:
                 # For regression models, use model's internal confidence if available
                 confidence = 0.8  # Default confidence for regression
-        except:
+        except Exception:
             confidence = 0.7  # Fallback confidence
 
         return min(confidence, 0.95)  # Cap at 95%
 
     def _determine_optimization_type(self, rule_data: Dict[str, Any]) -> str:
+
+
         """Determine the type of optimization needed."""
         if rule_data.get('error_rate', 0) > 0.1:
             return "error_reduction"
@@ -385,6 +406,8 @@ class AdvancedMLEngine:
             return "general_optimization"
 
     def _generate_optimization_reasoning(self, rule_data: Dict[str, Any], improvement: float) -> str:
+
+
         """Generate reasoning for optimization recommendation."""
         rule_name = rule_data.get('rule_name', 'unknown')
 
@@ -422,6 +445,8 @@ class AdvancedMLEngine:
 _ml_engine: Optional[AdvancedMLEngine] = None
 
 def get_ml_engine() -> AdvancedMLEngine:
+
+
     """Get global ML engine instance."""
     global _ml_engine
     if _ml_engine is None:

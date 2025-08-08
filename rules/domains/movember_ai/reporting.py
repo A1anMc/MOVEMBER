@@ -5,7 +5,6 @@ Ensures quality impact reporting with UK spelling and AUD currency standards.
 """
 
 from rules.types import Rule, Condition, Action, RulePriority
-from rules.core import RuleEngine
 
 
 # Impact Reporting Rules with UK spelling and AUD currency

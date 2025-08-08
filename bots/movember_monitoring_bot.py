@@ -10,11 +10,7 @@ import json
 import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
-from dataclasses import dataclass
-import httpx
-import aiohttp
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
 
 from rules.domains.movember_ai import MovemberAIRulesEngine
 from rules.types import ExecutionContext, ContextType, RulePriority
@@ -33,6 +29,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 @dataclass
 class MonitoringAlert:
+
+
     """Alert data structure."""
     alert_id: str
     alert_type: str
@@ -47,6 +45,8 @@ class MonitoringAlert:
 
 @dataclass
 class DataQualityReport:
+
+
     """Data quality report structure."""
     report_id: str
     timestamp: datetime
@@ -64,6 +64,8 @@ class MovemberMonitoringBot:
     """Automated monitoring bot for Movember AI Rules System."""
 
     def __init__(self):
+
+
         self.engine = MovemberAIRulesEngine()
         self.db = SessionLocal()
         self.logger = logging.getLogger(__name__)
@@ -220,7 +222,8 @@ class MovemberMonitoringBot:
                 result = self.db.execute(text("""
                     SELECT COUNT(*) as total_records,
                            SUM(CASE WHEN data_json LIKE '%"currency": "AUD"%' THEN 1 ELSE 0 END) as aud_compliant,
-                           SUM(CASE WHEN data_json LIKE '%color%' OR data_json LIKE '%behavior%' THEN 1 ELSE 0 END) as spelling_issues
+                           SUM(
+                               CASE WHEN data_json LIKE '%color%' OR data_json LIKE '%behavior%' THEN 1 ELSE 0 END) as spelling_issues
                     FROM grants
                     WHERE created_at >= :since
                 """), {"since": datetime.now() - timedelta(hours=24)})
@@ -255,7 +258,8 @@ class MovemberMonitoringBot:
                     severity="warning",
                     message=f"AUD currency compliance below threshold: {aud_currency_compliance:.2%}",
                     source="data_quality_monitor",
-                    details={"compliance": aud_currency_compliance, "threshold": self.thresholds["aud_currency_compliance"]}
+                    details={"compliance": aud_currency_compliance,
+                         "threshold": self.thresholds["aud_currency_compliance"]}
                 )
 
             if uk_spelling_consistency < self.thresholds["uk_spelling_consistency"]:
@@ -264,7 +268,8 @@ class MovemberMonitoringBot:
                     severity="warning",
                     message=f"UK spelling consistency below threshold: {uk_spelling_consistency:.2%}",
                     source="data_quality_monitor",
-                    details={"consistency": uk_spelling_consistency, "threshold": self.thresholds["uk_spelling_consistency"]}
+                    details={"consistency": uk_spelling_consistency,
+                         "threshold": self.thresholds["uk_spelling_consistency"]}
                 )
 
             # Store quality report
@@ -361,7 +366,8 @@ class MovemberMonitoringBot:
                         severity="warning",
                         message=f"Rule '{rule_name}' success rate below threshold: {success_rate:.2%}",
                         source="performance_monitor",
-                        details={"rule": rule_name, "success_rate": success_rate, "threshold": self.thresholds["success_rate"]}
+                        details={"rule": rule_name,
+                             "success_rate": success_rate, "threshold": self.thresholds["success_rate"]}
                     )
 
             self.logger.info("Performance metrics check completed")
@@ -421,6 +427,8 @@ class MovemberMonitoringBot:
         self.alerts = [alert for alert in self.alerts if alert.timestamp > cutoff_time]
 
     def _contains_american_spelling(self, text: str) -> bool:
+
+
         """Check if text contains American spelling."""
         american_spellings = [
             'color', 'behavior', 'organization', 'realize', 'analyze',
@@ -549,6 +557,8 @@ Please investigate immediately.
             self.logger.error(f"Error sending critical alert: {str(e)}")
 
     def get_alerts(self, severity: Optional[str] = None, resolved: Optional[bool] = None) -> List[MonitoringAlert]:
+
+
         """Get alerts with optional filtering."""
         alerts = self.alerts
 
@@ -561,11 +571,15 @@ Please investigate immediately.
         return alerts
 
     def get_quality_reports(self, hours: int = 24) -> List[DataQualityReport]:
+
+
         """Get recent data quality reports."""
         # Implementation for retrieving quality reports from database
         return []
 
     def get_compliance_reports(self, hours: int = 24) -> List[Dict]:
+
+
         """Get recent compliance reports."""
         # Implementation for retrieving compliance reports from database
         return []

@@ -4,18 +4,17 @@ Rule Caching System for Movember AI Rules Engine
 Implements intelligent rule caching to reduce evaluation time by 40%
 """
 
-import asyncio
 import json
 import hashlib
 from typing import Dict, Any, Optional, List
 from datetime import datetime, timedelta
 import logging
-from dataclasses import dataclass
-from enum import Enum
 
 logger = logging.getLogger(__name__)
 
 class CacheStrategy(Enum):
+
+
     """Cache strategy types."""
     NONE = "none"
     BASIC = "basic"
@@ -24,6 +23,8 @@ class CacheStrategy(Enum):
 
 @dataclass
 class CacheEntry:
+
+
     """Cache entry with metadata."""
     key: str
     result: Any
@@ -33,22 +34,32 @@ class CacheEntry:
     last_accessed: datetime = None
 
     def is_expired(self) -> bool:
+
+
         """Check if cache entry is expired."""
         return datetime.now() > self.timestamp + self.ttl
 
     def is_stale(self, max_age: timedelta) -> bool:
+
+
         """Check if cache entry is stale."""
         return datetime.now() > self.timestamp + max_age
 
     def touch(self):
+
+
         """Update access time and hit count."""
         self.last_accessed = datetime.now()
         self.hit_count += 1
 
 class RuleCache:
+
+
     """Intelligent rule caching system."""
 
     def __init__(self, strategy: CacheStrategy = CacheStrategy.INTELLIGENT):
+
+
         self.strategy = strategy
         self.cache: Dict[str, CacheEntry] = {}
         self.stats = {
@@ -64,6 +75,8 @@ class RuleCache:
         logger.info(f"Rule cache initialized with strategy: {strategy.value}")
 
     def _generate_cache_key(self, rule_name: str, context_data: Dict[str, Any]) -> str:
+
+
         """Generate cache key from rule name and context data."""
         # Create a deterministic hash of the context data
         context_str = json.dumps(context_data, sort_keys=True)
@@ -71,6 +84,8 @@ class RuleCache:
         return f"{rule_name}:{context_hash}"
 
     def _get_adaptive_ttl(self, rule_name: str, context_type: str) -> timedelta:
+
+
         """Get adaptive TTL based on rule characteristics."""
         # Rules that are frequently accessed get longer TTL
         if rule_name in ["validate_uk_spelling", "validate_aud_currency"]:
@@ -185,6 +200,8 @@ class RuleCache:
         logger.info(f"Cleared {cleared_count} cache entries")
 
     def get_stats(self) -> Dict[str, Any]:
+
+
         """Get cache performance statistics."""
         hit_rate = 0
         if self.stats["total_requests"] > 0:
@@ -203,6 +220,8 @@ class RuleCache:
         }
 
     def _estimate_memory_usage(self) -> float:
+
+
         """Estimate memory usage in MB."""
         # Rough estimation: each cache entry ~1KB
         return len(self.cache) * 0.001
@@ -240,6 +259,8 @@ class RuleCache:
 _rule_cache: Optional[RuleCache] = None
 
 def get_rule_cache() -> RuleCache:
+
+
     """Get global rule cache instance."""
     global _rule_cache
     if _rule_cache is None:
@@ -247,6 +268,8 @@ def get_rule_cache() -> RuleCache:
     return _rule_cache
 
 def set_cache_strategy(strategy: CacheStrategy) -> None:
+
+
     """Set cache strategy for the global cache."""
     global _rule_cache
     if _rule_cache is not None:

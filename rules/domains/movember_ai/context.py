@@ -5,7 +5,6 @@ Validates operational context with UK spelling and AUD currency standards.
 """
 
 from rules.types import Rule, Condition, Action, RulePriority
-from rules.core import RuleEngine
 
 
 # Context Validation Rules with UK spelling and AUD currency
@@ -445,7 +444,8 @@ def generate_context_recommendations(context_data: dict) -> list:
     recommendations = []
 
     # Check for project context
-    if 'project_id' not in context_data or not validate_movember_context(context_data['project_id'], context_data.get('operation_type', '')):
+    if 'project_id' not in context_data or not validate_movember_context(
+        context_data['project_id'], context_data.get
         recommendations.append("Ensure operation is within Movember project context")
 
     # Check for stakeholder authority

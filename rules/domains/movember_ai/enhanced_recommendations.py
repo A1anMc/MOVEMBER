@@ -12,15 +12,21 @@ import logging
 logger = logging.getLogger(__name__)
 
 class EnhancedRecommendationsEngine:
+
+
     """Enhanced recommendations engine with theory-backed insights."""
 
     def __init__(self):
+
+
         self.sdg_framework = self._load_sdg_framework()
         self.impact_theories = self._load_impact_theories()
         self.stakeholder_strategies = self._load_stakeholder_strategies()
         self.metrics_frameworks = self._load_metrics_frameworks()
 
     def _load_sdg_framework(self) -> Dict[str, Any]:
+
+
         """Load Sustainable Development Goals framework."""
         return {
             "SDG_3": {
@@ -105,6 +111,8 @@ class EnhancedRecommendationsEngine:
         }
 
     def _load_impact_theories(self) -> Dict[str, Any]:
+
+
         """Load impact measurement theories and frameworks."""
         return {
             "theory_of_change": {
@@ -158,6 +166,8 @@ class EnhancedRecommendationsEngine:
         }
 
     def _load_stakeholder_strategies(self) -> Dict[str, Any]:
+
+
         """Load stakeholder engagement strategies."""
         return {
             "primary_stakeholders": {
@@ -248,6 +258,8 @@ class EnhancedRecommendationsEngine:
         }
 
     def _load_metrics_frameworks(self) -> Dict[str, Any]:
+
+
         """Load comprehensive metrics frameworks."""
         return {
             "mental_health_metrics": {
@@ -322,6 +334,8 @@ class EnhancedRecommendationsEngine:
         }
 
     def generate_comprehensive_recommendations(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Generate comprehensive, theory-backed recommendations."""
         recommendations = {
             "timestamp": datetime.now().isoformat(),
@@ -336,6 +350,8 @@ class EnhancedRecommendationsEngine:
         return recommendations
 
     def _generate_impact_metrics_recommendations(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Generate theory-backed impact metrics recommendations."""
         category = grant_data.get("category", "")
         target_demographic = grant_data.get("target_demographic", "")
@@ -398,6 +414,8 @@ class EnhancedRecommendationsEngine:
         return recommendations
 
     def _generate_sdg_alignment_recommendations(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Generate comprehensive SDG alignment recommendations."""
         category = grant_data.get("category", "")
         location = grant_data.get("location", "")
@@ -433,6 +451,8 @@ class EnhancedRecommendationsEngine:
         }
 
     def _get_sdg_implementation_strategies(self, sdg: str, grant_data: Dict[str, Any]) -> List[str]:
+
+
         """Get implementation strategies for specific SDGs."""
         strategies = {
             "SDG_3": [
@@ -475,6 +495,8 @@ class EnhancedRecommendationsEngine:
         return strategies.get(sdg, [])
 
     def _get_sdg_measurement_approach(self, sdg: str, grant_data: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Get measurement approach for specific SDGs."""
         return {
             "indicators": self.sdg_framework[sdg]["indicators"],
@@ -491,6 +513,8 @@ class EnhancedRecommendationsEngine:
         }
 
     def _generate_stakeholder_recommendations(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Generate comprehensive stakeholder engagement recommendations."""
         category = grant_data.get("category", "")
         location = grant_data.get("location", "")
@@ -509,7 +533,9 @@ class EnhancedRecommendationsEngine:
                 "beneficiaries": {
                     "engagement_approach": "Participatory design and co-creation",
                     "strategies": self.stakeholder_strategies["primary_stakeholders"]["beneficiaries"]["engagement_strategies"],
+                        
                     "communication_channels": self.stakeholder_strategies["primary_stakeholders"]["beneficiaries"]["communication_channels"],
+                        
                     "feedback_mechanisms": [
                         "Regular community forums",
                         "Anonymous feedback systems",
@@ -520,7 +546,9 @@ class EnhancedRecommendationsEngine:
                 "healthcare_providers": {
                     "engagement_approach": "Professional development and clinical support",
                     "strategies": self.stakeholder_strategies["primary_stakeholders"]["healthcare_providers"]["engagement_strategies"],
+                        
                     "communication_channels": self.stakeholder_strategies["primary_stakeholders"]["healthcare_providers"]["communication_channels"],
+                        
                     "collaboration_opportunities": [
                         "Clinical practice guidelines development",
                         "Research partnerships",
@@ -531,7 +559,9 @@ class EnhancedRecommendationsEngine:
                 "community_organizations": {
                     "engagement_approach": "Partnership development and capacity building",
                     "strategies": self.stakeholder_strategies["primary_stakeholders"]["community_organizations"]["engagement_strategies"],
+                        
                     "communication_channels": self.stakeholder_strategies["primary_stakeholders"]["community_organizations"]["communication_channels"],
+                        
                     "partnership_opportunities": [
                         "Joint program delivery",
                         "Resource sharing agreements",
@@ -545,6 +575,7 @@ class EnhancedRecommendationsEngine:
                 "policymakers": {
                     "engagement_approach": "Evidence-based advocacy and policy influence",
                     "strategies": self.stakeholder_strategies["secondary_stakeholders"]["policymakers"]["engagement_strategies"],
+                        
                     "key_messages": [
                         "Mental health economic impact",
                         "Evidence-based intervention effectiveness",
@@ -555,6 +586,7 @@ class EnhancedRecommendationsEngine:
                 "funders": {
                     "engagement_approach": "Transparent reporting and impact demonstration",
                     "strategies": self.stakeholder_strategies["secondary_stakeholders"]["funders"]["engagement_strategies"],
+                        
                     "reporting_requirements": [
                         "Quarterly progress reports",
                         "Annual impact assessments",
@@ -567,6 +599,8 @@ class EnhancedRecommendationsEngine:
         return recommendations
 
     def _get_relevant_theories(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Get relevant theoretical frameworks for the grant."""
         category = grant_data.get("category", "")
 
@@ -586,6 +620,8 @@ class EnhancedRecommendationsEngine:
         return relevant_theories
 
     def _generate_dashboard_metrics(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Generate comprehensive dashboard metrics."""
         category = grant_data.get("category", "")
 

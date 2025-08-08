@@ -6,20 +6,24 @@ Predictive analytics and intelligent rule optimisation
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error
 import sqlite3
-import json
 from datetime import datetime, timedelta
 import logging
 
 class MovemberMLEngine:
+
+
     def __init__(self):
+
+
         self.db_path = "movember_ai.db"
         self.models = {}
         self.logger = logging.getLogger(__name__)
 
     def load_training_data(self):
+
+
         """Load data for ML training"""
         conn = sqlite3.connect(self.db_path)
 
@@ -39,6 +43,8 @@ class MovemberMLEngine:
         return grants_df, reports_df
 
     def train_grant_success_predictor(self):
+
+
         """Train ML model to predict grant success"""
         grants_df, _ = self.load_training_data()
 
@@ -59,6 +65,8 @@ class MovemberMLEngine:
         self.logger.info("Grant success predictor trained")
 
     def train_impact_prediction_model(self):
+
+
         """Train ML model to predict impact outcomes"""
         _, reports_df = self.load_training_data()
 
@@ -79,6 +87,8 @@ class MovemberMLEngine:
         self.logger.info("Impact prediction model trained")
 
     def predict_grant_success(self, grant_data):
+
+
         """Predict likelihood of grant success"""
         if 'grant_success' not in self.models:
             self.train_grant_success_predictor()
@@ -97,6 +107,8 @@ class MovemberMLEngine:
         }
 
     def predict_impact_outcome(self, project_data):
+
+
         """Predict expected impact outcome"""
         if 'impact_prediction' not in self.models:
             self.train_impact_prediction_model()
@@ -116,6 +128,8 @@ class MovemberMLEngine:
         }
 
     def _generate_grant_recommendations(self, grant_data):
+
+
         """Generate recommendations for grant improvement"""
         recommendations = []
 
@@ -128,6 +142,8 @@ class MovemberMLEngine:
         return recommendations
 
     def _generate_impact_recommendations(self, project_data):
+
+
         """Generate recommendations for impact optimisation"""
         recommendations = []
 
@@ -140,6 +156,8 @@ class MovemberMLEngine:
         return recommendations
 
     def _calculate_confidence_interval(self, prediction):
+
+
         """Calculate confidence interval for predictions"""
         # Simplified confidence calculation
         margin = prediction * 0.1  # 10% margin
@@ -149,6 +167,8 @@ class MovemberMLEngine:
         }
 
     def optimise_rules(self):
+
+
         """Use ML insights to optimise rule performance"""
         # Analyse rule effectiveness
         rule_performance = self._analyse_rule_performance()
@@ -162,6 +182,8 @@ class MovemberMLEngine:
         return optimisations
 
     def _analyse_rule_performance(self):
+
+
         """Analyse how well rules are performing"""
         # This would connect to the rules engine metrics
         return {

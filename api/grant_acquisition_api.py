@@ -9,7 +9,6 @@ from datetime import datetime
 from typing import Dict, List, Optional, Any
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel, Field
-import asyncio
 
 from grant_acquisition_engine import (
     grant_acquisition_engine,
@@ -24,6 +23,8 @@ grant_acquisition_router = APIRouter(prefix="/grant-acquisition", tags=["Grant A
 
 # Pydantic models for request/response
 class GrantDiscoveryRequest(BaseModel):
+
+
     focus_areas: Optional[List[str]] = Field(
         default=None,
         description="Specific focus areas for grant discovery"
@@ -38,12 +39,16 @@ class GrantDiscoveryRequest(BaseModel):
     )
 
 class GrantDiscoveryResponse(BaseModel):
+
+
     status: str
     discovery_results: Dict[str, Any]
     currency: str = "AUD"
     spelling_standard: str = "UK"
 
 class ApplicationEnhancementRequest(BaseModel):
+
+
     grant_id: str = Field(..., description="ID of the grant opportunity")
     current_draft: Dict[str, Any] = Field(..., description="Current application draft")
     movember_strengths: Optional[List[str]] = Field(
@@ -52,23 +57,31 @@ class ApplicationEnhancementRequest(BaseModel):
     )
 
 class ApplicationEnhancementResponse(BaseModel):
+
+
     status: str
     enhanced_application: Dict[str, Any]
     currency: str = "AUD"
     spelling_standard: str = "UK"
 
 class SuccessTrackingRequest(BaseModel):
+
+
     grant_id: str = Field(..., description="ID of the grant")
     application_data: Dict[str, Any] = Field(..., description="Application data")
     status: str = Field(..., description="Current application status")
 
 class SuccessTrackingResponse(BaseModel):
+
+
     status: str
     tracking_result: Dict[str, Any]
     currency: str = "AUD"
     spelling_standard: str = "UK"
 
 class SuccessStrategyRequest(BaseModel):
+
+
     grant_id: str = Field(..., description="ID of the grant opportunity")
     competitors: Optional[List[str]] = Field(
         default=None,
@@ -80,6 +93,8 @@ class SuccessStrategyRequest(BaseModel):
     )
 
 class SuccessStrategyResponse(BaseModel):
+
+
     status: str
     strategy: Dict[str, Any]
     currency: str = "AUD"
@@ -90,39 +105,39 @@ class SuccessStrategyResponse(BaseModel):
 async def discover_grants(request: GrantDiscoveryRequest):
     """
     Discover grant opportunities that match Movember's profile.
-    
+
     This endpoint helps Movember find relevant grant opportunities based on:
     - Focus areas (men's health, mental health, etc.)
     - Budget requirements
     - Timeline needs
     - Geographic scope
     """
-    
+
     logger.info(f"Grant discovery request: {request}")
-    
+
     try:
         # Use default Movember profile if not specified
         focus_areas = request.focus_areas or [
             "men's mental health",
-            "prostate cancer", 
+            "prostate cancer",
             "testicular cancer",
             "suicide prevention",
             "physical health awareness"
         ]
-        
+
         budget_range = request.budget_range or {"min": 50000, "max": 5000000}
-        
+
         # Call the grant acquisition engine
         discovery_results = await grant_acquisition_engine.discover_grants(
             focus_areas=focus_areas,
             budget_range=budget_range
         )
-        
+
         return GrantDiscoveryResponse(
             status="success",
             discovery_results=discovery_results
         )
-        
+
     except Exception as e:
         logger.error(f"Grant discovery failed: {e}")
         raise HTTPException(
@@ -135,28 +150,28 @@ async def discover_grants(request: GrantDiscoveryRequest):
 async def enhance_application(request: ApplicationEnhancementRequest):
     """
     Enhance a grant application for better success probability.
-    
+
     This endpoint helps Movember improve grant applications by:
     - Highlighting Movember's unique strengths
     - Optimising budget allocation
     - Providing strategic recommendations
     - Suggesting risk mitigation strategies
     """
-    
+
     logger.info(f"Application enhancement request for grant: {request.grant_id}")
-    
+
     try:
         # Call the grant acquisition engine
         enhancement_results = await grant_acquisition_engine.enhance_application(
             request.grant_id,
             request.current_draft
         )
-        
+
         return ApplicationEnhancementResponse(
             status="success",
             enhanced_application=enhancement_results
         )
-        
+
     except Exception as e:
         logger.error(f"Application enhancement failed: {e}")
         raise HTTPException(
@@ -169,32 +184,32 @@ async def enhance_application(request: ApplicationEnhancementRequest):
 async def track_success(request: SuccessTrackingRequest):
     """
     Track grant application success and provide analytics.
-    
+
     This endpoint helps Movember:
     - Track application status
     - Monitor success rates
     - Analyse funding obtained
     - Generate improvement recommendations
     """
-    
+
     logger.info(f"Success tracking request for grant: {request.grant_id}")
-    
+
     try:
         # Convert status string to enum
         status_enum = GrantStatus(request.status)
-        
+
         # Call the grant acquisition engine
         tracking_results = await grant_acquisition_engine.track_success(
             request.grant_id,
             request.application_data,
             status_enum
         )
-        
+
         return SuccessTrackingResponse(
             status="success",
             tracking_result=tracking_results
         )
-        
+
     except Exception as e:
         logger.error(f"Success tracking failed: {e}")
         raise HTTPException(
@@ -207,7 +222,7 @@ async def track_success(request: SuccessTrackingRequest):
 async def get_success_analytics():
     """
     Get comprehensive success analytics for Movember's grant applications.
-    
+
     Returns:
     - Overall success rates
     - Total funding obtained
@@ -215,20 +230,20 @@ async def get_success_analytics():
     - Success trends over time
     - Strategic recommendations
     """
-    
+
     logger.info("Success analytics request")
-    
+
     try:
         # Call the grant acquisition engine
         analytics_results = await grant_acquisition_engine.get_success_analytics()
-        
+
         return {
             "status": "success",
             "analytics": analytics_results,
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-        
+
     except Exception as e:
         logger.error(f"Success analytics failed: {e}")
         raise HTTPException(
@@ -241,30 +256,30 @@ async def get_success_analytics():
 async def develop_success_strategy(request: SuccessStrategyRequest):
     """
     Develop a winning strategy for a specific grant opportunity.
-    
+
     This endpoint helps Movember:
     - Analyse competitive positioning
     - Identify unique advantages
     - Develop strategic partnerships
     - Plan risk mitigation
     """
-    
+
     logger.info(f"Success strategy request for grant: {request.grant_id}")
-    
+
     try:
         # Find the grant opportunity
         grant_opportunity = next(
-            (g for g in grant_acquisition_engine.discovery_engine.grant_database 
+            (g for g in grant_acquisition_engine.discovery_engine.grant_database
              if g.id == request.grant_id),
             None
         )
-        
+
         if not grant_opportunity:
             raise HTTPException(
                 status_code=404,
                 detail=f"Grant opportunity {request.grant_id} not found"
             )
-        
+
         # Generate success strategy
         strategy = {
             "grant_id": request.grant_id,
@@ -304,12 +319,12 @@ async def develop_success_strategy(request: SuccessStrategyRequest):
                 "Show commitment to long-term impact and sustainability"
             ]
         }
-        
+
         return SuccessStrategyResponse(
             status="success",
             strategy=strategy
         )
-        
+
     except Exception as e:
         logger.error(f"Success strategy development failed: {e}")
         raise HTTPException(
@@ -322,7 +337,7 @@ async def develop_success_strategy(request: SuccessStrategyRequest):
 async def get_grant_opportunities():
     """
     Get all available grant opportunities for Movember.
-    
+
     Returns a comprehensive list of grant opportunities with:
     - Match scores
     - Success probabilities
@@ -330,12 +345,12 @@ async def get_grant_opportunities():
     - Deadlines
     - Requirements
     """
-    
+
     logger.info("Grant opportunities request")
-    
+
     try:
         opportunities = []
-        
+
         for grant in grant_acquisition_engine.discovery_engine.grant_database:
             opportunities.append({
                 "id": grant.id,
@@ -352,20 +367,21 @@ async def get_grant_opportunities():
                 "description": grant.description,
                 "requirements": grant.requirements or []
             })
-        
+
         # Sort by match score and success probability
         opportunities.sort(key=lambda x: (x["match_score"], x["success_probability"]), reverse=True)
-        
+
         return {
             "status": "success",
             "opportunities": opportunities,
             "total_opportunities": len(opportunities),
             "total_potential_funding": sum(g["amount"] for g in opportunities),
-            "average_success_probability": sum(g["success_probability"] for g in opportunities) / len(opportunities) if opportunities else 0,
+            "average_success_probability": sum(
+                g["success_probability"] for g in opportunities) / len(opportunities),
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-        
+
     except Exception as e:
         logger.error(f"Grant opportunities retrieval failed: {e}")
         raise HTTPException(
@@ -382,7 +398,7 @@ async def update_application_status(
 ):
     """
     Update the status of a grant application.
-    
+
     Status options:
     - discovered: Grant opportunity found
     - draft: Application in progress
@@ -390,9 +406,9 @@ async def update_application_status(
     - approved: Grant approved
     - rejected: Grant rejected
     """
-    
+
     logger.info(f"Application status update for grant: {grant_id} -> {status}")
-    
+
     try:
         # Validate status
         valid_statuses = [s.value for s in GrantStatus]
@@ -401,14 +417,14 @@ async def update_application_status(
                 status_code=400,
                 detail=f"Invalid status. Must be one of: {valid_statuses}"
             )
-        
+
         # Track the status update
         tracking_results = await grant_acquisition_engine.track_success(
             grant_id,
             application_data,
             GrantStatus(status)
         )
-        
+
         return {
             "status": "success",
             "grant_id": grant_id,
@@ -417,7 +433,7 @@ async def update_application_status(
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-        
+
     except Exception as e:
         logger.error(f"Application status update failed: {e}")
         raise HTTPException(
@@ -431,14 +447,14 @@ async def grant_acquisition_health():
     """
     Health check for the grant acquisition system.
     """
-    
+
     return {
         "status": "healthy",
         "service": "grant_acquisition",
         "timestamp": datetime.now().isoformat(),
         "features": [
             "grant_discovery",
-            "application_enhancement", 
+            "application_enhancement",
             "success_tracking",
             "success_analytics",
             "success_strategy"
@@ -448,4 +464,4 @@ async def grant_acquisition_health():
     }
 
 # Export the router for inclusion in main API
-__all__ = ["grant_acquisition_router"] 
+__all__ = ["grant_acquisition_router"]

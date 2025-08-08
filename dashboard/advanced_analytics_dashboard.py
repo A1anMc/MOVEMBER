@@ -12,12 +12,12 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 import json
 import httpx
-from dataclasses import dataclass
-from enum import Enum
 
 logger = logging.getLogger(__name__)
 
 class AnalyticsType(Enum):
+
+
     """Types of analytics for dashboard."""
     PREDICTIVE = "predictive"
     DESCRIPTIVE = "descriptive"
@@ -26,6 +26,8 @@ class AnalyticsType(Enum):
 
 @dataclass
 class AnalyticsInsight:
+
+
     """Structured analytics insight."""
     insight_type: str
     title: str
@@ -37,9 +39,13 @@ class AnalyticsInsight:
     timestamp: datetime
 
 class AdvancedAnalyticsDashboard:
+
+
     """Advanced analytics dashboard with ML insights."""
 
     def __init__(self, api_base_url: str = "https://movember-api.onrender.com"):
+
+
         self.api_base_url = api_base_url
         self.insights_history: List[AnalyticsInsight] = []
         self.analytics_cache = {}
@@ -355,7 +361,9 @@ class AdvancedAnalyticsDashboard:
                 },
                 "prediction_insights": {
                     "high_impact_grants": "Grants with comprehensive impact metrics and SDG alignment show 40% higher success rates",
+                        
                     "stakeholder_engagement": "Grants with strong stakeholder engagement plans have 35% better outcomes",
+                        
                     "budget_realism": "Realistic budgets correlate with 25% higher approval rates",
                     "timeline_feasibility": "Well-planned timelines increase success probability by 30%"
                 }
@@ -573,14 +581,18 @@ async def main():
     if "predictive_analytics" in analytics_report:
         pred_analytics = analytics_report["predictive_analytics"]
         print(f"\nPredictive Analytics:")
-        print(f"- Grant approval prediction accuracy: {pred_analytics.get('grant_approval_prediction', {}).get('model_accuracy', 0):.2f}")
-        print(f"- Impact prediction accuracy: {pred_analytics.get('impact_prediction', {}).get('model_accuracy', 0):.2f}")
+        print(
+            f"- Grant approval prediction accuracy: {pred_analytics.get('approval_accuracy', 'N/A')}%")
+        print(
+            f"- Impact prediction accuracy: {pred_analytics.get('impact_accuracy', 'N/A')}%")
 
     if "ml_insights" in analytics_report:
         ml_insights = analytics_report["ml_insights"]
         print(f"\nMachine Learning Insights:")
-        print(f"- Grant evaluation model F1 score: {ml_insights.get('model_performance', {}).get('grant_evaluation_model', {}).get('f1_score', 0):.2f}")
-        print(f"- Impact prediction R² score: {ml_insights.get('model_performance', {}).get('impact_prediction_model', {}).get('r2_score', 0):.2f}")
+        print(
+            f"- Grant evaluation model F1 score: {ml_insights.get('f1_score', 'N/A')}")
+        print(
+            f"- Impact prediction R² score: {ml_insights.get('r2_score', 'N/A')}")
 
     print("\nAdvanced analytics dashboard ready for comprehensive insights!")
     print("="*80)

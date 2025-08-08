@@ -10,17 +10,19 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 import hashlib
 import os
-from dataclasses import dataclass
-from enum import Enum
 import pandas as pd
 
 class DataClassification(Enum):
+
+
     PUBLIC = "public"
     INTERNAL = "internal"
     CONFIDENTIAL = "confidential"
     RESTRICTED = "restricted"
 
 class DataRetentionPolicy(Enum):
+
+
     SHORT_TERM = "short_term"  # 1 year
     MEDIUM_TERM = "medium_term"  # 5 years
     LONG_TERM = "long_term"  # 10 years
@@ -28,6 +30,8 @@ class DataRetentionPolicy(Enum):
 
 @dataclass
 class DataGovernancePolicy:
+
+
     classification: DataClassification
     retention_policy: DataRetentionPolicy
     encryption_required: bool
@@ -36,7 +40,11 @@ class DataGovernancePolicy:
     backup_frequency: str
 
 class DataGovernanceFramework:
+
+
     def __init__(self):
+
+
         self.db_path = "movember_ai.db"
         self.logger = logging.getLogger(__name__)
 
@@ -80,6 +88,8 @@ class DataGovernanceFramework:
         self._init_governance_tables()
 
     def _init_governance_tables(self):
+
+
         """Initialize governance-related database tables"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -142,6 +152,8 @@ class DataGovernanceFramework:
         conn.close()
 
     def log_data_access(self, user_id: str, data_type: str, action: str, record_id: str,
+
+
                        ip_address: str = None, user_agent: str = None):
         """Log data access for audit purposes"""
         conn = sqlite3.connect(self.db_path)
@@ -159,6 +171,8 @@ class DataGovernanceFramework:
         self.logger.info(f"Data access logged: {user_id} {action} {data_type}:{record_id}")
 
     def apply_retention_policy(self, data_type: str):
+
+
         """Apply retention policy to data"""
         policy = self.policies.get(data_type)
         if not policy:
@@ -232,6 +246,8 @@ class DataGovernanceFramework:
         self.logger.info(f"Retention policy applied to {len(records)} {data_type} records")
 
     def cleanup_expired_data(self):
+
+
         """Remove expired data based on retention policies"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -281,6 +297,8 @@ class DataGovernanceFramework:
         self.logger.info(f"Cleanup completed: {len(expired_records)} expired records removed")
 
     def generate_governance_report(self) -> Dict[str, Any]:
+
+
         """Generate comprehensive governance report"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -347,6 +365,8 @@ class DataGovernanceFramework:
         return report
 
     def encrypt_sensitive_data(self, data_type: str):
+
+
         """Encrypt sensitive data based on policy"""
         policy = self.policies.get(data_type)
         if not policy or not policy.encryption_required:
@@ -374,6 +394,8 @@ class DataGovernanceFramework:
         self.logger.info(f"Encryption key generated for {data_type}: {key_id}")
 
     def backup_data(self, data_type: str):
+
+
         """Create backup of data based on policy"""
         policy = self.policies.get(data_type)
         if not policy:
@@ -419,6 +441,8 @@ class DataGovernanceFramework:
         self.logger.info(f"Backup created for {data_type}: {backup_id} ({backup_size} bytes)")
 
 def main():
+
+
     """Main function to demonstrate governance framework"""
     governance = DataGovernanceFramework()
 

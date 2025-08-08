@@ -4,13 +4,11 @@ Advanced Metrics Dashboard for Movember AI Rules System
 Real-time performance monitoring and analytics
 """
 
-import asyncio
 import time
 import psutil
 import sqlite3
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional
-from dataclasses import dataclass
 import logging
 import json
 from collections import defaultdict, deque
@@ -19,6 +17,8 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class PerformanceMetric:
+
+
     """Performance metric data structure."""
     timestamp: datetime
     metric_name: str
@@ -29,6 +29,8 @@ class PerformanceMetric:
 
 @dataclass
 class SystemHealth:
+
+
     """System health status."""
     cpu_usage: float
     memory_usage: float
@@ -40,9 +42,13 @@ class SystemHealth:
     response_time_avg: float
 
 class AdvancedMetricsCollector:
+
+
     """Advanced metrics collection and analysis."""
 
     def __init__(self, db_path: str = "metrics.db"):
+
+
         self.db_path = db_path
         self.metrics_buffer = deque(maxlen=1000)
         self.performance_history = defaultdict(list)
@@ -56,6 +62,8 @@ class AdvancedMetricsCollector:
         self.init_database()
 
     def init_database(self):
+
+
         """Initialize metrics database."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -276,6 +284,8 @@ class AdvancedMetricsCollector:
         }
 
     def _calculate_error_rate(self) -> float:
+
+
         """Calculate current error rate from metrics buffer."""
         if not self.metrics_buffer:
             return 0.0
@@ -286,6 +296,8 @@ class AdvancedMetricsCollector:
         return (len(error_metrics) / total_metrics) * 100 if total_metrics > 0 else 0.0
 
     def _calculate_avg_response_time(self) -> float:
+
+
         """Calculate average response time from metrics buffer."""
         response_metrics = [m for m in self.metrics_buffer if "response_time" in m.metric_name.lower()]
 
@@ -295,6 +307,8 @@ class AdvancedMetricsCollector:
         return sum(m.value for m in response_metrics) / len(response_metrics)
 
     def _calculate_trend(self, metrics: List[PerformanceMetric]) -> str:
+
+
         """Calculate trend from recent metrics."""
         if len(metrics) < 2:
             return "stable"
@@ -429,6 +443,8 @@ class AdvancedMetricsCollector:
 _metrics_collector: Optional[AdvancedMetricsCollector] = None
 
 def get_metrics_collector() -> AdvancedMetricsCollector:
+
+
     """Get global metrics collector instance."""
     global _metrics_collector
     if _metrics_collector is None:

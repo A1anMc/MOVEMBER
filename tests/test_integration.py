@@ -5,7 +5,6 @@ Comprehensive testing of the complete rule evaluation workflow.
 """
 
 import asyncio
-import json
 import pytest
 import time
 from datetime import datetime
@@ -32,6 +31,8 @@ class TestMovemberAIRulesIntegration:
 
     @pytest.fixture
     def sample_impact_report(self):
+
+
         """Sample impact report data."""
         return {
             "report_id": "IMP-2024-001",
@@ -55,6 +56,8 @@ class TestMovemberAIRulesIntegration:
 
     @pytest.fixture
     def sample_grant_application(self):
+
+
         """Sample grant application data."""
         return {
             "grant_id": "GRANT-2024-001",

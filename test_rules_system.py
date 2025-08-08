@@ -10,7 +10,6 @@ import os
 # Add the current directory to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from rules.core import RuleEngine
 from rules.types import Rule, Condition, Action, RulePriority, ContextType, ExecutionContext
 
 
@@ -175,6 +174,8 @@ async def test_custom_action():
 
     # Define custom action
     def custom_test_action(action, context):
+
+
         return f"Custom action executed with value: {context.data.get('value', 0)}"
 
     # Register custom action

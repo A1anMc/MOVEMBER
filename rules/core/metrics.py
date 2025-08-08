@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class RuleMetrics:
+
+
     """Metrics for a specific rule."""
     rule_name: str
     total_executions: int = 0
@@ -30,6 +32,8 @@ class RuleMetrics:
 
     @property
     def success_rate(self) -> float:
+
+
         """Calculate success rate."""
         if self.total_executions == 0:
             return 0.0
@@ -37,6 +41,8 @@ class RuleMetrics:
 
     @property
     def average_execution_time(self) -> float:
+
+
         """Calculate average execution time."""
         if self.total_executions == 0:
             return 0.0
@@ -44,12 +50,16 @@ class RuleMetrics:
 
     @property
     def median_execution_time(self) -> float:
+
+
         """Calculate median execution time."""
         if not self.recent_execution_times:
             return 0.0
         return statistics.median(self.recent_execution_times)
 
     def record_execution(self, execution_time: float, success: bool) -> None:
+
+
         """Record an execution."""
         self.total_executions += 1
         self.total_execution_time += execution_time
@@ -67,6 +77,8 @@ class RuleMetrics:
             self.max_execution_time = execution_time
 
     def to_dict(self) -> Dict[str, Any]:
+
+
         """Convert to dictionary."""
         return {
             'rule_name': self.rule_name,
@@ -84,6 +96,8 @@ class RuleMetrics:
 
 @dataclass
 class SystemMetrics:
+
+
     """System-wide metrics."""
     total_rules_executed: int = 0
     total_batch_executions: int = 0
@@ -95,17 +109,23 @@ class SystemMetrics:
 
     @property
     def uptime(self) -> timedelta:
+
+
         """Calculate uptime."""
         return datetime.now() - self.uptime_start
 
     @property
     def average_batch_time(self) -> float:
+
+
         """Calculate average batch execution time."""
         if not self.recent_batch_times:
             return 0.0
         return statistics.mean(self.recent_batch_times)
 
     def record_batch_execution(self, rule_count: int, execution_time: float) -> None:
+
+
         """Record a batch execution."""
         self.total_batch_executions += 1
         self.total_rules_executed += rule_count
@@ -118,6 +138,8 @@ class SystemMetrics:
             self.peak_concurrent_rules = rule_count
 
     def to_dict(self) -> Dict[str, Any]:
+
+
         """Convert to dictionary."""
         return {
             'total_rules_executed': self.total_rules_executed,
@@ -134,6 +156,8 @@ class MetricsCollector:
     """Collects and manages metrics for the rule engine."""
 
     def __init__(self):
+
+
         self._lock = threading.Lock()
         self.system_metrics = SystemMetrics()
         self.rule_metrics: Dict[str, RuleMetrics] = defaultdict(lambda: RuleMetrics(""))
@@ -149,6 +173,8 @@ class MetricsCollector:
         self.alerts: List[Dict[str, Any]] = []
 
     def record_rule_execution(self, rule_name: str, execution_time: float, success: bool) -> None:
+
+
         """Record a rule execution."""
         with self._lock:
             if rule_name not in self.rule_metrics:
@@ -160,11 +186,15 @@ class MetricsCollector:
             self._check_performance_alerts(rule_name, execution_time, success)
 
     def record_batch_execution(self, rule_count: int, execution_time: float) -> None:
+
+
         """Record a batch execution."""
         with self._lock:
             self.system_metrics.record_batch_execution(rule_count, execution_time)
 
     def get_metrics(self) -> Dict[str, Any]:
+
+
         """Get all metrics."""
         with self._lock:
             return {
@@ -178,6 +208,8 @@ class MetricsCollector:
             }
 
     def get_rule_metrics(self, rule_name: str) -> Optional[Dict[str, Any]]:
+
+
         """Get metrics for a specific rule."""
         with self._lock:
             if rule_name in self.rule_metrics:
@@ -185,11 +217,15 @@ class MetricsCollector:
             return None
 
     def get_system_metrics(self) -> Dict[str, Any]:
+
+
         """Get system metrics."""
         with self._lock:
             return self.system_metrics.to_dict()
 
     def get_performance_summary(self) -> Dict[str, Any]:
+
+
         """Get a performance summary."""
         with self._lock:
             if not self.rule_metrics:
@@ -223,21 +259,29 @@ class MetricsCollector:
             }
 
     def set_performance_thresholds(self, thresholds: Dict[str, float]) -> None:
+
+
         """Set performance thresholds."""
         with self._lock:
             self.performance_thresholds.update(thresholds)
 
     def get_alerts(self, limit: int = 10) -> List[Dict[str, Any]]:
+
+
         """Get recent alerts."""
         with self._lock:
             return self.alerts[-limit:]
 
     def clear_alerts(self) -> None:
+
+
         """Clear all alerts."""
         with self._lock:
             self.alerts.clear()
 
     def reset(self) -> None:
+
+
         """Reset all metrics."""
         with self._lock:
             self.system_metrics = SystemMetrics()
@@ -245,6 +289,8 @@ class MetricsCollector:
             self.alerts.clear()
 
     def _check_performance_alerts(self, rule_name: str, execution_time: float, success: bool) -> None:
+
+
         """Check for performance issues and create alerts."""
         rule_metrics = self.rule_metrics[rule_name]
 
@@ -275,6 +321,8 @@ class MetricsCollector:
             )
 
     def _add_alert(self, alert_type: str, message: str, details: Dict[str, Any]) -> None:
+
+
         """Add an alert."""
         alert = {
             'timestamp': datetime.now().isoformat(),
@@ -292,6 +340,8 @@ class MetricsCollector:
         logger.warning(f"PERFORMANCE ALERT: {message}")
 
     def export_metrics(self, format: str = 'json') -> str:
+
+
         """Export metrics in the specified format."""
         metrics = self.get_metrics()
 
@@ -304,6 +354,8 @@ class MetricsCollector:
             raise ValueError(f"Unsupported format: {format}")
 
     def _export_csv(self, metrics: Dict[str, Any]) -> str:
+
+
         """Export metrics as CSV."""
         import csv
         import io

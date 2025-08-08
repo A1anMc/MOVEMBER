@@ -27,9 +27,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class MovemberMonitoringBot:
+
+
     """Monitoring bot for the Movember AI Rules System."""
 
     def __init__(self, api_url: str = "http://localhost: 8000", check_interval: int = 60):
+
+
         self.api_url = api_url
         self.check_interval = check_interval
         self.db_path = "movember_ai.db"

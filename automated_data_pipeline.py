@@ -11,12 +11,14 @@ import sqlite3
 from datetime import datetime, timedelta
 from typing import Dict, List, Any
 import json
-from real_data_sources import RealDataCollector
-from data_quality_assurance import DataQualityAssurance
 import numpy as np
 
 class AutomatedDataPipeline:
+
+
     def __init__(self):
+
+
         self.collector = RealDataCollector()
         self.qa = DataQualityAssurance()
         self.logger = logging.getLogger(__name__)
@@ -71,7 +73,8 @@ class AutomatedDataPipeline:
             duration = (end_time - start_time).total_seconds()
 
             self.performance_metrics['last_run'][data_type] = end_time.isoformat()
-            self.performance_metrics['success_count'][data_type] = self.performance_metrics['success_count'].get(data_type, 0) + 1
+            self.performance_metrics['success_count'][data_type] = self.performance_metrics['success_count'].get(
+                data_type, 0) + 1
             self.performance_metrics['data_volume'][data_type] = len(data)
 
             self.logger.info(f"✅ {data_type} collection completed: {len(data)} records in {duration:.2f}s")
@@ -81,7 +84,8 @@ class AutomatedDataPipeline:
 
         except Exception as e:
             self.logger.error(f"❌ Error in {data_type} collection: {e}")
-            self.performance_metrics['error_count'][data_type] = self.performance_metrics['error_count'].get(data_type, 0) + 1
+            self.performance_metrics['error_count'][data_type] = self.performance_metrics['error_count'].get(
+                data_type, 0) + 1
 
     async def run_quality_assessment(self, data_type: str):
         """Run quality assessment for collected data"""
@@ -106,6 +110,8 @@ class AutomatedDataPipeline:
             self.logger.error(f"❌ Error in quality assessment for {data_type}: {e}")
 
     def _store_quality_assessment(self, assessment: Dict[str, Any]):
+
+
         """Store quality assessment results"""
         conn = sqlite3.connect(self.collector.db_path)
         cursor = conn.cursor()
@@ -196,6 +202,8 @@ class AutomatedDataPipeline:
         self.logger.warning(f"🚨 Quality alert generated for {data_type}")
 
     def setup_schedules(self):
+
+
         """Setup automated schedules"""
         # Daily grants collection
         schedule.every().day.at("09: 00").do(
@@ -266,6 +274,8 @@ class AutomatedDataPipeline:
         self.logger.info("✅ Performance report generated")
 
     def start_pipeline(self):
+
+
         """Start the automated data pipeline"""
         self.logger.info("🚀 Starting automated data pipeline...")
 
@@ -283,6 +293,8 @@ class AutomatedDataPipeline:
             time.sleep(60)  # Check every minute
 
 def main():
+
+
     """Main function to start the pipeline"""
     # Configure logging
     logging.basicConfig(

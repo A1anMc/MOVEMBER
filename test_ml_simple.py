@@ -4,7 +4,6 @@ Simple ML test
 """
 import sqlite3
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 
 # Test database connection and data

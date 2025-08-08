@@ -21,22 +21,32 @@ logger = logging.getLogger(__name__)
 class SafeValue:
     """A sentinel that safely absorbs attribute access, iteration, and comparisons."""
     def __getattr__(self, name: str) -> 'SafeValue':
+
+
         # Provide zero-like attributes often used in expressions
         if name in {'length', 'count'}:
             return 0
         return self
 
     def __iter__(self):
+
+
         return iter(())
 
     def __len__(self) -> int:
+
+
         return 0
 
     def __bool__(self) -> bool:
+
+
         return False
 
     # Comparisons always evaluate to False to avoid raising
     def _cmp(self, other) -> bool:
+
+
         return False
 
     __lt__ = __le__ = __gt__ = __ge__ = __ne__ = __eq__ = _cmp
@@ -45,11 +55,15 @@ class SafeValue:
 class AttrDict(dict):
     """Dictionary that supports attribute-style access and recursive wrapping."""
     def __init__(self, *args, **kwargs):
+
+
         super().__init__(*args, **kwargs)
         for key, value in list(self.items()):
             self[key] = self._wrap(value)
 
     def __getattr__(self, item):
+
+
         try:
             if item == 'length':
                 return len(self)
@@ -60,17 +74,23 @@ class AttrDict(dict):
             return SafeValue()
 
     def __getitem__(self, key):
+
+
         if key in self.keys():
             return super().__getitem__(key)
         return SafeValue()
 
     def __setattr__(self, key, value):
+
+
         if key in {'_AttrDict__wrapped'}:
             return super().__setattr__(key, value)
         self[key] = self._wrap(value)
 
     @staticmethod
     def _wrap(value: Any) -> Any:
+
+
         if isinstance(value, dict):
             return AttrDict(value)
         if isinstance(value, list):
@@ -81,14 +101,20 @@ class AttrDict(dict):
 class AttrList(list):
     """List that provides attribute-style helpers and recursive wrapping."""
     def __init__(self, iterable=()):
+
+
         super().__init__(AttrDict._wrap(v) for v in iterable)
 
     @property
     def length(self) -> int:
+
+
         return len(self)
 
     @property
     def count(self) -> int:
+
+
         return len(self)
 
 
@@ -96,6 +122,8 @@ class ConditionEvaluator:
     """Evaluates individual conditions."""
 
     def __init__(self):
+
+
         # Built-in operators
         self.operators = {
             '==': operator.eq,
@@ -136,6 +164,8 @@ class ConditionEvaluator:
         }
 
     def evaluate(self, condition: Condition, context: ExecutionContext) -> bool:
+
+
         """Evaluate a single condition."""
         try:
             if condition.custom_evaluator:
@@ -163,6 +193,8 @@ class ConditionEvaluator:
         )
 
     def _wrap_data(self, data: Any) -> Any:
+
+
         """Recursively wrap dicts/lists for attribute-style access."""
         if isinstance(data, dict):
             return AttrDict(data)
@@ -171,6 +203,8 @@ class ConditionEvaluator:
         return data
 
     def _build_variables(self, context: ExecutionContext, parameters: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Build variables dictionary for expression evaluation."""
         wrapped_data = self._wrap_data(context.data or {})
 
@@ -187,12 +221,18 @@ class ConditionEvaluator:
             if 'outputs' in wrapped_data and 'outcomes' in wrapped_data:
                 report_alias = wrapped_data
 
-        project_alias = AttrDict({'id': context.data.get('project_id')}) if isinstance(context.data, dict) and 'project_id' in context.data else AttrDict({})
-        agent_alias = self._wrap_data((context.data or {}).get('agent', {})) if isinstance(context.data, dict) else AttrDict({})
-        user_alias = AttrDict({'request_type': ((context.data or {}).get('request', {}) or {}).get('type')}) if isinstance(context.data, dict) else AttrDict({})
-        operation_alias = self._wrap_data((context.data or {}).get('operation', {})) if isinstance(context.data, dict) else AttrDict({})
-        communication_alias = self._wrap_data((context.data or {}).get('communication', {})) if isinstance(context.data, dict) else AttrDict({})
-        stakeholder_alias = self._wrap_data(((context.data or {}).get('stakeholder') or {})) if isinstance(context.data, dict) else AttrDict({})
+        project_alias = AttrDict(
+            {'id': context.data.get
+        agent_alias = self._wrap_data(
+            
+        user_alias = AttrDict(
+            {'request_type': 
+        operation_alias = self._wrap_data(
+            
+        communication_alias = self._wrap_data(
+            
+        stakeholder_alias = self._wrap_data(
+            
 
         variables = {
             # Context data
@@ -236,6 +276,8 @@ class ConditionEvaluator:
         return variables
 
     def _evaluate_expression(self, expression: str, variables: Dict[str, Any]) -> bool:
+
+
         """Evaluate a Python expression safely."""
         try:
             # Parse the expression
@@ -255,6 +297,8 @@ class ConditionEvaluator:
             return False
 
     def _validate_ast(self, tree: ast.Expression) -> None:
+
+
         """Validate AST to ensure only safe operations are allowed."""
         allowed_nodes = {
             ast.Expression,
@@ -293,6 +337,8 @@ class ConditionEvaluator:
                         raise ValueError(f"Attribute access not allowed: {ast.unparse(node.func)}")
 
     def _is_safe_attribute(self, node: ast.Attribute) -> bool:
+
+
         """Check if attribute access is safe."""
         # Allow common safe attributes
         safe_attributes = {
@@ -313,9 +359,13 @@ class RuleEvaluator:
     """Evaluates multiple conditions for a rule."""
 
     def __init__(self):
+
+
         self.condition_evaluator = ConditionEvaluator()
 
     def evaluate_conditions(self, conditions: List[Condition], context: ExecutionContext) -> bool:
+
+
         """Evaluate all conditions for a rule."""
         if not conditions:
             return True
@@ -337,7 +387,10 @@ class RuleEvaluator:
 
         return True
 
-    def evaluate_conditions_with_details(self, conditions: List[Condition], context: ExecutionContext) -> Dict[str, Any]:
+    def evaluate_conditions_with_details(
+        self, conditions: List[Condition], context: ExecutionContext) -> Dict[str, Any]:
+
+
         """Evaluate conditions and return detailed results."""
         results = {
             'all_passed': True,

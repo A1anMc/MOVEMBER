@@ -9,10 +9,8 @@ import os
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
-from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 import shutil
-from pathlib import Path
 import json
 
 from data_upload_system import upload_system
@@ -24,6 +22,8 @@ data_upload_router = APIRouter(prefix="/data-upload", tags=["Data Upload"])
 
 # Pydantic models
 class UploadResponse(BaseModel):
+
+
     status: str
     data_id: str
     data_type: str
@@ -35,6 +35,8 @@ class UploadResponse(BaseModel):
     spelling_standard: str = "UK"
 
 class DataSummaryResponse(BaseModel):
+
+
     total_uploads: int
     by_type: Dict[str, int]
     by_status: Dict[str, int]
@@ -42,6 +44,8 @@ class DataSummaryResponse(BaseModel):
     recent_uploads: List[Dict[str, Any]]
 
 class UploadInstructionsResponse(BaseModel):
+
+
     supported_formats: List[str]
     supported_data_types: List[str]
     upload_directory: str
@@ -55,22 +59,22 @@ async def upload_data_file(
 ):
     """
     Upload a data file for processing.
-    
+
     Supported formats:
     - CSV: Comma-separated values
     - JSON: JavaScript Object Notation
     - Excel: .xlsx or .xls files
     - PDF: Portable Document Format (basic text extraction)
-    
+
     Supported data types:
     - annual_reports: Funding, reach, and impact data
     - grants: Grant opportunities and applications
     - projects: Project budgets and timelines
     - impact_metrics: Impact measurement data
     """
-    
+
     logger.info(f"File upload request: {file.filename}, type: {data_type}")
-    
+
     # Validate data type
     valid_types = ["annual_reports", "grants", "projects", "impact_metrics"]
     if data_type not in valid_types:
@@ -78,7 +82,7 @@ async def upload_data_file(
             status_code=400,
             detail=f"Invalid data type. Must be one of: {valid_types}"
         )
-    
+
     # Validate file format
     file_extension = Path(file.filename).suffix.lower()
     valid_extensions = [".csv", ".json", ".xlsx", ".xls", ".pdf"]
@@ -87,22 +91,22 @@ async def upload_data_file(
             status_code=400,
             detail=f"Invalid file format. Supported formats: {valid_extensions}"
         )
-    
+
     try:
         # Save uploaded file temporarily
         temp_file_path = f"temp_upload_{datetime.now().strftime('%Y%m%d_%H%M%S')}{file_extension}"
-        
+
         with open(temp_file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-        
+
         # Process the uploaded file
         result = upload_system.upload_file(temp_file_path, data_type)
-        
+
         # Clean up temp file
         os.remove(temp_file_path)
-        
+
         return UploadResponse(**result)
-        
+
     except Exception as e:
         logger.error(f"File upload failed: {e}")
         raise HTTPException(
@@ -115,7 +119,7 @@ async def upload_data_file(
 async def get_upload_summary():
     """
     Get summary of all uploaded data.
-    
+
     Returns:
     - Total number of uploads
     - Breakdown by data type
@@ -123,13 +127,13 @@ async def get_upload_summary():
     - Breakdown by file format
     - Recent uploads
     """
-    
+
     logger.info("Upload summary request")
-    
+
     try:
         summary = upload_system.get_data_summary()
         return DataSummaryResponse(**summary)
-        
+
     except Exception as e:
         logger.error(f"Summary retrieval failed: {e}")
         raise HTTPException(
@@ -142,13 +146,13 @@ async def get_upload_summary():
 async def get_uploaded_data_by_type(data_type: str):
     """
     Get all uploaded data of a specific type.
-    
+
     Parameters:
     - data_type: Type of data to retrieve (annual_reports, grants, projects, impact_metrics)
     """
-    
+
     logger.info(f"Data retrieval request for type: {data_type}")
-    
+
     try:
         data = upload_system.get_uploaded_data(data_type)
         return {
@@ -159,7 +163,7 @@ async def get_uploaded_data_by_type(data_type: str):
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-        
+
     except Exception as e:
         logger.error(f"Data retrieval failed: {e}")
         raise HTTPException(
@@ -172,16 +176,16 @@ async def get_uploaded_data_by_type(data_type: str):
 async def get_upload_instructions():
     """
     Get detailed instructions for uploading data.
-    
+
     Returns:
     - Supported file formats
     - Supported data types
     - Upload directory structure
     - Step-by-step instructions
     """
-    
+
     logger.info("Upload instructions request")
-    
+
     instructions = UploadInstructionsResponse(
         supported_formats=["CSV", "JSON", "Excel (.xlsx/.xls)", "PDF"],
         supported_data_types=["annual_reports", "grants", "projects", "impact_metrics"],
@@ -194,7 +198,7 @@ async def get_upload_instructions():
             "5. Access your processed data through the API endpoints"
         ]
     )
-    
+
     return instructions
 
 # Get data structure templates
@@ -202,18 +206,18 @@ async def get_upload_instructions():
 async def get_data_template(data_type: str):
     """
     Get template structure for a specific data type.
-    
+
     Parameters:
     - data_type: Type of data template to retrieve
     """
-    
+
     logger.info(f"Template request for type: {data_type}")
-    
+
     templates = {
         "annual_reports": {
             "description": "Annual reports data structure",
             "csv_columns": [
-                "year", "funding_raised", "men_reached", "countries_reached", 
+                "year", "funding_raised", "men_reached", "countries_reached",
                 "research_funding", "lives_saved", "awareness_increase"
             ],
             "json_structure": {
@@ -237,7 +241,7 @@ async def get_data_template(data_type: str):
         "grants": {
             "description": "Grant opportunities data structure",
             "csv_columns": [
-                "id", "title", "amount", "currency", "deadline", "status", 
+                "id", "title", "amount", "currency", "deadline", "status",
                 "funding_body", "focus_areas", "geographic_scope"
             ],
             "json_structure": {
@@ -259,7 +263,7 @@ async def get_data_template(data_type: str):
         "projects": {
             "description": "Project data structure",
             "csv_columns": [
-                "project_id", "title", "budget", "currency", "start_date", 
+                "project_id", "title", "budget", "currency", "start_date",
                 "end_date", "status", "geographic_scope", "target_audience"
             ],
             "json_structure": {
@@ -281,7 +285,7 @@ async def get_data_template(data_type: str):
         "impact_metrics": {
             "description": "Impact metrics data structure",
             "csv_columns": [
-                "metric_name", "value", "unit", "region", "year", 
+                "metric_name", "value", "unit", "region", "year",
                 "target", "actual", "percentage_achieved"
             ],
             "json_structure": {
@@ -305,13 +309,13 @@ async def get_data_template(data_type: str):
             }
         }
     }
-    
+
     if data_type not in templates:
         raise HTTPException(
             status_code=404,
             detail=f"Template not found for data type: {data_type}"
         )
-    
+
     return {
         "status": "success",
         "data_type": data_type,
@@ -325,40 +329,40 @@ async def get_data_template(data_type: str):
 async def download_processed_data(data_id: str):
     """
     Download processed data by data ID.
-    
+
     Parameters:
     - data_id: Unique identifier for the uploaded data
     """
-    
+
     logger.info(f"Download request for data ID: {data_id}")
-    
+
     try:
         # Get the uploaded data
         all_data = upload_system.get_uploaded_data()
         target_data = None
-        
+
         for data in all_data:
             if data["data_id"] == data_id:
                 target_data = data
                 break
-        
+
         if not target_data:
             raise HTTPException(
                 status_code=404,
                 detail=f"Data not found with ID: {data_id}"
             )
-        
+
         # Create a JSON file for download
         download_file = f"processed_data_{data_id}.json"
         with open(download_file, "w") as f:
             json.dump(target_data, f, indent=2)
-        
+
         return FileResponse(
             path=download_file,
             filename=f"movember_data_{data_id}.json",
             media_type="application/json"
         )
-        
+
     except Exception as e:
         logger.error(f"Download failed: {e}")
         raise HTTPException(
@@ -371,35 +375,35 @@ async def download_processed_data(data_id: str):
 async def validate_uploaded_data(data_id: str):
     """
     Re-validate uploaded data by data ID.
-    
+
     Parameters:
     - data_id: Unique identifier for the uploaded data
     """
-    
+
     logger.info(f"Validation request for data ID: {data_id}")
-    
+
     try:
         # Get the uploaded data
         all_data = upload_system.get_uploaded_data()
         target_data = None
-        
+
         for data in all_data:
             if data["data_id"] == data_id:
                 target_data = data
                 break
-        
+
         if not target_data:
             raise HTTPException(
                 status_code=404,
                 detail=f"Data not found with ID: {data_id}"
             )
-        
+
         # Re-validate the data
         validation_status = upload_system._validate_extracted_data(
-            target_data["extracted_data"], 
+            target_data["extracted_data"],
             target_data["data_type"]
         )
-        
+
         # Update the validation status in database
         upload_system._save_uploaded_data(
             data_id,
@@ -408,7 +412,7 @@ async def validate_uploaded_data(data_id: str):
             target_data["extracted_data"],
             validation_status
         )
-        
+
         return {
             "status": "success",
             "data_id": data_id,
@@ -417,7 +421,7 @@ async def validate_uploaded_data(data_id: str):
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-        
+
     except Exception as e:
         logger.error(f"Validation failed: {e}")
         raise HTTPException(
@@ -431,7 +435,7 @@ async def upload_system_health():
     """
     Health check for the data upload system.
     """
-    
+
     return {
         "status": "healthy",
         "service": "data_upload_system",
@@ -448,4 +452,4 @@ async def upload_system_health():
     }
 
 # Export the router for inclusion in main API
-__all__ = ["data_upload_router"] 
+__all__ = ["data_upload_router"]

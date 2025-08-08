@@ -5,11 +5,9 @@ Tests that Grant Support, Impact Reporting, and AI Rules Engine work together se
 """
 
 import asyncio
-import json
 import logging
 import pytest
 import time
-from datetime import datetime
 from typing import Dict, List, Any
 
 from rules.domains.movember_ai import (
@@ -41,6 +39,8 @@ class TestThreeSystemIntegration:
 
     @pytest.fixture
     def sample_grant_data(self):
+
+
         """Sample grant data for testing."""
         return {
             "grant_id": "GRANT-INTEGRATION-001",
@@ -65,6 +65,8 @@ class TestThreeSystemIntegration:
 
     @pytest.fixture
     def sample_impact_data(self):
+
+
         """Sample impact data for testing."""
         return {
             "report_id": "IMPACT-INTEGRATION-001",
@@ -392,7 +394,8 @@ class TestThreeSystemIntegration:
         # Should have events from all systems
         assert len(event_system_counts) >= 2  # At least 2 systems involved
 
-        logger.info(f"Integration metrics verified: {len(integrator.event_queue)} events, {len(integrator.validation_history)} validations")
+        logger.info(
+            f"Integration metrics verified: {len
 
 
 class TestSystemIntegrationAPI:

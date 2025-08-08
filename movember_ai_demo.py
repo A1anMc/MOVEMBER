@@ -7,9 +7,7 @@ Showcasing AI behaviour, impact reporting, grant evaluation, and weekly refactor
 """
 
 import asyncio
-import json
 import time
-from datetime import datetime
 
 from rules.domains.movember_ai import (
     MovemberAIRulesEngine,

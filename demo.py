@@ -6,9 +6,7 @@ A comprehensive demonstration of the brilliant rules system.
 """
 
 import asyncio
-import json
 import time
-from datetime import datetime
 
 from rules.core import RuleEngine, RuleEngineConfig
 from rules.types import ExecutionContext, ContextType
@@ -285,6 +283,8 @@ async def demo_custom_actions():
 
     # Define a custom action
     def custom_greeting_action(action, context):
+
+
         """Custom action that generates a personalized greeting."""
         name = context.data.get('name', 'User')
         greeting = f"Hello {name}! Welcome to our brilliant rules system!"

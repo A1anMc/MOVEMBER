@@ -6,7 +6,6 @@ All text uses UK spelling and currency in AUD.
 """
 
 from rules.types import Rule, Condition, Action, RulePriority
-from rules.core import RuleEngine
 
 
 # AI Behaviour Rules with UK spelling and AUD currency

@@ -4,7 +4,6 @@ Movember AI Rules System - Main Integration Module
 Provides unified access to all Movember AI rules and systems.
 """
 
-import asyncio
 import logging
 from typing import Dict, List, Optional, Any
 from datetime import datetime
@@ -34,11 +33,15 @@ class MovemberAIRulesEngine:
     """
 
     def __init__(self, config: Optional[RuleEngineConfig] = None):
+
+
         self.engine = RuleEngine(config or RuleEngineConfig())
         self.integrator = None  # Will be initialized when needed
         self._load_all_rules()
 
     def _load_all_rules(self):
+
+
         """Load all rule categories into the engine."""
         from rules.domains.movember_ai.behaviours import AI_RULES
         from rules.domains.movember_ai.reporting import IMPACT_REPORT_RULES
@@ -101,6 +104,8 @@ class MovemberAIRulesEngine:
         return serialized_results
 
     def _filter_rules_by_mode(self, mode: str) -> List:
+
+
         """Filter rules based on evaluation mode."""
         mode_mappings = {
             "reporting": ["impact_reporting"],
@@ -113,11 +118,15 @@ class MovemberAIRulesEngine:
         return mode_mappings.get(mode, [])
 
     def _is_rule_applicable_for_mode(self, result: Any, mode: str) -> bool:
+
+
         """Check if a rule result is applicable for the given mode."""
         # This is a simplified check - in practice, you'd have more sophisticated logic
         return True
 
     def get_metrics(self) -> Dict[str, Any]:
+
+
         """Get system metrics and performance statistics."""
         if self.engine.metrics:
             raw = self.engine.metrics.get_metrics()
@@ -136,6 +145,8 @@ class MovemberAIRulesEngine:
         return {"system_metrics": {}, "rule_metrics": {}}
 
     def get_execution_history(self) -> List[Dict]:
+
+
         """Get execution history and audit trail."""
         return self.engine.execution_history
 
@@ -146,7 +157,7 @@ class MovemberAIRulesEngine:
     async def get_integrator(self):
         """Get or create the system integrator."""
         if self.integrator is None:
-            from rules.domains.movember_ai.integration import create_movember_integrator  # local import to avoid circular
+from rules.domains.movember_ai.integration import create_movember_integrator # local import to avoid circular
             self.integrator = await create_movember_integrator()
         return self.integrator
 
@@ -192,6 +203,8 @@ class MovemberAIRulesEngine:
 
 # Convenience functions for easy access
 def create_movember_engine(config: Optional[RuleEngineConfig] = None) -> MovemberAIRulesEngine:
+
+
     """Create a Movember AI rules engine instance."""
     return MovemberAIRulesEngine(config)
 

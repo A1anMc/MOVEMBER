@@ -4,10 +4,8 @@ Code Quality Fix Script
 Automatically fixes common code quality issues in the Movember AI Rules System.
 """
 
-import os
 import re
 import glob
-from pathlib import Path
 
 
 def fix_file_endings():

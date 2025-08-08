@@ -11,7 +11,6 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 import httpx
 import json
-import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
@@ -28,9 +27,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class MovemberSystemMonitor:
+
+
     """Comprehensive monitoring system for Movember AI Rules System."""
 
     def __init__(self, api_base_url: str = "https://movember-api.onrender.com"):
+
+
         self.api_base_url = api_base_url
         self.alert_history: List[Dict] = []
         self.performance_metrics: Dict[str, List] = {
@@ -124,6 +127,8 @@ class MovemberSystemMonitor:
             return {"error": str(e)}
 
     def analyze_health_data(self, health_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+
+
         """Analyze health data and generate alerts."""
         alerts = []
 
@@ -151,7 +156,8 @@ class MovemberSystemMonitor:
         if memory_usage > self.thresholds['memory_usage_max']:
             alerts.append({
                 "level": "WARNING",
-                "message": f"High memory usage: {memory_usage * 100}% (threshold: {self.thresholds['memory_usage_max'] * 100}%)",
+                "message": f"High memory usage: {memory_usage * 100}% (
+                    threshold: {self.thresholds['memory_usage_max'] * 100}%)",
                 "timestamp": datetime.now().isoformat(),
                 "component": "memory"
             })
@@ -179,6 +185,8 @@ class MovemberSystemMonitor:
         return alerts
 
     def analyze_performance_data(self, metrics_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+
+
         """Analyze performance metrics and generate alerts."""
         alerts = []
 
@@ -198,7 +206,8 @@ class MovemberSystemMonitor:
         if avg_response_time > self.thresholds['response_time_max']:
             alerts.append({
                 "level": "WARNING",
-                "message": f"Slow response time: {avg_response_time}s (threshold: {self.thresholds['response_time_max']}s)",
+                "message": f"Slow response time: {avg_response_time}s (
+                    threshold: {self.thresholds['response_time_max']}s)",
                 "timestamp": datetime.now().isoformat(),
                 "component": "performance"
             })
@@ -209,7 +218,8 @@ class MovemberSystemMonitor:
         if error_rate > self.thresholds['error_rate_max']:
             alerts.append({
                 "level": "CRITICAL",
-                "message": f"High error rate: {error_rate * 100}% (threshold: {self.thresholds['error_rate_max'] * 100}%)",
+                "message": f"High error rate: {error_rate * 100}% (
+                    threshold: {self.thresholds['error_rate_max'] * 100}%)",
                 "timestamp": datetime.now().isoformat(),
                 "component": "reliability"
             })
@@ -227,6 +237,8 @@ class MovemberSystemMonitor:
         return alerts
 
     def send_email_alert(self, alert: Dict[str, Any]) -> bool:
+
+
         """Send email alert (placeholder for email configuration)."""
         try:
             # This is a placeholder - in production you'd configure SMTP
@@ -237,6 +249,8 @@ class MovemberSystemMonitor:
             return False
 
     def log_alert(self, alert: Dict[str, Any]) -> None:
+
+
         """Log alert to file and console."""
         alert_str = f"[{alert['level']}] {alert['component']}: {alert['message']}"
         logger.warning(alert_str)

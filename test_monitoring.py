@@ -6,7 +6,6 @@ Demonstrates the monitoring functionality
 
 import asyncio
 import logging
-from monitoring_bot import MovemberMonitoringBot
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

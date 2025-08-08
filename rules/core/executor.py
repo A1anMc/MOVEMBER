@@ -9,9 +9,7 @@ from typing import List, Dict, Any, Optional, Callable
 import logging
 import time
 import asyncio
-from datetime import datetime
 import json
-import smtplib
 import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -26,6 +24,8 @@ class ActionExecutor:
     """Executes rule actions."""
 
     def __init__(self):
+
+
         self.built_in_actions = {
             'log_message': self._log_message,
             'send_email': self._send_email,
@@ -53,11 +53,15 @@ class ActionExecutor:
         self.custom_actions: Dict[str, Callable] = {}
 
     def register_custom_action(self, name: str, executor: Callable) -> None:
+
+
         """Register a custom action executor."""
         self.custom_actions[name] = executor
         logger.info(f"Registered custom action: {name}")
 
     def execute_action(self, action: Action, context: ExecutionContext) -> ActionResult:
+
+
         """Execute a single action."""
         start_time = time.time()
 
@@ -136,6 +140,8 @@ class ActionExecutor:
             )
 
     def execute_actions(self, actions: List[Action], context: ExecutionContext) -> List[ActionResult]:
+
+
         """Execute multiple actions."""
         results = []
 
@@ -197,6 +203,8 @@ class ActionExecutor:
         return final_results
 
     def _get_executor(self, action: Action) -> Optional[Callable]:
+
+
         """Get the executor for an action."""
         # Check custom executor first
         if action.custom_executor:
@@ -215,6 +223,8 @@ class ActionExecutor:
     # Built-in action executors
 
     def _log_message(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Log a message."""
         message = action.parameters.get('message', 'No message provided')
         level = action.parameters.get('level', 'INFO')
@@ -233,6 +243,8 @@ class ActionExecutor:
         return f"Logged message: {message}"
 
     def _send_email(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Send an email."""
         to_email = action.parameters.get('to_email')
         subject = action.parameters.get('subject', 'Rule Engine Notification')
@@ -248,6 +260,8 @@ class ActionExecutor:
         return f"Email sent to {to_email}"
 
     def _send_webhook(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Send a webhook."""
         url = action.parameters.get('url')
         method = action.parameters.get('method', 'POST')
@@ -273,6 +287,8 @@ class ActionExecutor:
             raise Exception(f"Webhook request failed: {e}")
 
     def _update_data(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Update data in the context."""
         updates = action.parameters.get('updates', {})
 
@@ -282,6 +298,8 @@ class ActionExecutor:
         return f"Updated {len(updates)} data fields"
 
     def _validate_data(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Validate data in the context."""
         validations = action.parameters.get('validations', {})
         errors = []
@@ -305,6 +323,8 @@ class ActionExecutor:
         return "Data validation passed"
 
     def _notify_user(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Notify a user."""
         user_id = action.parameters.get('user_id') or context.user_id
         message = action.parameters.get('message', 'Notification from rule engine')
@@ -320,6 +340,8 @@ class ActionExecutor:
         return f"Notification sent to user {user_id}"
 
     def _trigger_workflow(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Trigger a workflow."""
         workflow_name = action.parameters.get('workflow_name')
         workflow_data = action.parameters.get('workflow_data', {})
@@ -334,6 +356,8 @@ class ActionExecutor:
         return f"Workflow {workflow_name} triggered"
 
     def _store_result(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Store a result."""
         key = action.parameters.get('key')
         value = action.parameters.get('value')
@@ -348,6 +372,8 @@ class ActionExecutor:
         return f"Result stored with key {key}"
 
     def _raise_alert(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Raise an alert."""
         alert_type = action.parameters.get('type', 'warning')
         message = action.parameters.get('message', 'Alert from rule engine')
@@ -360,6 +386,8 @@ class ActionExecutor:
         return f"Alert raised: {message}"
 
     def _approve_request(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Approve a request."""
         request_id = action.parameters.get('request_id')
         reason = action.parameters.get('reason', 'Approved by rule engine')
@@ -374,6 +402,8 @@ class ActionExecutor:
         return f"Request {request_id} approved"
 
     def _reject_request(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Reject a request."""
         request_id = action.parameters.get('request_id')
         reason = action.parameters.get('reason', 'Rejected by rule engine')
@@ -388,6 +418,8 @@ class ActionExecutor:
         return f"Request {request_id} rejected"
 
     def _schedule_task(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Schedule a task."""
         task_name = action.parameters.get('task_name')
         delay_seconds = action.parameters.get('delay_seconds', 0)
@@ -402,6 +434,8 @@ class ActionExecutor:
         return f"Task {task_name} scheduled"
 
     def _update_status(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Update a status."""
         status = action.parameters.get('status')
         entity_id = action.parameters.get('entity_id')
@@ -417,40 +451,54 @@ class ActionExecutor:
 
     # Safe no-op/stub executors
     def _trigger_audit_log(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Record an audit log entry (stub)."""
         message = action.parameters.get('message', 'Audit event recorded')
         logger.info(f"AUDIT: {message}")
         return "audit_logged"
 
     def _send_refactor_summary_to_admin(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Send refactor summary to admin (stub)."""
         admin = action.parameters.get('admin', 'admin@local')
         logger.info(f"Refactor summary would be sent to {admin}")
         return "refactor_summary_sent"
 
     def _schedule_next_review(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Schedule the next rule review (stub)."""
         when = action.parameters.get('when', 'next_week')
         logger.info(f"Next review scheduled for {when}")
         return "next_review_scheduled"
 
     def _abort(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Abort execution (stub)."""
         message = action.parameters.get('message', 'Aborted by rule')
         logger.warning(f"ABORT requested: {message}")
         return "aborted"
 
     def _log_context_violation(self, action: Action, context: ExecutionContext) -> str:
+
+
         reason = action.parameters.get('reason', 'Context violation detected')
         logger.warning(f"CONTEXT VIOLATION: {reason}")
         return "context_violation_logged"
 
     def _redirect_to_movember_scope(self, action: Action, context: ExecutionContext) -> str:
+
+
         target = action.parameters.get('target', 'movember')
         logger.info(f"Redirecting context to scope: {target}")
         return "redirected_to_movember"
 
     def _no_op(self, action: Action, context: ExecutionContext) -> str:
+
+
         """Fallback executor that performs no operation but logs the action name."""
         logger.info(f"No-op executor used for unknown action '{action.name}'")
         return "no_op"

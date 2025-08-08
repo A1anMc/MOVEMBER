@@ -9,13 +9,12 @@ import json
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
-from dataclasses import dataclass
-from enum import Enum
-import random
 
 logger = logging.getLogger(__name__)
 
 class ImpactCategory(Enum):
+
+
     AWARENESS = "awareness"
     BEHAVIOUR_CHANGE = "behaviour_change"
     HEALTH_OUTCOMES = "health_outcomes"
@@ -24,6 +23,8 @@ class ImpactCategory(Enum):
     COMMUNITY_ENGAGEMENT = "community_engagement"
 
 class ImpactMetric(Enum):
+
+
     MEN_REACHED = "men_reached"
     AWARENESS_INCREASE = "awareness_increase"
     SCREENINGS_CONDUCTED = "screenings_conducted"
@@ -35,6 +36,8 @@ class ImpactMetric(Enum):
 
 @dataclass
 class ImpactMeasurement:
+
+
     """Represents a specific impact measurement."""
     metric: ImpactMetric
     value: float
@@ -49,6 +52,8 @@ class ImpactMeasurement:
 
 @dataclass
 class ImpactProject:
+
+
     """Represents an impact project or initiative."""
     project_id: str
     title: str
@@ -63,8 +68,10 @@ class ImpactProject:
     sdg_alignment: List[str] = None
     stakeholders: List[str] = None
     status: str = "active"
-    
+
     def __post_init__(self):
+
+
         if self.geographic_scope is None:
             self.geographic_scope = ["Australia", "global"]
         if self.target_audience is None:
@@ -77,15 +84,21 @@ class ImpactProject:
             self.stakeholders = ["healthcare_providers", "researchers", "policymakers", "communities"]
 
 class ImpactIntelligenceEngine:
+
+
     """Comprehensive impact intelligence engine for Movember."""
-    
+
     def __init__(self):
+
+
         self.projects = self._initialize_projects()
         self.impact_data = self._initialize_impact_data()
         self.sdg_framework = self._initialize_sdg_framework()
         logger.info("Movember Impact Intelligence Engine initialised")
-    
+
     def _initialize_projects(self) -> List[ImpactProject]:
+
+
         """Initialize with real Movember impact projects."""
         return [
             ImpactProject(
@@ -133,8 +146,10 @@ class ImpactIntelligenceEngine:
                 sdg_alignment=["SDG3", "SDG10", "SDG17"]
             )
         ]
-    
+
     def _initialize_impact_data(self) -> Dict[str, Any]:
+
+
         """Initialize with realistic impact data."""
         return {
             "global_reach": {
@@ -162,8 +177,10 @@ class ImpactIntelligenceEngine:
                 "sustainability_score": 0.92
             }
         }
-    
+
     def _initialize_sdg_framework(self) -> Dict[str, Any]:
+
+
         """Initialize SDG framework for impact measurement."""
         return {
             "SDG3": {
@@ -185,17 +202,17 @@ class ImpactIntelligenceEngine:
                 "impact_metrics": ["partnerships_formed", "collaboration_impact"]
             }
         }
-    
+
     async def measure_project_impact(self, project_id: str) -> Dict[str, Any]:
         """Measure comprehensive impact for a specific project."""
-        
+
         project = next((p for p in self.projects if p.project_id == project_id), None)
         if not project:
             return {"error": f"Project {project_id} not found"}
-        
+
         # Generate realistic impact measurements
         impact_measurements = []
-        
+
         if "mental health" in project.title.lower():
             impact_measurements.extend([
                 ImpactMeasurement(
@@ -223,7 +240,7 @@ class ImpactIntelligenceEngine:
                     target_audience="men"
                 )
             ])
-        
+
         if "prostate cancer" in project.title.lower():
             impact_measurements.extend([
                 ImpactMeasurement(
@@ -251,7 +268,7 @@ class ImpactIntelligenceEngine:
                     target_audience="men"
                 )
             ])
-        
+
         if "suicide prevention" in project.title.lower():
             impact_measurements.extend([
                 ImpactMeasurement(
@@ -279,7 +296,7 @@ class ImpactIntelligenceEngine:
                     target_audience="men"
                 )
             ])
-        
+
         return {
             "project_id": project_id,
             "project_title": project.title,
@@ -302,31 +319,33 @@ class ImpactIntelligenceEngine:
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-    
-    async def generate_impact_report(self, 
+
+    async def generate_impact_report(self,
                                    report_type: str = "comprehensive",
                                    time_period: str = "annual") -> Dict[str, Any]:
         """Generate comprehensive impact report."""
-        
+
         # Calculate overall impact metrics
         total_men_reached = sum(
-            m.value for m in self._get_all_measurements() 
+            m.value for m in self._get_all_measurements()
             if m.metric == ImpactMetric.MEN_REACHED
         )
-        
+
         total_lives_saved = sum(
-            m.value for m in self._get_all_measurements() 
+            m.value for m in self._get_all_measurements()
             if m.metric == ImpactMetric.LIVES_SAVED
         )
-        
+
         total_screenings = sum(
-            m.value for m in self._get_all_measurements() 
+            m.value for m in self._get_all_measurements()
             if m.metric == ImpactMetric.SCREENINGS_CONDUCTED
         )
-        
-        awareness_measurements = [m for m in self._get_all_measurements() if m.metric == ImpactMetric.AWARENESS_INCREASE]
-        awareness_increase = sum(m.value for m in awareness_measurements) / len(awareness_measurements) if awareness_measurements else 0
-        
+
+        awareness_measurements = [m for m in self._get_all_measurements(
+            ) if m.metric == ImpactMetric.AWARENESS_INCREASE]
+        awareness_increase = sum(
+            m.value for m in awareness_measurements) / len
+
         return {
             "report_type": report_type,
             "time_period": time_period,
@@ -392,22 +411,24 @@ class ImpactIntelligenceEngine:
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-    
+
     def _get_all_measurements(self) -> List[ImpactMeasurement]:
+
+
         """Get all impact measurements across all projects."""
         all_measurements = []
         for project in self.projects:
             if project.impact_metrics:
                 all_measurements.extend(project.impact_metrics)
         return all_measurements
-    
+
     async def calculate_social_return_on_investment(self, project_id: str) -> Dict[str, Any]:
         """Calculate SROI for a specific project."""
-        
+
         project = next((p for p in self.projects if p.project_id == project_id), None)
         if not project:
             return {"error": f"Project {project_id} not found"}
-        
+
         # Calculate SROI based on project type
         if "mental health" in project.title.lower():
             investment = project.budget
@@ -425,7 +446,7 @@ class ImpactIntelligenceEngine:
             investment = project.budget
             social_value = 15000000  # Default social value
             sroi_ratio = social_value / investment
-        
+
         return {
             "project_id": project_id,
             "project_title": project.title,
@@ -435,10 +456,10 @@ class ImpactIntelligenceEngine:
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-    
+
     async def generate_impact_visualisation_data(self) -> Dict[str, Any]:
         """Generate data for impact visualisations."""
-        
+
         return {
             "global_reach": {
                 "men_reached_by_region": {
@@ -502,26 +523,26 @@ impact_intelligence_engine = ImpactIntelligenceEngine()
 
 async def main():
     """Test the impact intelligence engine."""
-    
+
     # Test project impact measurement
     project_impact = await impact_intelligence_engine.measure_project_impact("IMP-2024-001")
     print("Project Impact Measurement:")
     print(json.dumps(project_impact, indent=2, default=str))
-    
+
     # Test comprehensive impact report
     impact_report = await impact_intelligence_engine.generate_impact_report()
     print("\nComprehensive Impact Report:")
     print(json.dumps(impact_report, indent=2, default=str))
-    
+
     # Test SROI calculation
     sroi_result = await impact_intelligence_engine.calculate_social_return_on_investment("IMP-2024-001")
     print("\nSROI Calculation:")
     print(json.dumps(sroi_result, indent=2, default=str))
-    
+
     # Test visualisation data
     viz_data = await impact_intelligence_engine.generate_impact_visualisation_data()
     print("\nVisualisation Data:")
     print(json.dumps(viz_data, indent=2, default=str))
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

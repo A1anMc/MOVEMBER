@@ -14,9 +14,13 @@ from datetime import datetime
 from typing import Dict, List, Any
 
 class BaselineValidator:
+
+
     """Validates system against baseline configuration."""
 
     def __init__(self, baseline_file: str = "baseline_config.json"):
+
+
         self.baseline_file = baseline_file
         self.baseline = self.load_baseline()
         self.validation_results = {
@@ -27,6 +31,8 @@ class BaselineValidator:
         }
 
     def load_baseline(self) -> Dict[str, Any]:
+
+
         """Load baseline configuration."""
         try:
             with open(self.baseline_file, 'r') as f:
@@ -39,6 +45,8 @@ class BaselineValidator:
             sys.exit(1)
 
     def validate_system(self):
+
+
         """Run comprehensive baseline validation."""
         print("🔍 Validating Movember AI Rules System against baseline...")
 
@@ -55,6 +63,8 @@ class BaselineValidator:
         self.generate_validation_report()
 
     def validate_environment(self):
+
+
         """Validate Python environment."""
         print("\n🐍 Validating Python environment...")
 
@@ -65,7 +75,8 @@ class BaselineValidator:
             self.validation_results["passed"].append("Python version >= 3.8")
             print(f"✅ Python version: {python_version.major}.{python_version.minor}.{python_version.micro}")
         else:
-            self.validation_results["failed"].append(f"Python version {python_version.major}.{python_version.minor} < 3.8")
+            self.validation_results["failed"].append(
+                f"Python version {python_version.major}.{python_version.minor} < 3.8")
             print(f"❌ Python version: {python_version.major}.{python_version.minor}.{python_version.micro}")
 
         # Check virtual environment
@@ -77,6 +88,8 @@ class BaselineValidator:
             print("❌ Virtual environment not active")
 
     def validate_directories(self):
+
+
         """Validate required directories."""
         print("\n📁 Validating directories...")
 
@@ -100,6 +113,8 @@ class BaselineValidator:
                 print(f"⚠️ {dir_name} (optional)")
 
     def validate_files(self):
+
+
         """Validate required files."""
         print("\n📄 Validating files...")
 
@@ -136,6 +151,8 @@ class BaselineValidator:
                 print(f"⚠️ {file_name}")
 
     def validate_dependencies(self):
+
+
         """Validate Python dependencies."""
         print("\n📦 Validating dependencies...")
 
@@ -161,6 +178,8 @@ class BaselineValidator:
                 print(f"⚠️ {package} (optional)")
 
     def validate_database(self):
+
+
         """Validate database."""
         print("\n💾 Validating database...")
 
@@ -198,6 +217,8 @@ class BaselineValidator:
             print(f"❌ Database error: {e}")
 
     def validate_api(self):
+
+
         """Validate API endpoints."""
         print("\n🌐 Validating API...")
 
@@ -219,7 +240,8 @@ class BaselineValidator:
                             self.validation_results["passed"].append(f"Endpoint accessible: {endpoint}")
                             print(f"✅ {endpoint}")
                         else:
-                            self.validation_results["warnings"].append(f"Endpoint returned {response.status_code}: {endpoint}")
+                            self.validation_results["warnings"].append(
+                                f"Endpoint returned {response.status_code}: {endpoint}")
                             print(f"⚠️ {endpoint} ({response.status_code})")
                     except Exception as e:
                         self.validation_results["warnings"].append(f"Endpoint error: {endpoint} - {str(e)}")
@@ -235,6 +257,8 @@ class BaselineValidator:
             print(f"❌ API error: {e}")
 
     def validate_compliance(self):
+
+
         """Validate compliance standards."""
         print("\n🔍 Validating compliance standards...")
 
@@ -273,6 +297,8 @@ class BaselineValidator:
             print(f"❌ AUD currency test failed: {e}")
 
     def validate_monitoring(self):
+
+
         """Validate monitoring components."""
         print("\n🤖 Validating monitoring...")
 
@@ -305,6 +331,8 @@ class BaselineValidator:
             print(f"⚠️ Could not check data scraper: {e}")
 
     def validate_performance(self):
+
+
         """Validate performance metrics."""
         print("\n📈 Validating performance...")
 
@@ -332,12 +360,15 @@ class BaselineValidator:
             print(f"⚠️ Could not check performance: {e}")
 
     def generate_validation_report(self):
+
+
         """Generate validation report."""
         print("\n" + "="*60)
         print("📊 BASELINE VALIDATION REPORT")
         print("="*60)
 
-        total_checks = len(self.validation_results["passed"]) + len(self.validation_results["failed"]) + len(self.validation_results["warnings"])
+        total_checks = len(
+            self.validation_results["passed"]) + len
 
         print(f"\n📈 Summary:")
         print(f"  ✅ Passed: {len(self.validation_results['passed'])}")
@@ -372,6 +403,8 @@ class BaselineValidator:
         print("✅ Validation report saved to baseline_validation_report.json")
 
 def main():
+
+
     """Main validation function."""
     validator = BaselineValidator()
     validator.validate_system()

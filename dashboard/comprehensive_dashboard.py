@@ -10,12 +10,12 @@ import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 import httpx
-from dataclasses import dataclass
-from enum import Enum
 
 logger = logging.getLogger(__name__)
 
 class MetricType(Enum):
+
+
     """Types of metrics for dashboard reporting."""
     IMPACT = "impact"
     SDG = "sdg"
@@ -25,6 +25,8 @@ class MetricType(Enum):
 
 @dataclass
 class DashboardMetric:
+
+
     """Dashboard metric data structure."""
     name: str
     value: float
@@ -36,9 +38,13 @@ class DashboardMetric:
     theory_backing: str = ""
 
 class ComprehensiveDashboard:
+
+
     """Comprehensive dashboard system with theory-backed insights."""
 
     def __init__(self, api_base_url: str = "https://movember-api.onrender.com"):
+
+
         self.api_base_url = api_base_url
         self.metrics_history: Dict[str, List[DashboardMetric]] = {}
         self.recommendations_engine = None  # Will be imported from enhanced_recommendations
@@ -868,13 +874,15 @@ async def main():
 
     # Print key sections
     if "impact_metrics" in report:
-        print(f"\nImpact Metrics: {len(report['impact_metrics'].get('primary_metrics', []))} primary metrics identified")
+        print(
+            f"\nImpact Metrics: {len(report['impact_metrics'].get('primary_metrics', []))} primary metrics")
 
     if "sdg_alignment" in report:
         print(f"SDG Alignment: {len(report['sdg_alignment'].get('primary_sdgs', []))} SDGs aligned")
 
     if "stakeholder_engagement" in report:
-        print(f"Stakeholder Engagement: {len(report['stakeholder_engagement'].get('primary_stakeholders', {}))} primary stakeholder groups")
+        print(
+            f"Stakeholder Engagement: {len(report['stakeholder_engagement'].get('primary_stakeholders', []))} primary stakeholders")
 
     print("\nDashboard system ready for comprehensive reporting!")
     print("="*80)

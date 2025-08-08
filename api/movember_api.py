@@ -14,14 +14,11 @@ from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, asdict
 from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Header, Request, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import httpx
-import aiohttp
 from sqlalchemy import create_engine, Column, String, Integer, Float, DateTime, Text
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text
 import time
 import random
@@ -42,7 +39,6 @@ except ImportError as e:
 # Import grant acquisition system
 try:
     from grant_acquisition_engine import grant_acquisition_engine
-    from api.grant_acquisition_api import grant_acquisition_router
     GRANT_ACQUISITION_AVAILABLE = True
 except ImportError as e:
     logger.warning(f"Grant acquisition system not available: {e}")
@@ -53,7 +49,6 @@ except ImportError as e:
 # Import impact intelligence system
 try:
     from impact_intelligence_engine import impact_intelligence_engine
-    from api.impact_intelligence_api import impact_intelligence_router
     IMPACT_INTELLIGENCE_AVAILABLE = True
 except ImportError as e:
     logger.warning(f"Impact intelligence system not available: {e}")
@@ -63,8 +58,6 @@ except ImportError as e:
 
 # Import real data integration system
 try:
-    from real_data_integration import movember_data_integrator
-    from api.real_data_api import real_data_router
     REAL_DATA_AVAILABLE = True
 except ImportError as e:
     logger.warning(f"Real data integration system not available: {e}")
@@ -74,8 +67,6 @@ except ImportError as e:
 
 # Import data upload system
 try:
-    from data_upload_system import upload_system
-    from api.data_upload_api import data_upload_router
     DATA_UPLOAD_AVAILABLE = True
 except ImportError as e:
     logger.warning(f"Data upload system not available: {e}")
@@ -247,6 +238,8 @@ class ScraperConfig(BaseModel):
 
 # Database models
 class GrantRecord(Base):
+
+
     __tablename__ = "grants"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -394,6 +387,8 @@ class MovemberAPIService:
     """Service layer for Movember AI Rules System API."""
 
     def __init__(self):
+
+
         self.engine = MovemberAIRulesEngine()
         self.db = SessionLocal()
         self.logger = logging.getLogger(__name__)
@@ -503,7 +498,6 @@ class MovemberAPIService:
         """Run web scraper with specified configuration."""
         try:
             import requests
-            from bs4 import BeautifulSoup
 
             # Make request with rate limiting
             await asyncio.sleep(1 / config.rate_limit)
@@ -584,6 +578,8 @@ class MovemberAPIService:
             raise HTTPException(status_code=500, detail=f"Error monitoring system health: {str(e)}")
 
     def _ensure_uk_spelling_and_aud_currency(self, data: Dict) -> Dict:
+
+
         """Ensure data uses UK spelling and AUD currency."""
         # Import conversion functions
         from rules.domains.movember_ai.behaviours import convert_to_uk_spelling, format_aud_currency
@@ -591,7 +587,8 @@ class MovemberAPIService:
         processed_data = data.copy()
 
         # Process text fields for UK spelling
-        text_fields = ['title', 'description', 'summary', 'notes', 'comments', 'methodology', 'conclusions', 'recommendations']
+        text_fields = ['title',
+             'description', 'summary', 'notes', 'comments', 'methodology', 'conclusions', 'recommendations']
         for field in text_fields:
             if field in processed_data and isinstance(processed_data[field], str):
                 processed_data[field] = convert_to_uk_spelling(processed_data[field])
@@ -606,6 +603,8 @@ class MovemberAPIService:
         return processed_data
 
     def _store_grant_record(self, grant_data: GrantData):
+
+
         """Store grant record in database."""
         ensure_tables()
         record = GrantRecord(
@@ -622,6 +621,8 @@ class MovemberAPIService:
         self.db.commit()
 
     def _store_impact_report_record(self, report_data: ImpactReportData):
+
+
         """Store impact report record in database."""
         ensure_tables()
         record = ImpactReportRecord(
@@ -636,6 +637,8 @@ class MovemberAPIService:
         self.db.commit()
 
     def _store_health_record(self, health_data: SystemHealthData):
+
+
         """Store system health record in database."""
         ensure_tables()
         record = SystemHealthRecord(
@@ -661,26 +664,36 @@ class MovemberAPIService:
         self.db.commit()
 
     def _generate_grant_recommendations(self, grant_data: Dict) -> List[str]:
+
+
         """Generate recommendations for grant improvement."""
         from rules.domains.movember_ai.grant_rules import generate_grant_recommendations
         return generate_grant_recommendations(grant_data)
 
     def _calculate_grant_score(self, grant_data: Dict) -> float:
+
+
         """Calculate grant score."""
         from rules.domains.movember_ai.grant_rules import calculate_grant_score
         return calculate_grant_score(grant_data)
 
     def _calculate_report_quality_score(self, report_data: Dict) -> float:
+
+
         """Calculate report quality score."""
         from rules.domains.movember_ai.reporting import calculate_report_quality_score
         return calculate_report_quality_score(report_data)
 
     def _validate_framework_compliance(self, report_data: Dict) -> Dict:
+
+
         """Validate framework compliance."""
         from rules.domains.movember_ai.reporting import validate_framework_compliance
         return validate_framework_compliance(report_data)
 
     def _generate_report_recommendations(self, report_data: Dict) -> List[str]:
+
+
         """Generate recommendations for report improvement."""
         from rules.domains.movember_ai.reporting import generate_report_recommendations
         return generate_report_recommendations(report_data)
@@ -688,6 +701,8 @@ class MovemberAPIService:
 
 # Dependency injection
 def get_api_service():
+
+
     return MovemberAPIService()
 
 
@@ -959,8 +974,10 @@ async def evaluate_grant(grant_data: dict):
             conn.execute(
                 text("""
                     INSERT INTO grant_evaluations
-                    (grant_id, evaluation_timestamp, overall_score, recommendation, ml_predictions, rules_evaluation, grant_data)
-                    VALUES (:grant_id, :evaluation_timestamp, :overall_score, :recommendation, :ml_predictions, :rules_evaluation, :grant_data)
+                    (
+                        grant_id, evaluation_timestamp, overall_score, recommendation, ml_predictions, rules_evaluation, grant_data)
+                    VALUES (
+                        :grant_id, :evaluation_timestamp, :overall_score, :recommendation, :ml_predictions, :rules_evaluation, :grant_data)
                 """),
                 evaluation_record
             )

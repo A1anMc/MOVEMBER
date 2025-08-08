@@ -14,12 +14,12 @@ import json
 import sqlalchemy
 from sqlalchemy import create_engine, text
 import os
-from dataclasses import dataclass
-from enum import Enum
 
 logger = logging.getLogger(__name__)
 
 class DataSource(Enum):
+
+
     """Data sources for ML training."""
     GRANT_APPLICATIONS = "grant_applications"
     RULE_EVALUATIONS = "rule_evaluations"
@@ -31,6 +31,8 @@ class DataSource(Enum):
 
 @dataclass
 class MLDataPoint:
+
+
     """Structured data point for ML training."""
     grant_id: str
     timestamp: datetime
@@ -40,9 +42,13 @@ class MLDataPoint:
     source: DataSource
 
 class EnhancedDataPipeline:
+
+
     """Enhanced data pipeline for ML model training."""
 
     def __init__(self, database_url: str = None):
+
+
         self.database_url = database_url or os.getenv('DATABASE_URL', 'sqlite:///ml_data.db')
         self.engine = create_engine(self.database_url)
         self.data_cache = {}
@@ -50,6 +56,8 @@ class EnhancedDataPipeline:
         self.label_columns = self._define_label_columns()
 
     def _define_feature_columns(self) -> Dict[str, List[str]]:
+
+
         """Define feature columns for different ML tasks."""
         return {
             "grant_evaluation": [
@@ -84,6 +92,8 @@ class EnhancedDataPipeline:
         }
 
     def _define_label_columns(self) -> Dict[str, List[str]]:
+
+
         """Define label columns for different ML tasks."""
         return {
             "grant_evaluation": [
@@ -127,6 +137,8 @@ class EnhancedDataPipeline:
         )
 
     def _extract_grant_features(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Extract features from grant data."""
         features = {}
 
@@ -157,6 +169,8 @@ class EnhancedDataPipeline:
         return features
 
     def _extract_grant_labels(self, grant_data: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Extract labels from grant data."""
         labels = {}
 
@@ -167,7 +181,8 @@ class EnhancedDataPipeline:
         labels["overall_score"] = grant_data.get("score", 0) / 10.0
 
         # Approval probability (based on score threshold)
-        labels["approval_probability"] = 1.0 if grant_data.get("score", 0) >= 7.0 else 0.5 if grant_data.get("score", 0) >= 5.0 else 0.0
+        labels["approval_probability"] = 1.0 if grant_data.get(
+            "score", 0) >= 7.0 else 0.5 if grant_data.get
 
         # Risk level (0=low, 1=medium, 2=high)
         score = grant_data.get("score", 0)
@@ -200,6 +215,8 @@ class EnhancedDataPipeline:
         return labels
 
     def _encode_category(self, category: str) -> int:
+
+
         """Encode category as integer."""
         category_mapping = {
             "mental_health": 1,
@@ -211,6 +228,8 @@ class EnhancedDataPipeline:
         return category_mapping.get(category.lower(), 0)
 
     def _encode_demographic(self, demographic: str) -> int:
+
+
         """Encode demographic as integer."""
         demographic_mapping = {
             "young_men": 1,
@@ -222,6 +241,8 @@ class EnhancedDataPipeline:
         return demographic_mapping.get(demographic.lower(), 0)
 
     def _encode_location(self, location: str) -> int:
+
+
         """Encode location as integer."""
         location_mapping = {
             "victoria": 1,
@@ -236,6 +257,8 @@ class EnhancedDataPipeline:
         return location_mapping.get(location.lower().replace(" ", "_"), 0)
 
     def _estimate_organisation_size(self, organisation: str) -> int:
+
+
         """Estimate organisation size based on name patterns."""
         org_lower = organisation.lower()
         if any(word in org_lower for word in ["university", "hospital", "government", "department"]):
@@ -246,6 +269,8 @@ class EnhancedDataPipeline:
             return 1  # Small
 
     def _estimate_contact_experience(self, contact: str) -> int:
+
+
         """Estimate contact experience level."""
         contact_lower = contact.lower()
         if "dr." in contact_lower or "professor" in contact_lower:
@@ -256,18 +281,24 @@ class EnhancedDataPipeline:
             return 1  # Low experience
 
     def _check_stakeholder_plan(self, grant_data: Dict[str, Any]) -> int:
+
+
         """Check if grant has stakeholder engagement plan."""
         description = grant_data.get("description", "").lower()
         keywords = ["stakeholder", "community", "partnership", "engagement"]
         return 1 if any(keyword in description for keyword in keywords) else 0
 
     def _check_impact_metrics(self, grant_data: Dict[str, Any]) -> int:
+
+
         """Check if grant has impact metrics."""
         description = grant_data.get("description", "").lower()
         keywords = ["impact", "outcome", "measurement", "evaluation", "metrics"]
         return 1 if any(keyword in description for keyword in keywords) else 0
 
     def _check_sdg_alignment(self, grant_data: Dict[str, Any]) -> int:
+
+
         """Check if grant has SDG alignment."""
         description = grant_data.get("description", "").lower()
         keywords = ["sdg", "sustainable development", "goal", "target"]
@@ -292,13 +323,16 @@ class EnhancedDataPipeline:
         )
 
     def _extract_rule_features(self, evaluation_results: List[Dict[str, Any]]) -> Dict[str, Any]:
+
+
         """Extract features from rule evaluation results."""
         features = {}
 
         # Rule execution statistics
         features["total_rules"] = len(evaluation_results)
         features["triggered_rules"] = len([r for r in evaluation_results if r.get("conditions_met", False)])
-        features["success_rate"] = len([r for r in evaluation_results if r.get("success", False)]) / len(evaluation_results) if evaluation_results else 0
+        features["success_rate"] = len(
+            [r for r in evaluation_results if r.get
 
         # Rule category distribution
         rule_categories = {}
@@ -320,6 +354,8 @@ class EnhancedDataPipeline:
         return features
 
     def _extract_rule_labels(self, evaluation_results: List[Dict[str, Any]]) -> Dict[str, Any]:
+
+
         """Extract labels from rule evaluation results."""
         labels = {}
 
@@ -338,6 +374,8 @@ class EnhancedDataPipeline:
         return labels
 
     def _categorize_rule(self, rule_name: str) -> str:
+
+
         """Categorize rule based on name."""
         rule_lower = rule_name.lower()
         if any(word in rule_lower for word in ["validate", "check", "ensure"]):

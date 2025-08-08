@@ -63,10 +63,13 @@ def create_user_validation_rules():
         priority=RulePriority.MEDIUM,
         context_types=[ContextType.USER_REGISTRATION],
         conditions=[
-            Condition("any(c.isupper() for c in data.get('password', ''))", description="Password must contain uppercase letter"),
-            Condition("any(c.islower() for c in data.get('password', ''))", description="Password must contain lowercase letter"),
+            Condition(
+                "any
+            Condition(
+                "any
             Condition("any(c.isdigit() for c in data.get('password', ''))", description="Password must contain digit"),
-            Condition("any(c in '!@#$%^&*()' for c in data.get('password', ''))", description="Password must contain special character")
+            Condition(
+                "any
         ],
         actions=[
             Action("log_message", parameters={
@@ -224,7 +227,8 @@ def create_login_rules():
         priority=RulePriority.MEDIUM,
         context_types=[ContextType.USER_LOGIN],
         conditions=[
-            Condition("data.get('email') not in ['user@example.com', 'admin@example.com'] or data.get('password') != 'correct_password'",
+            Condition(
+                "data.get
                      description="Invalid credentials")
         ],
         actions=[

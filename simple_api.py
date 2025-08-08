@@ -6,7 +6,6 @@ A basic FastAPI server for testing the system
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from typing import Dict, Any, List
 import json
 import sqlite3
@@ -17,7 +16,6 @@ import logging
 from rules.core.cache import get_rule_cache, CacheStrategy
 from monitoring.advanced_metrics import get_metrics_collector, PerformanceMetric
 import time
-import asyncio
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -194,6 +192,8 @@ async def advanced_health_check():
 
 # Pydantic models
 class GrantRequest(BaseModel):
+
+
     title: str
     budget: float
     currency: str = "AUD"
@@ -202,12 +202,16 @@ class GrantRequest(BaseModel):
     description: str
 
 class ImpactReportRequest(BaseModel):
+
+
     title: str
     type: str
     frameworks: List[str]
     description: str
 
 class HealthResponse(BaseModel):
+
+
     status: str
     timestamp: str
     version: str
@@ -217,10 +221,14 @@ class HealthResponse(BaseModel):
 
 # Database functions
 def get_db_connection():
+
+
     """Get database connection"""
     return sqlite3.connect('movember_ai.db')
 
 def init_database():
+
+
     """Initialize the database with required tables."""
     try:
         conn = get_db_connection()
@@ -267,6 +275,8 @@ def init_database():
         return False
 
 def validate_uk_spelling(text: str) -> bool:
+
+
     """Validate UK spelling in text."""
     # Simple UK spelling validation
     american_spellings = ['color', 'favor', 'center', 'theater', 'realize', 'organize']
@@ -276,10 +286,14 @@ def validate_uk_spelling(text: str) -> bool:
     return True
 
 def validate_aud_currency(currency: str) -> bool:
+
+
     """Validate AUD currency format."""
     return currency.upper() == "AUD"
 
 def format_aud_currency(amount: float) -> str:
+
+
     """Format amount in AUD currency."""
     return f"A${amount:,.2f}"
 
@@ -596,7 +610,8 @@ async def get_global_impact():
                     {"name": "Awareness Campaign Reach", "value": 2500000, "unit": "people", "target": 2000000},
                     {"name": "Social Media Engagement", "value": 850000, "unit": "interactions", "target": 750000},
                     {"name": "Media Coverage", "value": 1250, "unit": "articles", "target": 1000},
-                    {"name": "Educational Resources Distributed", "value": 450000, "unit": "resources", "target": 400000}
+                    {"name": "Educational Resources Distributed",
+                         "value": 450000, "unit": "resources", "target": 400000}
                 ],
                 "impact_score": 8.7,
                 "achievements": [
@@ -649,7 +664,8 @@ async def get_global_impact():
                 "metrics": [
                     {"name": "Awareness Campaigns", "value": 45, "unit": "campaigns", "target": 40},
                     {"name": "Educational Sessions", "value": 850, "unit": "sessions", "target": 800},
-                    {"name": "Self-Examination Guides Distributed", "value": 180000, "unit": "guides", "target": 150000},
+                    {"name": "Self-Examination Guides Distributed",
+                         "value": 180000, "unit": "guides", "target": 150000},
                     {"name": "Early Detection Cases", "value": 125, "unit": "cases", "target": 100}
                 ],
                 "impact_score": 8.5,
@@ -667,7 +683,8 @@ async def get_global_impact():
                 "metrics": [
                     {"name": "Prevention Programmes", "value": 35, "unit": "programmes", "target": 30},
                     {"name": "Crisis Intervention Sessions", "value": 8500, "unit": "sessions", "target": 7500},
-                    {"name": "Mental Health Training Provided", "value": 12500, "unit": "training_hours", "target": 10000},
+                    {"name": "Mental Health Training Provided",
+                         "value": 12500, "unit": "training_hours", "target": 10000},
                     {"name": "Lives Positively Impacted", "value": 45000, "unit": "individuals", "target": 40000}
                 ],
                 "impact_score": 9.3,
@@ -761,7 +778,8 @@ async def get_global_impact():
                 "metrics": [
                     {"name": "Educational Programmes", "value": 125, "unit": "programmes", "target": 100},
                     {"name": "Training Sessions", "value": 850, "unit": "sessions", "target": 750},
-                    {"name": "Educational Materials Distributed", "value": 650000, "unit": "materials", "target": 600000},
+                    {"name": "Educational Materials Distributed",
+                         "value": 650000, "unit": "materials", "target": 600000},
                     {"name": "Educational Reach", "value": 1250000, "unit": "individuals", "target": 1000000}
                 ],
                 "impact_score": 8.7,
@@ -834,7 +852,6 @@ async def get_global_impact():
 async def get_executive_summary():
     """Get executive summary of Movember's impact."""
     try:
-        from movember_impact_measurement import MovemberImpactMeasurement
 
         impact_system = MovemberImpactMeasurement()
         executive_summary = await impact_system.generate_executive_summary()
@@ -895,7 +912,6 @@ async def get_category_impact(category_name: str):
 async def get_impact_dashboard():
     """Get comprehensive impact dashboard data."""
     try:
-        from movember_impact_measurement import MovemberImpactMeasurement
 
         impact_system = MovemberImpactMeasurement()
         global_impact = await impact_system.measure_global_impact()

@@ -12,12 +12,9 @@ import json
 import re
 from datetime import datetime
 from typing import Dict, List, Any, Optional
-from bs4 import BeautifulSoup
 import time
-import random
 import os
 from urllib.parse import urljoin, urlparse
-import httpx
 
 # Configure logging
 logging.basicConfig(
@@ -31,13 +28,18 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class MovemberDataScraper:
+
+
     """Data scraper for the Movember AI Rules System."""
 
     def __init__(self, db_path: str = "movember_ai.db"):
+
+
         self.db_path = db_path
         self.session = None
         self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (
+                Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 
         }
         self.rate_limit_delay = 2  # seconds between requests
         self.max_retries = 3
@@ -53,6 +55,8 @@ class MovemberDataScraper:
             await self.session.close()
 
     def convert_to_uk_spelling(self, text: str) -> str:
+
+
         """Convert American spelling to UK spelling."""
         spelling_map = {
             'color': 'colour',
@@ -82,10 +86,14 @@ class MovemberDataScraper:
         return converted_text
 
     def format_aud_currency(self, amount: float) -> str:
+
+
         """Format amount in AUD currency."""
         return f"A${amount:,.2f}"
 
     def extract_currency_amount(self, text: str) -> Optional[float]:
+
+
         """Extract currency amounts from text and convert to AUD."""
         # Common currency patterns
         patterns = [
@@ -106,6 +114,8 @@ class MovemberDataScraper:
         return None
 
     def validate_data_quality(self, data: Dict[str, Any]) -> Dict[str, Any]:
+
+
         """Validate and score data quality."""
         score = 0
         issues = []
@@ -142,7 +152,8 @@ class MovemberDataScraper:
 
         # Check for frameworks in impact reports
         if 'frameworks' in data and data['frameworks']:
-            valid_frameworks = ['ToC', 'CEMP', 'SDG', 'Theory of Change', 'Common Evaluation and Measurement Protocol', 'Sustainable Development Goals']
+            valid_frameworks = ['ToC',
+                 'CEMP', 'SDG', 'Theory of Change', 'Common Evaluation and Measurement Protocol', 'Sustainable Development Goals']
             if any(framework in str(data['frameworks']) for framework in valid_frameworks):
                 score += 25
 
@@ -271,7 +282,8 @@ class MovemberDataScraper:
         soup = BeautifulSoup(html, 'html.parser')
 
         # Generic grant parsing (can be customized per source)
-        grant_elements = soup.find_all(['div', 'article', 'section'], class_=re.compile(r'grant|funding|opportunity', re.I))
+        grant_elements = soup.find_all(
+            ['div', 'article', 'section'], class_=re.compile
 
         for element in grant_elements:
             try:
@@ -288,7 +300,8 @@ class MovemberDataScraper:
                 budget = self.extract_currency_amount(budget_text)
 
                 # Extract organisation
-                org_elem = element.find(['span', 'div'], class_=re.compile(r'organisation|organization|institution', re.I))
+                org_elem = element.find(
+                    ['span', 'div'], class_=re.compile
                 organisation = org_elem.get_text(strip=True) if org_elem else "Unknown Organisation"
 
                 if title and description:
@@ -313,7 +326,8 @@ class MovemberDataScraper:
         soup = BeautifulSoup(html, 'html.parser')
 
         # Generic research parsing
-        research_elements = soup.find_all(['div', 'article', 'section'], class_=re.compile(r'research|study|publication', re.I))
+        research_elements = soup.find_all(
+            ['div', 'article', 'section'], class_=re.compile
 
         for element in research_elements:
             try:
@@ -350,7 +364,8 @@ class MovemberDataScraper:
         soup = BeautifulSoup(html, 'html.parser')
 
         # Generic impact parsing
-        impact_elements = soup.find_all(['div', 'article', 'section'], class_=re.compile(r'impact|outcome|result', re.I))
+        impact_elements = soup.find_all(
+            ['div', 'article', 'section'], class_=re.compile
 
         for element in impact_elements:
             try:
@@ -414,8 +429,10 @@ class MovemberDataScraper:
             # Calculate quality metrics
             total_records = len(data)
             valid_records = sum(1 for item in data if item.get('quality_score', 0) >= 75)
-            uk_spelling_issues = sum(1 for item in data if 'quality_issues' in item and any('spelling' in issue for issue in item['quality_issues']))
-            aud_currency_issues = sum(1 for item in data if 'quality_issues' in item and any('currency' in issue for issue in item['quality_issues']))
+            uk_spelling_issues = sum(
+                1 for item in data if 'quality_issues' in item and any
+            aud_currency_issues = sum(
+                1 for item in data if 'quality_issues' in item and any
 
             # Store the data
             cursor.execute("""
@@ -439,12 +456,15 @@ class MovemberDataScraper:
             conn.commit()
             conn.close()
 
-            logger.info(f"💾 Stored {total_records} {data_type} records (quality score: {sum(item.get('quality_score', 0) for item in data) / max(len(data), 1):.1f}%)")
+            logger.info(
+                f"💾 Stored {total_records} {data_type} records 
 
         except Exception as e:
             logger.error(f"❌ Failed to store scraped data: {e}")
 
     def create_grants_scraping_config(self, base_url: str) -> Dict[str, Any]:
+
+
         """Create a configuration for grants scraping."""
         return {
             "type": "grants",
@@ -463,6 +483,8 @@ class MovemberDataScraper:
         }
 
     def create_research_scraping_config(self, base_url: str) -> Dict[str, Any]:
+
+
         """Create a configuration for research scraping."""
         return {
             "type": "research",
@@ -480,6 +502,8 @@ class MovemberDataScraper:
         }
 
     def create_impact_scraping_config(self, base_url: str) -> Dict[str, Any]:
+
+
         """Create a configuration for impact data scraping."""
         return {
             "type": "impact",
@@ -503,6 +527,8 @@ async def main():
 
     # Build sources strictly from environment (comma-separated URLs). No fallbacks.
     def env_sources(env_var: str) -> list:
+
+
         raw = os.getenv(env_var, "").strip()
         if not raw:
             return []

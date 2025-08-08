@@ -4,14 +4,11 @@ Movember AI Rules System - Weekly Refactoring Rules
 Manages weekly rule auditing and refactoring with UK spelling and AUD currency standards.
 """
 
-import asyncio
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
-from dataclasses import dataclass
 
 from rules.types import Rule, Condition, Action, RulePriority
-from rules.core import RuleEngine
 
 
 # Weekly Refactoring Rules with UK spelling and AUD currency
@@ -236,6 +233,8 @@ REFACTOR_RULES = [
 
 @dataclass
 class RefactorSummary:
+
+
     """Summary of refactoring results."""
     issues_found: int
     rules_optimised: int
@@ -251,6 +250,8 @@ class RuleRefactorEngine:
     """Engine for managing rule refactoring and optimisation."""
 
     def __init__(self):
+
+
         self.logger = logging.getLogger(__name__)
         self.refactor_history = []
 
@@ -375,10 +376,14 @@ class RuleRefactorEngine:
         ]
 
     def get_refactor_history(self) -> List[RefactorSummary]:
+
+
         """Get refactoring history."""
         return self.refactor_history
 
     def generate_refactor_report(self, summary: RefactorSummary) -> str:
+
+
         """
         Generate a human-readable refactoring report.
 

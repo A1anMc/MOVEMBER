@@ -5,21 +5,22 @@ Launch script for Movember Impact Dashboard
 
 import subprocess
 import time
-import signal
-import sys
 import os
-from pathlib import Path
 
 def check_api_running():
+
+
     """Check if the API is running."""
     try:
         import requests
         response = requests.get('http://localhost: 8000/health/', timeout=2)
         return response.status_code == 200
-    except:
+    except Exception:
         return False
 
 def start_api():
+
+
     """Start the API server."""
     print("🚀 Starting Movember AI Rules API...")
     api_process = subprocess.Popen(['python', 'simple_api.py'],
@@ -29,6 +30,8 @@ def start_api():
     return api_process
 
 def start_frontend():
+
+
     """Start the frontend server."""
     print("🌐 Starting frontend server...")
     frontend_dir = Path('frontend')
@@ -45,6 +48,8 @@ def start_frontend():
     return frontend_process
 
 def main():
+
+
     """Main launch function."""
     print("🎯 Movember Impact Dashboard Launcher")
     print("=" * 50)

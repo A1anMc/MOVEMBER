@@ -5,12 +5,9 @@ Comprehensive measurement framework for Movember's impact across all key areas.
 """
 
 import asyncio
-import json
 import sqlite3
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
-from dataclasses import dataclass
-from enum import Enum
 import logging
 
 # Configure logging
@@ -18,6 +15,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class ImpactCategory(Enum):
+
+
     """Movember impact categories."""
     MENS_HEALTH_AWARENESS = "mens_health_awareness"
     MENTAL_HEALTH = "mental_health"
@@ -31,6 +30,8 @@ class ImpactCategory(Enum):
     EDUCATION = "education"
 
 class MeasurementFramework(Enum):
+
+
     """Impact measurement frameworks."""
     THEORY_OF_CHANGE = "theory_of_change"
     CEMP = "cemp"
@@ -40,6 +41,8 @@ class MeasurementFramework(Enum):
 
 @dataclass
 class ImpactMetric:
+
+
     """Individual impact metric."""
     name: str
     category: ImpactCategory
@@ -55,6 +58,8 @@ class ImpactMetric:
 
 @dataclass
 class ImpactReport:
+
+
     """Comprehensive impact report."""
     report_id: str
     title: str
@@ -70,13 +75,19 @@ class ImpactReport:
     spelling_standard: str = "UK"
 
 class MovemberImpactMeasurement:
+
+
     """High-level impact measurement system for Movember."""
 
     def __init__(self, db_path: str = "movember_impact.db"):
+
+
         self.db_path = db_path
         self.init_database()
 
     def init_database(self):
+
+
         """Initialize the impact measurement database."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -387,11 +398,15 @@ class MovemberImpactMeasurement:
         }
 
     def _calculate_overall_impact_score(self, impact_data: Dict[str, Any]) -> float:
+
+
         """Calculate overall impact score across all categories."""
         scores = [category_data["impact_score"] for category_data in impact_data.values()]
         return sum(scores) / len(scores)
 
     def _generate_key_highlights(self, impact_data: Dict[str, Any]) -> List[str]:
+
+
         """Generate key highlights from impact data."""
         highlights = []
 
@@ -415,6 +430,8 @@ class MovemberImpactMeasurement:
         }
 
     def _generate_global_recommendations(self, impact_data: Dict[str, Any]) -> List[str]:
+
+
         """Generate global recommendations based on impact data."""
         recommendations = []
 
@@ -467,7 +484,8 @@ async def main():
 
     print("🎯 Movember Global Impact Measurement")
     print(f"Overall Impact Score: {global_impact['overall_impact_score']:.1f}/10")
-    print(f"Measurement Period: {global_impact['measurement_period']['start']} to {global_impact['measurement_period']['end']}")
+    print(
+        f"Measurement Period: {global_impact['measurement_period']['start']} to {global_impact['measurement_period']['end']}")
 
     print("\n📊 Category Breakdown:")
     for category, data in global_impact['category_breakdown'].items():

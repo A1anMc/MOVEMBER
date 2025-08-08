@@ -10,7 +10,6 @@ import subprocess
 import shutil
 import json
 import time
-from pathlib import Path
 from datetime import datetime
 import logging
 
@@ -19,9 +18,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class ProductionDeployment:
+
+
     """Production deployment manager for Movember AI Rules System."""
 
     def __init__(self, deployment_dir: str = "production"):
+
+
         self.deployment_dir = deployment_dir
         self.backup_dir = f"{deployment_dir}_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         self.config = {
@@ -33,6 +36,8 @@ class ProductionDeployment:
         }
 
     def deploy(self):
+
+
         """Main deployment process."""
         logger.info("🚀 Starting Production Deployment for Movember AI Rules System")
         logger.info("=" * 60)
@@ -77,6 +82,8 @@ class ProductionDeployment:
             raise
 
     def _pre_deployment_checks(self):
+
+
         """Perform pre-deployment checks."""
         logger.info("🔍 Performing pre-deployment checks...")
 
@@ -105,6 +112,8 @@ class ProductionDeployment:
         logger.info("✅ Pre-deployment checks passed")
 
     def _create_backup(self):
+
+
         """Create backup of existing deployment."""
         logger.info("💾 Creating backup of existing deployment...")
 
@@ -115,6 +124,8 @@ class ProductionDeployment:
             logger.info("ℹ️ No existing deployment to backup")
 
     def _prepare_deployment_directory(self):
+
+
         """Prepare deployment directory structure."""
         logger.info("📁 Preparing deployment directory...")
 
@@ -138,6 +149,8 @@ class ProductionDeployment:
         logger.info("✅ Deployment directory structure created")
 
     def _copy_application_files(self):
+
+
         """Copy application files to deployment directory."""
         logger.info("📋 Copying application files...")
 
@@ -186,6 +199,8 @@ class ProductionDeployment:
         logger.info("✅ Application files copied")
 
     def _install_dependencies(self):
+
+
         """Install production dependencies."""
         logger.info("📦 Installing production dependencies...")
 
@@ -204,6 +219,8 @@ class ProductionDeployment:
             logger.warning("⚠️ No requirements.txt found, skipping dependency installation")
 
     def _configure_production_settings(self):
+
+
         """Configure production settings."""
         logger.info("⚙️ Configuring production settings...")
 
@@ -250,6 +267,8 @@ class ProductionDeployment:
         logger.info("✅ Production settings configured")
 
     def _create_startup_scripts(self):
+
+
         """Create startup scripts for production."""
         logger.info("📜 Creating startup scripts...")
 
@@ -315,6 +334,8 @@ wait
         logger.info("✅ Startup scripts created")
 
     def _run_tests(self):
+
+
         """Run deployment tests."""
         logger.info("🧪 Running deployment tests...")
 
@@ -348,6 +369,8 @@ wait
         logger.info("✅ All deployment tests passed")
 
     def _start_services(self):
+
+
         """Start production services."""
         logger.info("🚀 Starting production services...")
 
@@ -356,6 +379,8 @@ wait
         logger.info("✅ Production services configured for startup")
 
     def _health_checks(self):
+
+
         """Perform health checks."""
         logger.info("🏥 Performing health checks...")
 
@@ -376,6 +401,8 @@ wait
         logger.info("✅ Health checks passed")
 
     def _final_verification(self):
+
+
         """Perform final verification."""
         logger.info("🔍 Performing final verification...")
 
@@ -412,6 +439,8 @@ wait
         logger.info("✅ Final verification completed")
 
     def _rollback(self):
+
+
         """Rollback to previous deployment."""
         logger.info("🔄 Rolling back deployment...")
 
@@ -424,6 +453,8 @@ wait
             logger.warning("⚠️ No backup available for rollback")
 
     def _print_deployment_summary(self):
+
+
         """Print deployment summary."""
         logger.info("📊 Deployment Summary")
         logger.info("=" * 40)
@@ -445,6 +476,8 @@ wait
         logger.info("   ✅ Production-ready Configuration")
 
 def main():
+
+
     """Main deployment function."""
     deployment = ProductionDeployment()
     deployment.deploy()

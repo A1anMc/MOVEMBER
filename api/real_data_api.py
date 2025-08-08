@@ -9,7 +9,6 @@ from datetime import datetime
 from typing import Dict, List, Optional, Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-import asyncio
 
 from real_data_integration import movember_data_integrator
 
@@ -20,10 +19,14 @@ real_data_router = APIRouter(prefix="/real-data", tags=["Real Data"])
 
 # Pydantic models for request/response
 class RealMetricsRequest(BaseModel):
+
+
     include_annual_reports: bool = Field(default=True, description="Include data from annual reports")
     include_impact_data: bool = Field(default=True, description="Include impact data")
 
 class RealMetricsResponse(BaseModel):
+
+
     status: str
     real_metrics: Dict[str, Any]
     data_sources: List[str]
@@ -32,6 +35,8 @@ class RealMetricsResponse(BaseModel):
     spelling_standard: str = "UK"
 
 class RealGrantsResponse(BaseModel):
+
+
     status: str
     real_grants: List[Dict[str, Any]]
     total_opportunities: int
@@ -41,6 +46,8 @@ class RealGrantsResponse(BaseModel):
     spelling_standard: str = "UK"
 
 class RealProjectsResponse(BaseModel):
+
+
     status: str
     real_projects: List[Dict[str, Any]]
     total_projects: int
@@ -49,6 +56,8 @@ class RealProjectsResponse(BaseModel):
     spelling_standard: str = "UK"
 
 class RealImpactResponse(BaseModel):
+
+
     status: str
     real_impact: Dict[str, Any]
     data_sources: List[str]
@@ -61,27 +70,27 @@ class RealImpactResponse(BaseModel):
 async def get_real_movember_metrics(request: RealMetricsRequest):
     """
     Get real Movember metrics from official sources.
-    
+
     This endpoint provides:
     - Real funding data from annual reports
     - Actual men reached numbers
     - Real research funding amounts
     - Actual impact metrics
     """
-    
+
     logger.info("Real Movember metrics request")
-    
+
     try:
         # Call the real data integrator
         real_metrics = await movember_data_integrator.get_real_movember_metrics()
-        
+
         return RealMetricsResponse(
             status="success",
             real_metrics=real_metrics["real_metrics"],
             data_sources=real_metrics["data_sources"],
             last_updated=real_metrics["last_updated"]
         )
-        
+
     except Exception as e:
         logger.error(f"Real metrics retrieval failed: {e}")
         raise HTTPException(
@@ -94,20 +103,20 @@ async def get_real_movember_metrics(request: RealMetricsRequest):
 async def get_real_grant_opportunities():
     """
     Get real grant opportunities relevant to Movember.
-    
+
     This endpoint provides:
     - Real NHMRC grants
     - Actual ARC opportunities
     - Government funding programs
     - Real deadlines and requirements
     """
-    
+
     logger.info("Real grant opportunities request")
-    
+
     try:
         # Call the real data integrator
         real_grants = await movember_data_integrator.get_real_grant_opportunities()
-        
+
         return RealGrantsResponse(
             status="success",
             real_grants=real_grants["real_grants"],
@@ -115,7 +124,7 @@ async def get_real_grant_opportunities():
             total_potential_funding=real_grants["total_potential_funding"],
             average_success_probability=real_grants["average_success_probability"]
         )
-        
+
     except Exception as e:
         logger.error(f"Real grants retrieval failed: {e}")
         raise HTTPException(
@@ -128,27 +137,27 @@ async def get_real_grant_opportunities():
 async def get_real_movember_projects():
     """
     Get real Movember projects and initiatives.
-    
+
     This endpoint provides:
     - Actual project budgets
     - Real geographic scope
     - Actual target audiences
     - Real SDG alignment
     """
-    
+
     logger.info("Real Movember projects request")
-    
+
     try:
         # Call the real data integrator
         real_projects = await movember_data_integrator.get_real_movember_projects()
-        
+
         return RealProjectsResponse(
             status="success",
             real_projects=real_projects["real_projects"],
             total_projects=real_projects["total_projects"],
             total_budget=real_projects["total_budget"]
         )
-        
+
     except Exception as e:
         logger.error(f"Real projects retrieval failed: {e}")
         raise HTTPException(
@@ -161,27 +170,27 @@ async def get_real_movember_projects():
 async def get_real_impact_data():
     """
     Get real impact data from Movember's reports.
-    
+
     This endpoint provides:
     - Real men reached by region
     - Actual awareness increase data
     - Real health outcomes
     - Actual research impact
     """
-    
+
     logger.info("Real impact data request")
-    
+
     try:
         # Call the real data integrator
         real_impact = await movember_data_integrator.get_real_impact_data()
-        
+
         return RealImpactResponse(
             status="success",
             real_impact=real_impact["real_impact"],
             data_sources=real_impact["data_sources"],
             last_updated=real_impact["last_updated"]
         )
-        
+
     except Exception as e:
         logger.error(f"Real impact data retrieval failed: {e}")
         raise HTTPException(
@@ -194,27 +203,27 @@ async def get_real_impact_data():
 async def get_annual_reports_data():
     """
     Get data extracted from Movember's annual reports.
-    
+
     This endpoint provides:
     - Funding raised data
     - Men reached numbers
     - Countries reached
     - Research funding amounts
     """
-    
+
     logger.info("Annual reports data request")
-    
+
     try:
         # Call the real data integrator
         annual_reports_data = await movember_data_integrator.fetch_annual_reports_data()
-        
+
         return {
             "status": "success",
             "annual_reports_data": annual_reports_data,
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-        
+
     except Exception as e:
         logger.error(f"Annual reports data retrieval failed: {e}")
         raise HTTPException(
@@ -227,16 +236,16 @@ async def get_annual_reports_data():
 async def get_data_sources_info():
     """
     Get information about data sources used.
-    
+
     This endpoint provides:
     - List of data sources
     - Data freshness information
     - Source reliability scores
     - Update frequency
     """
-    
+
     logger.info("Data sources information request")
-    
+
     try:
         data_sources = {
             "official_sources": [
@@ -303,14 +312,14 @@ async def get_data_sources_info():
                 "completeness_score": 0.88
             }
         }
-        
+
         return {
             "status": "success",
             "data_sources": data_sources,
             "currency": "AUD",
             "spelling_standard": "UK"
         }
-        
+
     except Exception as e:
         logger.error(f"Data sources information retrieval failed: {e}")
         raise HTTPException(
@@ -324,7 +333,7 @@ async def real_data_health():
     """
     Health check for the real data integration system.
     """
-    
+
     return {
         "status": "healthy",
         "service": "real_data_integration",
@@ -341,4 +350,4 @@ async def real_data_health():
     }
 
 # Export the router for inclusion in main API
-__all__ = ["real_data_router"] 
+__all__ = ["real_data_router"]

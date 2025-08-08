@@ -5,7 +5,6 @@ Manages grant application, evaluation, and lifecycle with UK spelling and AUD cu
 """
 
 from rules.types import Rule, Condition, Action, RulePriority
-from rules.core import RuleEngine
 
 
 # Grant Lifecycle Rules with UK spelling and AUD currency

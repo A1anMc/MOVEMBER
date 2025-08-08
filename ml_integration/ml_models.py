@@ -26,9 +26,13 @@ warnings.filterwarnings('ignore')
 logger = logging.getLogger(__name__)
 
 class MLModelManager:
+
+
     """Manages multiple ML models for different prediction tasks."""
 
     def __init__(self, models_dir: str = "ml_integration/models"):
+
+
         self.models_dir = models_dir
         self.models = {}
         self.scalers = {}
@@ -268,6 +272,8 @@ class MLModelManager:
             return {"error": str(e)}
 
     def _prepare_grant_evaluation_data(self, data: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+
+
         """Prepare data for grant evaluation model."""
         # Select features
         feature_columns = [
@@ -296,6 +302,8 @@ class MLModelManager:
         return X, y
 
     def _prepare_impact_prediction_data(self, data: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+
+
         """Prepare data for impact prediction model."""
         # Select features
         feature_columns = [
@@ -317,6 +325,8 @@ class MLModelManager:
         return X, y
 
     def _prepare_sdg_alignment_data(self, data: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+
+
         """Prepare data for SDG alignment model."""
         # Select features
         feature_columns = [
@@ -342,6 +352,8 @@ class MLModelManager:
         return X, y
 
     def _get_feature_importance(self, model, feature_selector) -> Dict[str, float]:
+
+
         """Get feature importance from model."""
         try:
             if hasattr(model, 'feature_importances_'):
@@ -451,6 +463,8 @@ class MLModelManager:
             return {"error": str(e)}
 
     def _extract_grant_features_for_prediction(self, grant_data: Dict[str, Any]) -> List[float]:
+
+
         """Extract features from grant data for prediction."""
         # This would be similar to the feature extraction in the data pipeline
         # For now, return a simple feature vector
@@ -471,6 +485,8 @@ class MLModelManager:
         ]
 
     def _encode_category(self, category: str) -> int:
+
+
         """Encode category as integer."""
         category_mapping = {
             "mental_health": 1,
@@ -482,6 +498,8 @@ class MLModelManager:
         return category_mapping.get(category.lower(), 0)
 
     def _encode_demographic(self, demographic: str) -> int:
+
+
         """Encode demographic as integer."""
         demographic_mapping = {
             "young_men": 1,
@@ -493,6 +511,8 @@ class MLModelManager:
         return demographic_mapping.get(demographic.lower(), 0)
 
     def _encode_location(self, location: str) -> int:
+
+
         """Encode location as integer."""
         location_mapping = {
             "victoria": 1,
@@ -507,6 +527,8 @@ class MLModelManager:
         return location_mapping.get(location.lower().replace(" ", "_"), 0)
 
     def _estimate_organisation_size(self, organisation: str) -> int:
+
+
         """Estimate organisation size based on name patterns."""
         org_lower = organisation.lower()
         if any(word in org_lower for word in ["university", "hospital", "government", "department"]):
@@ -517,6 +539,8 @@ class MLModelManager:
             return 1  # Small
 
     def _estimate_contact_experience(self, contact: str) -> int:
+
+
         """Estimate contact experience level."""
         contact_lower = contact.lower()
         if "dr." in contact_lower or "professor" in contact_lower:
@@ -527,18 +551,24 @@ class MLModelManager:
             return 1  # Low experience
 
     def _check_stakeholder_plan(self, grant_data: Dict[str, Any]) -> int:
+
+
         """Check if grant has stakeholder engagement plan."""
         description = grant_data.get("description", "").lower()
         keywords = ["stakeholder", "community", "partnership", "engagement"]
         return 1 if any(keyword in description for keyword in keywords) else 0
 
     def _check_impact_metrics(self, grant_data: Dict[str, Any]) -> int:
+
+
         """Check if grant has impact metrics."""
         description = grant_data.get("description", "").lower()
         keywords = ["impact", "outcome", "measurement", "evaluation", "metrics"]
         return 1 if any(keyword in description for keyword in keywords) else 0
 
     def _check_sdg_alignment(self, grant_data: Dict[str, Any]) -> int:
+
+
         """Check if grant has SDG alignment."""
         description = grant_data.get("description", "").lower()
         keywords = ["sdg", "sustainable development", "goal", "target"]

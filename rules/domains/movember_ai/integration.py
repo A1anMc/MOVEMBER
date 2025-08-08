@@ -5,14 +5,11 @@ Ensures seamless interaction between Grant Support, Impact Reporting, and AI Rul
 """
 
 import asyncio
-import json
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
-from enum import Enum
 
-from rules.core import RuleEngine
 from rules.types import ExecutionContext, ContextType, RulePriority
 from rules.domains.movember_ai import (
     MovemberAIRulesEngine,
@@ -43,6 +40,8 @@ class EventType(Enum):
 
 @dataclass
 class SystemEvent:
+
+
     """Represents an event that occurred in one of the integrated systems."""
     event_type: EventType
     system_type: SystemType
@@ -55,6 +54,8 @@ class SystemEvent:
 
 @dataclass
 class CrossSystemValidation:
+
+
     """Represents validation results across multiple systems."""
     validation_id: str
     systems_involved: List[SystemType]
@@ -72,6 +73,8 @@ class MovemberSystemIntegrator:
     """
 
     def __init__(self, config: Optional[Dict] = None):
+
+
         self.config = config or self._get_default_config()
         self.engine = create_movember_engine()
         self.event_queue: List[SystemEvent] = []
@@ -83,6 +86,8 @@ class MovemberSystemIntegrator:
         }
 
     def _get_default_config(self) -> Dict:
+
+
         """Get default integration configuration."""
         return {
             "event_processing": {
@@ -550,6 +555,8 @@ class MovemberSystemIntegrator:
         }
 
     def _calculate_overall_score(self, grant_eval: Dict, impact_assessment: Dict, ai_validation: Dict) -> float:
+
+
         """Calculate overall grant score."""
         scores = [
             grant_eval.get("technical_score", 0) * 0.4,
@@ -559,6 +566,8 @@ class MovemberSystemIntegrator:
         return sum(scores)
 
     def _generate_funding_recommendation(self, overall_score: float) -> str:
+
+
         """Generate funding recommendation based on overall score."""
         if overall_score >= 8.5:
             return "strongly_recommend"
@@ -619,6 +628,8 @@ class MovemberSystemIntegrator:
         }
 
     def _combine_analyses(self, framework_analysis: Dict, grant_outcomes: Dict, ai_analysis: Dict) -> Dict:
+
+
         """Combine analyses from all systems."""
         return {
             "comprehensive_score": 8.6,
@@ -677,50 +688,75 @@ class MovemberSystemIntegrator:
 
     # Helper methods for generating outputs
     def _generate_next_steps(self, results: List) -> List[str]:
+
+
         """Generate next steps based on rule evaluation results."""
         return ["Review validation results", "Address any issues", "Proceed to evaluation"]
 
     def _extract_approval_conditions(self, results: List) -> List[str]:
+
+
         """Extract approval conditions from rule results."""
         return ["Regular reporting required", "Impact monitoring mandatory", "Stakeholder engagement"]
 
     def _extract_monitoring_requirements(self, results: List) -> List[str]:
+
+
         """Extract monitoring requirements from rule results."""
         return ["Quarterly progress reports", "Impact assessment at 6 months", "Final evaluation"]
 
     def _extract_funding_terms(self, results: List) -> Dict:
+
+
         """Extract funding terms from rule results."""
         return {"amount": 500000, "disbursement": "quarterly", "conditions": ["performance_based"]}
 
     def _generate_monitoring_framework(self, impact_plan: Dict) -> Dict:
+
+
         """Generate monitoring framework for impact plan."""
-        return {"frequency": "quarterly", "metrics": impact_plan.get("metrics", []), "stakeholders": impact_plan.get("stakeholders", [])}
+        return {"frequency": "quarterly", "metrics": impact_plan.get(
+            "metrics", []), "stakeholders": impact_plan.get
 
     def _generate_reporting_schedule(self, impact_plan: Dict) -> Dict:
+
+
         """Generate reporting schedule for impact plan."""
         return {"interim_reports": "quarterly", "final_report": "end_of_grant", "stakeholder_updates": "monthly"}
 
     def _identify_missing_data(self, impact_data: Dict) -> List[str]:
+
+
         """Identify missing data in impact report."""
         return ["baseline_data", "comparison_group"]
 
     def _generate_impact_recommendations(self, analysis: Dict) -> List[str]:
+
+
         """Generate recommendations based on impact analysis."""
         return ["Scale successful interventions", "Address identified gaps", "Strengthen monitoring"]
 
     def _generate_stakeholder_communication(self, report: Dict) -> Dict:
+
+
         """Generate stakeholder communication plan."""
         return {"executives": "executive_summary", "funders": "detailed_report", "community": "accessible_summary"}
 
     def _generate_visualizations(self, report: Dict) -> List[str]:
+
+
         """Generate visualizations for impact report."""
         return ["impact_charts", "outcome_graphs", "stakeholder_maps"]
 
     def _trigger_follow_up_actions(self, impact_data: Dict) -> List[str]:
+
+
         """Trigger follow-up actions based on impact results."""
         return ["schedule_follow_up_study", "plan_scale_up", "update_grant_database"]
 
     def _calculate_performance_metrics(self, impact_data: Dict) -> Dict:
+
+
         """Calculate performance metrics for impact data."""
         return {"success_rate": 0.85, "efficiency_score": 0.78, "impact_multiplier": 2.3}
 

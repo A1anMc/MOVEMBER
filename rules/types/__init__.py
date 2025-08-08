@@ -7,7 +7,6 @@ Core data structures and types for the rules system.
 from typing import List, Dict, Any, Optional, Callable, Union
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
 
 __all__ = [
     'Rule',
@@ -47,6 +46,8 @@ class ContextType(Enum):
 
 @dataclass
 class Condition:
+
+
     """A condition that must be met for a rule to execute."""
     expression: str
     description: Optional[str] = None
@@ -54,12 +55,16 @@ class Condition:
     custom_evaluator: Optional[Callable] = None
 
     def __post_init__(self):
+
+
         if not self.description:
             self.description = f"Condition: {self.expression}"
 
 
 @dataclass
 class Action:
+
+
     """An action to be executed when a rule's conditions are met."""
     name: str
     parameters: Dict[str, Any] = field(default_factory=dict)
@@ -69,12 +74,16 @@ class Action:
     max_retries: int = 3
 
     def __post_init__(self):
+
+
         if not self.description:
             self.description = f"Action: {self.name}"
 
 
 @dataclass
 class ActionResult:
+
+
     """Result of an action execution."""
     action_name: str
     success: bool
@@ -84,6 +93,8 @@ class ActionResult:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
+
+
         """Convert to dictionary for serialization."""
         return {
             'action_name': self.action_name,
@@ -97,6 +108,8 @@ class ActionResult:
 
 @dataclass
 class RuleResult:
+
+
     """Result of a rule execution."""
     rule_name: str
     success: bool
@@ -107,6 +120,8 @@ class RuleResult:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
+
+
         """Convert to dictionary for serialization."""
         return {
             'rule_name': self.rule_name,
@@ -121,6 +136,8 @@ class RuleResult:
 
 @dataclass
 class ExecutionContext:
+
+
     """Context for rule execution."""
     context_type: ContextType
     context_id: str
@@ -131,6 +148,8 @@ class ExecutionContext:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
+
+
         """Convert to dictionary for serialization."""
         return {
             'context_type': self.context_type.value,
@@ -145,6 +164,8 @@ class ExecutionContext:
 
 @dataclass
 class Rule:
+
+
     """A rule definition."""
     name: str
     conditions: List[Condition] = field(default_factory=list)
@@ -160,10 +181,14 @@ class Rule:
     updated_at: datetime = field(default_factory=datetime.now)
 
     def __post_init__(self):
+
+
         if not self.description:
             self.description = f"Rule: {self.name}"
 
     def to_dict(self) -> Dict[str, Any]:
+
+
         """Convert to dictionary for serialization."""
         return {
             'name': self.name,
@@ -197,6 +222,8 @@ class Rule:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Rule':
+
+
         """Create a rule from dictionary."""
         return cls(
             name=data['name'],

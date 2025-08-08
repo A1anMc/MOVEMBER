@@ -4,16 +4,18 @@ Real Data Sources Integration for Movember AI Rules System
 Connects to actual grant databases, research repositories, and impact measurement platforms
 """
 import asyncio
-import aiohttp
 import sqlite3
-import json
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 import pandas as pd
 
 class RealDataCollector:
+
+
     def __init__(self):
+
+
         self.db_path = "movember_ai.db"
         self.logger = logging.getLogger(__name__)
 
@@ -241,6 +243,8 @@ class RealDataCollector:
         ]
 
     def store_real_data(self, data, data_type):
+
+
         """Store real data in the database"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()

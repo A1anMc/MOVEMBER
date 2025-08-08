@@ -13,6 +13,8 @@ builtins.logger = logger
 
 @pytest.fixture
 def sample_grant_data():
+
+
     return {
         "grant_id": "GRANT-INTEGRATION-001",
         "title": "Men's Health Research Initiative",
@@ -36,6 +38,8 @@ def sample_grant_data():
 
 @pytest.fixture
 def sample_impact_data():
+
+
     return {
         "report_id": "IMPACT-INTEGRATION-001",
         "grant_id": "GRANT-INTEGRATION-001",
