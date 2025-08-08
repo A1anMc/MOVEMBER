@@ -12,7 +12,7 @@ import json
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, asdict
-from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import httpx
@@ -41,6 +41,22 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 def ensure_tables() -> None:
     """Ensure ORM tables exist (idempotent)."""
     try:
+        # Import ORM models defined below via globals
+        tables = []
+        try:
+            tables = [
+                globals().get('GrantRecord').__table__,
+                globals().get('ImpactReportRecord').__table__,
+                globals().get('SystemHealthRecord').__table__,
+            ]
+        except Exception:
+            tables = []
+
+        # Create explicitly per table to avoid timing issues
+        for t in [t for t in tables if t is not None]:
+            t.create(bind=engine, checkfirst=True)
+
+        # Fallback to metadata-wide create as well
         Base.metadata.create_all(bind=engine)
     except Exception as exc:
         logger.error("ensure_tables failed: %s", exc)
@@ -240,6 +256,16 @@ def _init_db() -> None:
         logger.info("Database tables ensured/created")
     except Exception as exc:
         logger.error("Failed to initialize database tables: %s", exc)
+
+# Basic API key auth dependency (skip if API_KEY not set)
+API_KEY = os.getenv("API_KEY", "").strip()
+
+async def verify_api_key(x_api_key: str | None = Header(default=None)):
+    if not API_KEY:
+        return True
+    if not x_api_key or x_api_key != API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid or missing API key")
+    return True
 
 # CORS middleware
 app.add_middleware(
@@ -561,7 +587,8 @@ def get_api_service():
 async def submit_grant_application(
     grant_data: GrantData,
     background_tasks: BackgroundTasks,
-    service: MovemberAPIService = Depends(get_api_service)
+    service: MovemberAPIService = Depends(get_api_service),
+    _: bool = Depends(verify_api_key)
 ):
     """Submit grant application for processing."""
     return await service.process_grant_application(grant_data)
@@ -571,7 +598,8 @@ async def submit_grant_application(
 async def submit_impact_report(
     report_data: ImpactReportData,
     background_tasks: BackgroundTasks,
-    service: MovemberAPIService = Depends(get_api_service)
+    service: MovemberAPIService = Depends(get_api_service),
+    _: bool = Depends(verify_api_key)
 ):
     """Submit impact report for processing."""
     return await service.process_impact_report(report_data)
@@ -580,7 +608,8 @@ async def submit_impact_report(
 @app.post("/external-data/", response_model=Dict)
 async def collect_external_data(
     request: ExternalDataRequest,
-    service: MovemberAPIService = Depends(get_api_service)
+    service: MovemberAPIService = Depends(get_api_service),
+    _: bool = Depends(verify_api_key)
 ):
     """Collect data from external sources."""
     return await service.collect_external_data(request)
@@ -589,7 +618,8 @@ async def collect_external_data(
 @app.post("/scraper/", response_model=Dict)
 async def run_web_scraper(
     config: ScraperConfig,
-    service: MovemberAPIService = Depends(get_api_service)
+    service: MovemberAPIService = Depends(get_api_service),
+    _: bool = Depends(verify_api_key)
 ):
     """Run web scraper with specified configuration."""
     return await service.run_web_scraper(config)
