@@ -157,7 +157,7 @@ class MovemberAIRulesEngine:
     async def get_integrator(self):
         """Get or create the system integrator."""
         if self.integrator is None:
-from rules.domains.movember_ai.integration import create_movember_integrator # local import to avoid circular
+            from rules.domains.movember_ai.integration import create_movember_integrator # local import to avoid circular
             self.integrator = await create_movember_integrator()
         return self.integrator
 
