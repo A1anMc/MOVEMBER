@@ -48,6 +48,17 @@ except ImportError as e:
     grant_acquisition_router = None
     GRANT_ACQUISITION_AVAILABLE = False
 
+# Import impact intelligence system
+try:
+    from impact_intelligence_engine import impact_intelligence_engine
+    from api.impact_intelligence_api import impact_intelligence_router
+    IMPACT_INTELLIGENCE_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Impact intelligence system not available: {e}")
+    impact_intelligence_engine = None
+    impact_intelligence_router = None
+    IMPACT_INTELLIGENCE_AVAILABLE = False
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -325,6 +336,13 @@ if GRANT_ACQUISITION_AVAILABLE and grant_acquisition_router:
     logger.info("Grant acquisition endpoints included")
 else:
     logger.warning("Grant acquisition endpoints not available")
+
+# Include impact intelligence router if available
+if IMPACT_INTELLIGENCE_AVAILABLE and impact_intelligence_router:
+    app.include_router(impact_intelligence_router)
+    logger.info("Impact intelligence endpoints included")
+else:
+    logger.warning("Impact intelligence endpoints not available")
 
 # Global variables
 movember_engine = None
