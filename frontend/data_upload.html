@@ -225,11 +225,50 @@
             font-size: 14px;
             font-weight: 600;
         }
+        .logo-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .logo {
+            height: 80px;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .logo-fallback {
+            display: none;
+            background: linear-gradient(135deg, #2E86AB 0%, #F7931E 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .logo-text {
+            font-family: 'Arial', sans-serif;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
+            <div class="logo-container">
+                <img src="/static/images/logo.png" alt="Movember Logo" class="logo" id="movemberLogo">
+                <div class="logo-fallback" id="logoFallback">
+                    <span class="logo-text">Movember</span>
+                </div>
+            </div>
             <h1>📤 Movember Data Upload System</h1>
             <p>Upload real Movember data in various formats for automatic processing</p>
         </div>
@@ -349,10 +388,31 @@
     <script>
         const API_BASE = 'http://localhost:8001';
         
-        // Load summary on page load
+        // Handle logo loading
         document.addEventListener('DOMContentLoaded', function() {
+            loadLogo();
             loadSummary();
         });
+        
+        function loadLogo() {
+            const logo = document.getElementById('movemberLogo');
+            const fallback = document.getElementById('logoFallback');
+            
+            // Check if logo loads successfully
+            logo.onload = function() {
+                logo.style.display = 'block';
+                fallback.style.display = 'none';
+            };
+            
+            logo.onerror = function() {
+                logo.style.display = 'none';
+                fallback.style.display = 'block';
+                console.log('Logo not found, showing fallback');
+            };
+            
+            // Trigger load check
+            logo.src = logo.src;
+        }
         
         // Handle form submission
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {

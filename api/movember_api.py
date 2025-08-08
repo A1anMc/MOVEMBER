@@ -12,7 +12,9 @@ import json
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, asdict
-from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Header
+from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Header, Request, Form, UploadFile, File
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import httpx
@@ -304,6 +306,9 @@ app = FastAPI(
     description="API for Movember AI Rules System with UK spelling and AUD currency standards",
     version="1.1.0"
 )
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="assets"), name="static")
 
 # Ensure DB tables exist at startup (handles fresh Postgres instances on Render)
 @app.on_event("startup")
@@ -1060,6 +1065,16 @@ async def get_grant_evaluations(limit: int = 10, offset: int = 0):
     except Exception as e:
         logger.error(f"Error retrieving grant evaluations: {str(e)}")
         return {"status": "error", "message": str(e)}
+
+
+# Logo endpoint for testing
+@app.get("/logo/")
+async def get_logo():
+    """Get the Movember logo."""
+    try:
+        return FileResponse("assets/images/logo-placeholder.svg")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Logo not found")
 
 
 if __name__ == "__main__":
