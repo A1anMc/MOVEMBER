@@ -1,22 +1,33 @@
 {
   "name": "Movember AI Rules System",
   "short_name": "Movember AI",
-  "description": "Movember AI Rules System for grant evaluation and impact measurement",
+  "description": "AI-powered rules system for Movember grant management and impact measurement",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2E86AB",
+  "theme_color": "#F7931E",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/static/images/android-chrome-192x192.png",
+      "src": "/logo/192",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/static/images/android-chrome-512x512.png",
+      "src": "/logo/512",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo/apple",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "theme_color": "#2E86AB",
-  "background_color": "#ffffff",
-  "display": "standalone",
-  "start_url": "/",
-  "scope": "/"
+  "categories": ["productivity", "business", "health"],
+  "lang": "en-AU",
+  "dir": "ltr"
 }

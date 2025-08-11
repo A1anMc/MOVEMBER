@@ -1084,23 +1084,72 @@ async def get_grant_evaluations(limit: int = 10, offset: int = 0):
         return {"status": "error", "message": str(e)}
 
 
-# Logo endpoint for testing
+# Logo endpoints
 @app.get("/logo/")
 async def get_logo():
     """Get the Movember logo."""
     try:
-        return FileResponse("assets/images/logo-placeholder.svg")
+        return FileResponse("assets/images/logo-placeholder.svg", media_type="image/svg+xml")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Logo not found")
 
-# Favicon endpoint
+@app.get("/logo/192")
+async def get_logo_192():
+    """Get the Movember logo (192x192)."""
+    try:
+        return FileResponse("assets/images/android-chrome-192x192.png", media_type="image/png")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Logo not found")
+
+@app.get("/logo/512")
+async def get_logo_512():
+    """Get the Movember logo (512x512)."""
+    try:
+        return FileResponse("assets/images/android-chrome-512x512.png", media_type="image/png")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Logo not found")
+
+@app.get("/logo/apple")
+async def get_apple_logo():
+    """Get the Apple touch icon."""
+    try:
+        return FileResponse("assets/images/apple-touch-icon.png", media_type="image/png")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Logo not found")
+
+# Favicon endpoints
 @app.get("/favicon.ico")
 async def get_favicon():
     """Get the Movember favicon."""
     try:
-        return FileResponse("assets/images/favicon.ico")
+        return FileResponse("assets/images/favicon.ico", media_type="image/x-icon")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Favicon not found")
+
+@app.get("/favicon/16")
+async def get_favicon_16():
+    """Get the 16x16 favicon."""
+    try:
+        return FileResponse("assets/images/favicon-16x16.png", media_type="image/png")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Favicon not found")
+
+@app.get("/favicon/32")
+async def get_favicon_32():
+    """Get the 32x32 favicon."""
+    try:
+        return FileResponse("assets/images/favicon-32x32.png", media_type="image/png")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Favicon not found")
+
+# Web manifest endpoint for PWA support
+@app.get("/site.webmanifest")
+async def get_web_manifest():
+    """Get the web app manifest for PWA support."""
+    try:
+        return FileResponse("assets/site.webmanifest", media_type="application/manifest+json")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Web manifest not found")
 
 
 if __name__ == "__main__":
