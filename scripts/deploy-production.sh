@@ -275,8 +275,8 @@ httpx==0.25.2
 aiohttp==3.9.1
 beautifulsoup4==4.12.2
 pandas==2.1.4
-pydantic==2.5.0
-python-multipart==0.0.6
+pydantic==2.6.1
+python-multipart>=0.0.7
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 python-dotenv==1.0.0
