@@ -1090,6 +1090,12 @@ from pathlib import Path
 # Get the base directory for assets
 BASE_DIR = Path(__file__).parent.parent
 
+# Test endpoint
+@app.get("/test-logo/")
+async def test_logo():
+    """Test endpoint for logo."""
+    return {"message": "Logo endpoint is working", "status": "success"}
+
 # Logo endpoints
 @app.get("/logo/")
 async def get_logo():
