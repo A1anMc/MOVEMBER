@@ -5,16 +5,12 @@ Integrates with government health APIs and research databases for comprehensive 
 """
 
 import asyncio
-import aiohttp
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 from enum import Enum
 import json
-import re
-from bs4 import BeautifulSoup
-import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -44,11 +40,6 @@ class AdvancedHealthDataConnector:
     """Advanced connector for health data from multiple sources."""
     
     def __init__(self):
-        self.session = None
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-        
         # API endpoints and configurations
         self.endpoints = {
             'aihw': {
@@ -72,14 +63,6 @@ class AdvancedHealthDataConnector:
                 'timeout': 30
             }
         }
-        
-    async def __aenter__(self):
-        self.session = aiohttp.ClientSession(headers=self.headers)
-        return self
-        
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        if self.session:
-            await self.session.close()
     
     async def get_comprehensive_health_data(self) -> Dict[str, Any]:
         """Get comprehensive health data from all available sources."""
@@ -589,13 +572,13 @@ class AdvancedHealthDataConnector:
 # Convenience function for easy integration
 async def get_advanced_health_data() -> Dict[str, Any]:
     """Get comprehensive health data from advanced sources."""
-    async with AdvancedHealthDataConnector() as connector:
-        return await connector.get_comprehensive_health_data()
+    connector = AdvancedHealthDataConnector()
+    return await connector.get_comprehensive_health_data()
 
 async def get_mens_health_summary() -> Dict[str, Any]:
     """Get a comprehensive men's health summary."""
-    async with AdvancedHealthDataConnector() as connector:
-        return await connector.get_mens_health_summary()
+    connector = AdvancedHealthDataConnector()
+    return await connector.get_mens_health_summary()
 
 if __name__ == "__main__":
     # Test the advanced health data connector
