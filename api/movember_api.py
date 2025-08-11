@@ -76,6 +76,12 @@ except ImportError as e:
     data_upload_router = None
     DATA_UPLOAD_AVAILABLE = False
 
+# Add new imports for Phase 2 components
+from analytics.predictive_engine import get_predictive_analytics_engine, PredictionType, ModelType
+from data.sources.advanced_health_data import get_advanced_health_data, get_mens_health_summary
+from monitoring.real_time_monitor import get_real_time_monitor
+from dashboard.advanced_analytics_dashboard import get_advanced_analytics_dashboard
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -336,7 +342,6 @@ async def startup_event():
 
     except Exception as e:
         logger.error(f"Error during startup: {str(e)}")
-        logger.info("Continuing with application startup despite database issues...")
 
 # Basic API key auth dependency (skip if API_KEY not set)
 API_KEY = os.getenv("API_KEY", "").strip()
@@ -378,9 +383,10 @@ if DATA_UPLOAD_AVAILABLE:
 else:
     logger.warning("Data upload system not available")
 
-# Global variables
-movember_engine = None
-health_monitor = None
+# Add new global variables for Phase 2 components
+predictive_engine = None
+real_time_monitor = None
+analytics_dashboard = None
 
 
 class MovemberAPIService:
@@ -1554,6 +1560,265 @@ async def get_web_manifest():
         return FileResponse(str(manifest_path), media_type="application/manifest+json")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Web manifest not found")
+
+# Add new Phase 2 endpoints
+
+@app.get("/analytics/predictive/grant-success")
+async def predict_grant_success(
+    budget_amount: float = 250000,
+    team_size: int = 8,
+    experience_years: float = 12,
+    previous_grants: int = 3,
+    research_quality_score: float = 8.5,
+    collaboration_score: float = 8.0,
+    innovation_score: float = 7.5,
+    impact_potential: float = 8.0,
+    geographic_reach: int = 15,
+    timeline_months: int = 24
+):
+    """Predict grant success probability using machine learning models."""
+    try:
+        if not predictive_engine:
+            raise HTTPException(status_code=503, detail="Predictive engine not available")
+        
+        grant_data = {
+            'budget_amount': budget_amount,
+            'team_size': team_size,
+            'experience_years': experience_years,
+            'previous_grants': previous_grants,
+            'research_quality_score': research_quality_score,
+            'collaboration_score': collaboration_score,
+            'innovation_score': innovation_score,
+            'impact_potential': impact_potential,
+            'geographic_reach': geographic_reach,
+            'timeline_months': timeline_months
+        }
+        
+        prediction = await predictive_engine.predict_grant_success(grant_data)
+        
+        return {
+            "status": "success",
+            "data": {
+                "prediction": prediction.predicted_value,
+                "confidence": prediction.confidence,
+                "model_type": prediction.model_type.value,
+                "features_used": prediction.features_used,
+                "timestamp": prediction.timestamp.isoformat(),
+                "input_data": grant_data
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error predicting grant success: {e}")
+        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
+
+@app.get("/analytics/predictive/impact-growth")
+async def predict_impact_growth():
+    """Predict impact growth over the next 12 months."""
+    try:
+        if not predictive_engine:
+            raise HTTPException(status_code=503, detail="Predictive engine not available")
+        
+        # Get current metrics (simulated)
+        current_metrics = {
+            'people_reached_lag1': 1200000,
+            'people_reached_lag2': 1150000,
+            'people_reached_lag3': 1100000,
+            'funding_raised': 160000000,
+            'research_projects': 480,
+            'volunteer_hours': 55000,
+            'awareness_score': 7.8
+        }
+        
+        prediction = await predictive_engine.predict_impact_growth(current_metrics)
+        
+        return {
+            "status": "success",
+            "data": {
+                "predicted_people_reached": prediction.predicted_value,
+                "confidence": prediction.confidence,
+                "model_type": prediction.model_type.value,
+                "features_used": prediction.features_used,
+                "timestamp": prediction.timestamp.isoformat(),
+                "current_metrics": current_metrics
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error predicting impact growth: {e}")
+        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
+
+@app.get("/analytics/predictive/trends")
+async def analyze_trends(metric_name: str = "people_reached"):
+    """Analyze trends for a specific metric."""
+    try:
+        if not predictive_engine:
+            raise HTTPException(status_code=503, detail="Predictive engine not available")
+        
+        # Simulate historical data
+        historical_values = [7.2, 7.5, 7.8, 8.1, 8.3, 8.5, 8.7, 8.9, 9.1, 9.3, 9.5, 9.7]
+        
+        trend_analysis = await predictive_engine.analyze_trends(metric_name, historical_values)
+        
+        return {
+            "status": "success",
+            "data": {
+                "metric_name": trend_analysis.metric_name,
+                "current_value": trend_analysis.current_value,
+                "trend_direction": trend_analysis.trend_direction,
+                "trend_strength": trend_analysis.trend_strength,
+                "seasonal_pattern": trend_analysis.seasonal_pattern,
+                "forecasts": {
+                    "3_months": trend_analysis.forecast_3_months,
+                    "6_months": trend_analysis.forecast_6_months,
+                    "12_months": trend_analysis.forecast_12_months
+                },
+                "confidence_intervals": trend_analysis.confidence_intervals
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error analyzing trends: {e}")
+        raise HTTPException(status_code=500, detail=f"Trend analysis error: {str(e)}")
+
+@app.get("/analytics/predictive/model-performance")
+async def get_model_performance():
+    """Get performance summary of all predictive models."""
+    try:
+        if not predictive_engine:
+            raise HTTPException(status_code=503, detail="Predictive engine not available")
+        
+        performance = await predictive_engine.get_model_performance_summary()
+        
+        return {
+            "status": "success",
+            "data": performance
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting model performance: {e}")
+        raise HTTPException(status_code=500, detail=f"Performance error: {str(e)}")
+
+@app.get("/health/advanced")
+async def get_advanced_health_data():
+    """Get comprehensive health data from multiple sources."""
+    try:
+        health_data = await get_advanced_health_data()
+        
+        return {
+            "status": "success",
+            "data": health_data
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting advanced health data: {e}")
+        raise HTTPException(status_code=500, detail=f"Health data error: {str(e)}")
+
+@app.get("/health/mens-health-summary")
+async def get_mens_health_summary():
+    """Get comprehensive men's health summary."""
+    try:
+        summary = await get_mens_health_summary()
+        
+        return {
+            "status": "success",
+            "data": summary
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting men's health summary: {e}")
+        raise HTTPException(status_code=500, detail=f"Health summary error: {str(e)}")
+
+@app.get("/monitoring/status")
+async def get_monitoring_status():
+    """Get real-time monitoring status."""
+    try:
+        if not real_time_monitor:
+            raise HTTPException(status_code=503, detail="Real-time monitor not available")
+        
+        status = await real_time_monitor.get_monitoring_summary()
+        
+        return {
+            "status": "success",
+            "data": status
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting monitoring status: {e}")
+        raise HTTPException(status_code=500, detail=f"Monitoring error: {str(e)}")
+
+@app.get("/dashboard/analytics")
+async def get_analytics_dashboard():
+    """Get advanced analytics dashboard data."""
+    try:
+        if not analytics_dashboard:
+            raise HTTPException(status_code=503, detail="Analytics dashboard not available")
+        
+        dashboard_data = await analytics_dashboard.get_dashboard_data()
+        
+        return {
+            "status": "success",
+            "data": dashboard_data
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting analytics dashboard: {e}")
+        raise HTTPException(status_code=500, detail=f"Dashboard error: {str(e)}")
+
+@app.get("/dashboard/widget/{widget_id}")
+async def get_dashboard_widget(widget_id: str):
+    """Get data for a specific dashboard widget."""
+    try:
+        if not analytics_dashboard:
+            raise HTTPException(status_code=503, detail="Analytics dashboard not available")
+        
+        if widget_id not in analytics_dashboard.widgets:
+            raise HTTPException(status_code=404, detail=f"Widget {widget_id} not found")
+        
+        widget = analytics_dashboard.widgets[widget_id]
+        
+        return {
+            "status": "success",
+            "data": {
+                "id": widget.id,
+                "title": widget.title,
+                "type": widget.widget_type,
+                "data": widget.data,
+                "position": widget.position,
+                "size": widget.size
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting dashboard widget {widget_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Widget error: {str(e)}")
+
+@app.get("/dashboard/chart/{chart_id}")
+async def get_dashboard_chart(chart_id: str):
+    """Get data for a specific dashboard chart."""
+    try:
+        if not analytics_dashboard:
+            raise HTTPException(status_code=503, detail="Analytics dashboard not available")
+        
+        if chart_id not in analytics_dashboard.charts:
+            raise HTTPException(status_code=404, detail=f"Chart {chart_id} not found")
+        
+        chart = analytics_dashboard.charts[chart_id]
+        
+        return {
+            "status": "success",
+            "data": {
+                "type": chart.chart_type.value,
+                "title": chart.title,
+                "labels": chart.labels,
+                "datasets": chart.datasets,
+                "options": chart.options
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting dashboard chart {chart_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Chart error: {str(e)}")
 
 
 if __name__ == "__main__":
