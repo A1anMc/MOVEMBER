@@ -76,11 +76,16 @@ except ImportError as e:
     data_upload_router = None
     DATA_UPLOAD_AVAILABLE = False
 
-# Add new imports for Phase 2 components
-from analytics.predictive_engine import get_predictive_analytics_engine, PredictionType, ModelType
-from data.sources.advanced_health_data import get_advanced_health_data, get_mens_health_summary
-from monitoring.real_time_monitor import get_real_time_monitor
-from dashboard.advanced_analytics_dashboard import get_advanced_analytics_dashboard
+# Add new imports for Phase 2 components (optional)
+try:
+    from analytics.predictive_engine import get_predictive_analytics_engine, PredictionType, ModelType
+    from data.sources.advanced_health_data import get_advanced_health_data, get_mens_health_summary
+    from monitoring.real_time_monitor import get_real_time_monitor
+    from dashboard.advanced_analytics_dashboard import get_advanced_analytics_dashboard
+    PHASE2_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Phase 2 components not available: {e}")
+    PHASE2_AVAILABLE = False
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -314,7 +319,7 @@ app.mount("/static", StaticFiles(directory="assets"), name="static")
 # Ensure DB tables exist at startup (handles fresh Postgres instances on Render)
 @app.on_event("startup")
 async def startup_event():
-    """Initialize database tables on startup"""
+    """Initialize database tables and Phase 2 components on startup"""
     try:
         # Create tables
         Base.metadata.create_all(bind=engine)
@@ -339,6 +344,41 @@ async def startup_event():
         except Exception as db_error:
             logger.warning(f"Database table creation failed (non-critical): {str(db_error)}")
             logger.info("Continuing with application startup...")
+
+        # Initialize Phase 2 components if available
+        if PHASE2_AVAILABLE:
+            logger.info("Initializing Phase 2 components...")
+            
+            try:
+                # Initialize predictive analytics engine
+                global predictive_engine
+                predictive_engine = await get_predictive_analytics_engine()
+                logger.info("Predictive analytics engine initialized")
+            except Exception as e:
+                logger.error(f"Error initializing predictive engine: {e}")
+                predictive_engine = None
+            
+            try:
+                # Initialize real-time monitor
+                global real_time_monitor
+                real_time_monitor = await get_real_time_monitor()
+                logger.info("Real-time monitor initialized")
+            except Exception as e:
+                logger.error(f"Error initializing real-time monitor: {e}")
+                real_time_monitor = None
+            
+            try:
+                # Initialize analytics dashboard
+                global analytics_dashboard
+                analytics_dashboard = await get_advanced_analytics_dashboard()
+                logger.info("Analytics dashboard initialized")
+            except Exception as e:
+                logger.error(f"Error initializing analytics dashboard: {e}")
+                analytics_dashboard = None
+            
+            logger.info("Phase 2 components initialization completed")
+        else:
+            logger.info("Phase 2 components not available - skipping initialization")
 
     except Exception as e:
         logger.error(f"Error during startup: {str(e)}")
@@ -382,6 +422,11 @@ if DATA_UPLOAD_AVAILABLE:
     logger.info("Data upload system available")
 else:
     logger.warning("Data upload system not available")
+
+if PHASE2_AVAILABLE:
+    logger.info("Phase 2 components available")
+else:
+    logger.warning("Phase 2 components not available")
 
 # Add new global variables for Phase 2 components
 predictive_engine = None
