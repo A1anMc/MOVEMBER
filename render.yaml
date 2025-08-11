@@ -17,6 +17,10 @@ services:
         fromDatabase:
           name: movember-db
           property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
 
   # React Frontend
   - type: web

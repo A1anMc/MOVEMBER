@@ -314,24 +314,29 @@ async def startup_event():
         Base.metadata.create_all(bind=engine)
 
         # Create grant_evaluations table if it doesn't exist
-        with engine.begin() as conn:
-            conn.execute(text("""
-                CREATE TABLE IF NOT EXISTS grant_evaluations (
-                    id SERIAL PRIMARY KEY,
-                    grant_id VARCHAR(255) NOT NULL,
-                    evaluation_timestamp TIMESTAMP NOT NULL,
-                    overall_score DECIMAL(3,3) NOT NULL,
-                    recommendation VARCHAR(50) NOT NULL,
-                    ml_predictions JSONB,
-                    rules_evaluation JSONB,
-                    grant_data JSONB,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            """))
+        try:
+            with engine.begin() as conn:
+                conn.execute(text("""
+                    CREATE TABLE IF NOT EXISTS grant_evaluations (
+                        id SERIAL PRIMARY KEY,
+                        grant_id VARCHAR(255) NOT NULL,
+                        evaluation_timestamp TIMESTAMP NOT NULL,
+                        overall_score DECIMAL(3,3) NOT NULL,
+                        recommendation VARCHAR(50) NOT NULL,
+                        ml_predictions JSONB,
+                        rules_evaluation JSONB,
+                        grant_data JSONB,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                """))
+            logger.info("Database tables initialized successfully")
+        except Exception as db_error:
+            logger.warning(f"Database table creation failed (non-critical): {str(db_error)}")
+            logger.info("Continuing with application startup...")
 
-        logger.info("Database tables initialized successfully")
     except Exception as e:
-        logger.error(f"Error initializing database: {str(e)}")
+        logger.error(f"Error during startup: {str(e)}")
+        logger.info("Continuing with application startup despite database issues...")
 
 # Basic API key auth dependency (skip if API_KEY not set)
 API_KEY = os.getenv("API_KEY", "").strip()
