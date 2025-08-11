@@ -9,6 +9,8 @@ import sqlite3
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 import logging
+from enum import Enum
+from dataclasses import dataclass
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
