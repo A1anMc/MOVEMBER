@@ -156,7 +156,7 @@ class MovemberSystemMonitor:
         if memory_usage > self.thresholds['memory_usage_max']:
             alerts.append({
                 "level": "WARNING",
-                "message": f"High memory usage: {memory_usage * 100}% (
+                "message": f"High memory usage: {memory_usage * 100}% ("
                     threshold: {self.thresholds['memory_usage_max'] * 100}%)",
                 "timestamp": datetime.now().isoformat(),
                 "component": "memory"

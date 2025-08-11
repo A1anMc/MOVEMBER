@@ -64,7 +64,7 @@ def create_user_validation_rules():
         context_types=[ContextType.USER_REGISTRATION],
         conditions=[
             Condition(
-                "any
+                "any"
             Condition(
                 "any
             Condition("any(c.isdigit() for c in data.get('password', ''))", description="Password must contain digit"),

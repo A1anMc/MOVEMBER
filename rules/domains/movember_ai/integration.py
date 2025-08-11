@@ -783,3 +783,5 @@ async def validate_system_integration(data: Dict, config: Optional[Dict] = None)
     """Validate integration across all systems."""
     integrator = await create_movember_integrator(config)
     return await integrator._validate_cross_system_consistency(data)
+
+}

@@ -181,8 +181,8 @@ class EnhancedDataPipeline:
         labels["overall_score"] = grant_data.get("score", 0) / 10.0
 
         # Approval probability (based on score threshold)
-        labels["approval_probability"] = 1.0 if grant_data.get(
-            "score", 0) >= 7.0 else 0.5 if grant_data.get
+        score = grant_data.get("score", 0)
+        labels["approval_probability"] = 1.0 if score >= 7.0 else 0.5 if score >= 5.0 else 0.2
 
         # Risk level (0=low, 1=medium, 2=high)
         score = grant_data.get("score", 0)

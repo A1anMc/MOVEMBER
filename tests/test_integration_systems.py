@@ -395,7 +395,7 @@ class TestThreeSystemIntegration:
         assert len(event_system_counts) >= 2  # At least 2 systems involved
 
         logger.info(
-            f"Integration metrics verified: {len
+            f"Integration metrics verified: {len"
 
 
 class TestSystemIntegrationAPI:

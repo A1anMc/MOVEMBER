@@ -38,8 +38,7 @@ class MovemberDataScraper:
         self.db_path = db_path
         self.session = None
         self.headers = {
-            'User-Agent': 'Mozilla/5.0 (
-                Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
         }
         self.rate_limit_delay = 2  # seconds between requests
         self.max_retries = 3
