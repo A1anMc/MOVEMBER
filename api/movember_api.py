@@ -1094,11 +1094,33 @@ BASE_DIR = Path(__file__).parent.parent
 @app.get("/logo/")
 async def get_logo():
     """Get the Movember logo."""
-    try:
-        logo_path = BASE_DIR / "assets" / "images" / "logo-placeholder.svg"
-        return FileResponse(str(logo_path), media_type="image/svg+xml")
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Logo not found")
+    # Serve the SVG content directly for now
+    svg_content = '''<svg width="200" height="80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="movemberGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2E86AB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F7931E;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background rectangle -->
+  <rect width="200" height="80" rx="10" fill="url(#movemberGradient)" />
+  
+  <!-- Movember text -->
+  <text x="100" y="45" font-family="Arial, sans-serif" font-size="24" font-weight="bold" 
+        text-anchor="middle" fill="white" text-transform="uppercase" letter-spacing="2">
+    MOVEMBER
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="100" y="65" font-family="Arial, sans-serif" font-size="12" 
+        text-anchor="middle" fill="white" opacity="0.9">
+    AI Rules System
+  </text>
+</svg>'''
+    
+    from fastapi.responses import Response
+    return Response(content=svg_content, media_type="image/svg+xml")
 
 @app.get("/logo/192")
 async def get_logo_192():
@@ -1131,11 +1153,21 @@ async def get_apple_logo():
 @app.get("/favicon.ico")
 async def get_favicon():
     """Get the Movember favicon."""
-    try:
-        favicon_path = BASE_DIR / "assets" / "images" / "favicon.ico"
-        return FileResponse(str(favicon_path), media_type="image/x-icon")
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Favicon not found")
+    # Serve a simple SVG favicon for now
+    favicon_svg = '''<svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="faviconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2E86AB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F7931E;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="6" fill="url(#faviconGradient)" />
+  <text x="16" y="22" font-family="Arial, sans-serif" font-size="18" font-weight="bold" 
+        text-anchor="middle" fill="white">M</text>
+</svg>'''
+    
+    from fastapi.responses import Response
+    return Response(content=favicon_svg, media_type="image/svg+xml")
 
 @app.get("/favicon/16")
 async def get_favicon_16():
