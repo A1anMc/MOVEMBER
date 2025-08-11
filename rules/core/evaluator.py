@@ -222,16 +222,23 @@ class ConditionEvaluator:
                 report_alias = wrapped_data
 
         project_alias = AttrDict(
-            {'id': context.data.get
+            {'id': context.data.get('project_id', '')}
+        )
         agent_alias = self._wrap_data(
-            
+            context.data.get('agent_data', {})
+        )
         user_alias = AttrDict(
-            {'request_type': 
+            {'request_type': context.data.get('request_type', '')}
+        )
         operation_alias = self._wrap_data(
-            
+            context.data.get('operation_data', {})
+        )
         communication_alias = self._wrap_data(
-            
+            context.data.get('communication_data', {})
+        )
         stakeholder_alias = self._wrap_data(
+            context.data.get('stakeholder_data', {})
+        )
             
 
         variables = {

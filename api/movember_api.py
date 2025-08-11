@@ -15,11 +15,13 @@ from dataclasses import dataclass, asdict
 from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Header, Request, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import httpx
 from sqlalchemy import create_engine, Column, String, Integer, Float, DateTime, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import text
+from sqlalchemy.orm import sessionmaker
 import time
 import random
 
@@ -350,33 +352,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include grant acquisition router if available
-if GRANT_ACQUISITION_AVAILABLE and grant_acquisition_router:
-    app.include_router(grant_acquisition_router)
-    logger.info("Grant acquisition endpoints included")
+# Log system availability
+if GRANT_ACQUISITION_AVAILABLE:
+    logger.info("Grant acquisition system available")
 else:
-    logger.warning("Grant acquisition endpoints not available")
+    logger.warning("Grant acquisition system not available")
 
-# Include impact intelligence router if available
-if IMPACT_INTELLIGENCE_AVAILABLE and impact_intelligence_router:
-    app.include_router(impact_intelligence_router)
-    logger.info("Impact intelligence endpoints included")
+if IMPACT_INTELLIGENCE_AVAILABLE:
+    logger.info("Impact intelligence system available")
 else:
-    logger.warning("Impact intelligence endpoints not available")
+    logger.warning("Impact intelligence system not available")
 
-# Include real data integration router if available
-if REAL_DATA_AVAILABLE and real_data_router:
-    app.include_router(real_data_router)
-    logger.info("Real data integration endpoints included")
+if REAL_DATA_AVAILABLE:
+    logger.info("Real data integration system available")
 else:
-    logger.warning("Real data integration endpoints not available")
+    logger.warning("Real data integration system not available")
 
-# Include data upload router if available
-if DATA_UPLOAD_AVAILABLE and data_upload_router:
-    app.include_router(data_upload_router)
-    logger.info("Data upload endpoints included")
+if DATA_UPLOAD_AVAILABLE:
+    logger.info("Data upload system available")
 else:
-    logger.warning("Data upload endpoints not available")
+    logger.warning("Data upload system not available")
 
 # Global variables
 movember_engine = None

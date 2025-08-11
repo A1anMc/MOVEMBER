@@ -7,6 +7,7 @@ Core data structures and types for the rules system.
 from typing import List, Dict, Any, Optional, Callable, Union
 from dataclasses import dataclass, field
 from datetime import datetime
+from enum import Enum
 
 __all__ = [
     'Rule',

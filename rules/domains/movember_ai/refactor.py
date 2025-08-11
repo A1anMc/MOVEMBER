@@ -7,6 +7,7 @@ Manages weekly rule auditing and refactoring with UK spelling and AUD currency s
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
+from dataclasses import dataclass
 
 from rules.types import Rule, Condition, Action, RulePriority
 

@@ -445,7 +445,8 @@ def generate_context_recommendations(context_data: dict) -> list:
 
     # Check for project context
     if 'project_id' not in context_data or not validate_movember_context(
-        context_data['project_id'], context_data.get
+        context_data['project_id'], context_data.get('operation_type', '')
+    ):
         recommendations.append("Ensure operation is within Movember project context")
 
     # Check for stakeholder authority

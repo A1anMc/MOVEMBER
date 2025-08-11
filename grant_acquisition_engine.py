@@ -10,6 +10,8 @@ import json
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
+from enum import Enum
+from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
