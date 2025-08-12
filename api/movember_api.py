@@ -2085,6 +2085,14 @@ try:
 except ImportError as e:
     logger.warning(f"Digital Analytics API not available: {e}")
 
+# Add advanced analytics integration
+try:
+    from api.advanced_analytics_api import include_advanced_analytics_routes
+    include_advanced_analytics_routes(app)
+    logger.info("Advanced Analytics API routes included")
+except ImportError as e:
+    logger.warning(f"Advanced Analytics API not available: {e}")
+
 # Add enhanced impact tracking integration
 # try:
 #     from api.enhanced_impact_api import include_enhanced_impact_routes
