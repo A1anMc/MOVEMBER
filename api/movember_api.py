@@ -2069,6 +2069,13 @@ if PHASE6_AVAILABLE:
 else:
     logger.warning("Phase 6 research endpoints not available")
 
+# Add monitoring system integration
+try:
+    from api.monitoring_api import include_monitoring_routes
+    include_monitoring_routes(app)
+    logger.info("Monitoring API routes included")
+except ImportError as e:
+    logger.warning(f"Monitoring API not available: {e}")
 
 if __name__ == "__main__":
     import uvicorn
