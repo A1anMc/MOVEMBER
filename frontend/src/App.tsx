@@ -6,6 +6,7 @@ import GrantEvaluation from './components/GrantEvaluation';
 import AIGrantAssistant from './components/AIGrantAssistant';
 import Analytics from './components/Analytics';
 import MLInsights from './components/MLInsights';
+import AdvancedAnalyticsDashboard from './components/AdvancedAnalyticsDashboard';
 import Navigation from './components/Navigation';
 import './App.css';
 
@@ -27,10 +28,11 @@ function App() {
           <main className="pt-16">
             <Routes>
               <Route path="/" element={<Dashboard />} />
-                        <Route path="/grants" element={<GrantEvaluation />} />
-          <Route path="/ai-assistant" element={<AIGrantAssistant />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/ml-insights" element={<MLInsights />} />
+              <Route path="/grants" element={<GrantEvaluation />} />
+              <Route path="/ai-assistant" element={<AIGrantAssistant />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/ml-insights" element={<MLInsights />} />
+              <Route path="/advanced-analytics" element={<AdvancedAnalyticsDashboard />} />
             </Routes>
           </main>
         </div>

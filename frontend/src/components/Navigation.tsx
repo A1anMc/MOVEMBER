@@ -19,6 +19,7 @@ const Navigation: React.FC = () => {
     { name: 'AI Assistant', href: '/ai-assistant', icon: SparklesIcon },
     { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
     { name: 'ML Insights', href: '/ml-insights', icon: CpuChipIcon },
+    { name: 'Advanced Analytics', href: '/advanced-analytics', icon: CpuChipIcon },
   ];
 
   return (
