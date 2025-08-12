@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
+import { buildApiUrl, API_ENDPOINTS } from '../config/api';
 
 interface PredictionResult {
   predicted_value: number;
@@ -66,11 +67,11 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
       setLoading(true);
       
       // Fetch model performance
-      const performanceResponse = await fetch('http://localhost:8000/analytics/advanced/performance/all');
+      const performanceResponse = await fetch(buildApiUrl(API_ENDPOINTS.ADVANCED_PERFORMANCE));
       const performanceData = await performanceResponse.json();
       
       // Fetch insights
-      const insightsResponse = await fetch('http://localhost:8000/analytics/advanced/insights/all');
+      const insightsResponse = await fetch(buildApiUrl(API_ENDPOINTS.ADVANCED_INSIGHTS));
       const insightsData = await insightsResponse.json();
       
       setModelPerformance(Object.values(performanceData.performances || {}));
@@ -98,7 +99,7 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
         awareness_score: 75
       };
 
-      const response = await fetch(`http://localhost:8000/analytics/advanced/predict/${selectedModel}/${selectedHorizon}`, {
+      const response = await fetch(buildApiUrl(API_ENDPOINTS.ADVANCED_PREDICT(selectedModel, selectedHorizon)), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
