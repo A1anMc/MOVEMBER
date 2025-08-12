@@ -2077,6 +2077,14 @@ try:
 except ImportError as e:
     logger.warning(f"Monitoring API not available: {e}")
 
+# Add enhanced impact tracking integration
+# try:
+#     from api.enhanced_impact_api import include_enhanced_impact_routes
+#     include_enhanced_impact_routes(app)
+#     logger.info("Enhanced Impact API routes included")
+# except ImportError as e:
+#     logger.warning(f"Enhanced Impact API not available: {e}")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
