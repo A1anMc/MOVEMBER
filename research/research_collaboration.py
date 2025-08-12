@@ -44,12 +44,12 @@ class ResearchProject:
     lead_institution: str
     collaborating_institutions: List[str]
     start_date: datetime
-    end_date: Optional[datetime] = None
     budget: float
     status: str
     research_areas: List[str]
     team_members: List[str]
     milestones: List[Dict[str, Any]]
+    end_date: Optional[datetime] = None
 
 @dataclass
 class CollaborationSession:
@@ -58,10 +58,10 @@ class CollaborationSession:
     participants: List[str]
     session_type: str
     start_time: datetime
-    end_time: Optional[datetime] = None
     agenda: List[str]
     outcomes: List[str]
     documents_shared: List[str]
+    end_time: Optional[datetime] = None
 
 class ResearchCollaborationPlatform:
     """Multi-institution research collaboration platform."""

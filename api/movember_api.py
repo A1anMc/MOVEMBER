@@ -1958,7 +1958,7 @@ if PHASE6_AVAILABLE:
 
     @app.get("/research/insights/{category}")
     async def generate_research_insights_endpoint(
-        category: str = Path(..., description="Research category")
+        category: str = Path(description="Research category")
     ):
         """Generate research insights for a specific category."""
         try:

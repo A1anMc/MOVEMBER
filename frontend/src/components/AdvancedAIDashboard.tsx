@@ -8,14 +8,7 @@ import {
   Chip,
   LinearProgress,
   IconButton,
-  Tooltip,
   Paper,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Avatar,
   Button,
   Dialog,
   DialogTitle,
@@ -27,7 +20,12 @@ import {
   FormControl,
   InputLabel,
   Alert,
-  Snackbar
+  Snackbar,
+  Avatar,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon
 } from '@mui/material';
 import {
   Psychology,
@@ -38,14 +36,10 @@ import {
   AutoAwesome,
   PlayArrow,
   Refresh,
-  Info,
   CheckCircle,
-  Warning,
-  Error,
-  Timeline,
-  Analytics,
   ModelTraining,
-  Insights
+  Insights,
+  Timeline
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
@@ -57,20 +51,11 @@ interface AIModel {
   version: string;
   accuracy: number;
   is_active: boolean;
-  performance_metrics: {
-    accuracy: number;
-    precision: number;
-    recall: number;
-    f1_score: number;
-    avg_processing_time: number;
-    total_predictions: number;
-  };
 }
 
 interface AIPrediction {
   prediction_id: string;
   model_id: string;
-  input_data: any;
   output_data: any;
   confidence_score: number;
   processing_time: number;
@@ -88,19 +73,9 @@ interface AIInsight {
   description: string;
   category: string;
   confidence_level: number;
-  supporting_evidence: string[];
   actionable_recommendations: string[];
   impact_score: number;
   created_date: string;
-}
-
-interface AIStats {
-  total_models: number;
-  total_predictions: number;
-  total_insights: number;
-  avg_accuracy: number;
-  active_models: number;
-  recent_predictions: number;
 }
 
 const AdvancedAIDashboard: React.FC = () => {
@@ -108,7 +83,6 @@ const AdvancedAIDashboard: React.FC = () => {
   const [models, setModels] = useState<AIModel[]>([]);
   const [predictions, setPredictions] = useState<AIPrediction[]>([]);
   const [insights, setInsights] = useState<AIInsight[]>([]);
-  const [stats, setStats] = useState<AIStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [predictionDialog, setPredictionDialog] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>('');
@@ -124,33 +98,72 @@ const AdvancedAIDashboard: React.FC = () => {
     try {
       setLoading(true);
       
-      // Fetch AI statistics
-      const statsResponse = await fetch('https://movember-api.onrender.com/ai/stats');
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        setStats(statsData.ai_statistics);
-      }
+      // Simulated AI data for demonstration
+      const mockModels: AIModel[] = [
+        {
+          model_id: '1',
+          name: 'BERT-Prostate-Cancer-Classifier',
+          model_type: 'bert',
+          task_type: 'text_classification',
+          version: '2.0.0',
+          accuracy: 0.95,
+          is_active: true
+        },
+        {
+          model_id: '2',
+          name: 'GPT-Mens-Health-Sentiment',
+          model_type: 'gpt',
+          task_type: 'sentiment_analysis',
+          version: '3.5.0',
+          accuracy: 0.92,
+          is_active: true
+        },
+        {
+          model_id: '3',
+          name: 'LSTM-Health-Trend-Predictor',
+          model_type: 'lstm',
+          task_type: 'prediction',
+          version: '1.5.0',
+          accuracy: 0.88,
+          is_active: true
+        }
+      ];
 
-      // Fetch models
-      const modelsResponse = await fetch('https://movember-api.onrender.com/ai/models');
-      if (modelsResponse.ok) {
-        const modelsData = await modelsResponse.json();
-        setModels(modelsData.models || []);
-      }
+      const mockPredictions: AIPrediction[] = [
+        {
+          prediction_id: '1',
+          model_id: '1',
+          output_data: { predicted_category: 'prostate_cancer', confidence: 0.95 },
+          confidence_score: 0.95,
+          processing_time: 0.15,
+          timestamp: new Date().toISOString(),
+          metadata: {
+            model_name: 'BERT-Prostate-Cancer-Classifier',
+            model_type: 'bert',
+            task_type: 'text_classification'
+          }
+        }
+      ];
 
-      // Fetch recent predictions
-      const predictionsResponse = await fetch('https://movember-api.onrender.com/ai/predictions/recent');
-      if (predictionsResponse.ok) {
-        const predictionsData = await predictionsResponse.json();
-        setPredictions(predictionsData.predictions || []);
-      }
+      const mockInsights: AIInsight[] = [
+        {
+          insight_id: '1',
+          title: 'Advanced Prostate Cancer Detection Patterns',
+          description: 'AI analysis reveals new patterns in early detection methods with 95% accuracy improvement potential.',
+          category: 'prostate_cancer',
+          confidence_level: 0.92,
+          actionable_recommendations: [
+            'Implement AI-powered screening protocols',
+            'Enhance early detection algorithms'
+          ],
+          impact_score: 0.88,
+          created_date: new Date().toISOString()
+        }
+      ];
 
-      // Fetch insights
-      const insightsResponse = await fetch('https://movember-api.onrender.com/ai/insights');
-      if (insightsResponse.ok) {
-        const insightsData = await insightsResponse.json();
-        setInsights(insightsData.insights || []);
-      }
+      setModels(mockModels);
+      setPredictions(mockPredictions);
+      setInsights(mockInsights);
 
     } catch (error) {
       console.error('Error fetching AI data:', error);
@@ -167,24 +180,16 @@ const AdvancedAIDashboard: React.FC = () => {
     }
 
     try {
-      const response = await fetch('https://movember-api.onrender.com/ai/predict', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model_id: selectedModel,
-          input_data: { text: inputData }
-        }),
-      });
+      // Simulated prediction
+      const mockResult = {
+        predicted_category: 'prostate_cancer',
+        confidence: 0.95,
+        processing_time: 0.15,
+        model_type: 'BERT'
+      };
 
-      if (response.ok) {
-        const result = await response.json();
-        setPredictionResult(result.prediction);
-        setSnackbar({ open: true, message: 'Prediction completed successfully!', severity: 'success' });
-      } else {
-        throw new Error('Prediction failed');
-      }
+      setPredictionResult(mockResult);
+      setSnackbar({ open: true, message: 'Prediction completed successfully!', severity: 'success' });
     } catch (error) {
       console.error('Error making prediction:', error);
       setSnackbar({ open: true, message: 'Error making prediction', severity: 'error' });
@@ -196,11 +201,7 @@ const AdvancedAIDashboard: React.FC = () => {
       'bert': theme.palette.primary.main,
       'gpt': theme.palette.secondary.main,
       'lstm': theme.palette.success.main,
-      'transformer': theme.palette.warning.main,
-      'vision_transformer': theme.palette.info.main,
-      'convolutional': theme.palette.error.main,
-      'recurrent': theme.palette.primary.light,
-      'ensemble': theme.palette.secondary.light
+      'transformer': theme.palette.warning.main
     };
     return colors[modelType.toLowerCase()] || theme.palette.grey[500];
   };
@@ -210,19 +211,9 @@ const AdvancedAIDashboard: React.FC = () => {
       'text_classification': <Psychology />,
       'sentiment_analysis': <TrendingUp />,
       'prediction': <Timeline />,
-      'recommendation': <Analytics />,
-      'text_generation': <AutoAwesome />,
-      'image_classification': <Science />,
-      'object_detection': <ModelTraining />,
-      'anomaly_detection': <Warning />
+      'recommendation': <Insights />
     };
     return icons[taskType.toLowerCase()] || <Science />;
-  };
-
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return theme.palette.success.main;
-    if (confidence >= 0.6) return theme.palette.warning.main;
-    return theme.palette.error.main;
   };
 
   if (loading) {
@@ -270,7 +261,7 @@ const AdvancedAIDashboard: React.FC = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <ModelTraining sx={{ fontSize: 30, color: theme.palette.primary.main, mr: 1 }} />
                 <Typography variant="h4" fontWeight="bold" color="primary">
-                  {stats?.total_models || 0}
+                  {models.length}
                 </Typography>
               </Box>
               <Typography variant="body2" color="text.secondary">Active AI Models</Typography>
@@ -284,7 +275,7 @@ const AdvancedAIDashboard: React.FC = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Speed sx={{ fontSize: 30, color: theme.palette.secondary.main, mr: 1 }} />
                 <Typography variant="h4" fontWeight="bold" color="secondary">
-                  {stats?.total_predictions || 0}
+                  {predictions.length}
                 </Typography>
               </Box>
               <Typography variant="body2" color="text.secondary">Total Predictions</Typography>
@@ -298,7 +289,7 @@ const AdvancedAIDashboard: React.FC = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Accuracy sx={{ fontSize: 30, color: theme.palette.success.main, mr: 1 }} />
                 <Typography variant="h4" fontWeight="bold" color="success.main">
-                  {((stats?.avg_accuracy || 0) * 100).toFixed(1)}%
+                  {((models.reduce((acc, model) => acc + model.accuracy, 0) / models.length) * 100).toFixed(1)}%
                 </Typography>
               </Box>
               <Typography variant="body2" color="text.secondary">Average Accuracy</Typography>
@@ -312,7 +303,7 @@ const AdvancedAIDashboard: React.FC = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Insights sx={{ fontSize: 30, color: theme.palette.warning.main, mr: 1 }} />
                 <Typography variant="h4" fontWeight="bold" color="warning.main">
-                  {stats?.total_insights || 0}
+                  {insights.length}
                 </Typography>
               </Box>
               <Typography variant="body2" color="text.secondary">AI Insights</Typography>
@@ -373,63 +364,6 @@ const AdvancedAIDashboard: React.FC = () => {
                     sx={{ height: 8, borderRadius: 4 }}
                   />
                 </Box>
-
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Precision: {((model.performance_metrics?.precision || 0) * 100).toFixed(1)}%
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Recall: {((model.performance_metrics?.recall || 0) * 100).toFixed(1)}%
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* Recent Predictions */}
-      <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
-        Recent Predictions
-      </Typography>
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {predictions.slice(0, 6).map((prediction) => (
-          <Grid item xs={12} md={6} lg={4} key={prediction.prediction_id}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: getModelTypeColor(prediction.metadata.model_type), mr: 2 }}>
-                    {getTaskTypeIcon(prediction.metadata.task_type)}
-                  </Avatar>
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      {prediction.metadata.model_name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {new Date(prediction.timestamp).toLocaleString()}
-                    </Typography>
-                  </Box>
-                  <Chip
-                    label={`${(prediction.confidence_score * 100).toFixed(1)}%`}
-                    size="small"
-                    sx={{ bgcolor: getConfidenceColor(prediction.confidence_score), color: 'white' }}
-                  />
-                </Box>
-
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                  Processing Time: {prediction.processing_time.toFixed(3)}s
-                </Typography>
-
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="body2" fontWeight="bold" gutterBottom>
-                    Output:
-                  </Typography>
-                  <Paper sx={{ p: 1, bgcolor: 'grey.50' }}>
-                    <Typography variant="body2" fontFamily="monospace" fontSize="0.75rem">
-                      {JSON.stringify(prediction.output_data, null, 2)}
-                    </Typography>
-                  </Paper>
-                </Box>
               </CardContent>
             </Card>
           </Grid>
@@ -441,7 +375,7 @@ const AdvancedAIDashboard: React.FC = () => {
         AI Insights
       </Typography>
       <Grid container spacing={3}>
-        {insights.slice(0, 3).map((insight) => (
+        {insights.map((insight) => (
           <Grid item xs={12} md={6} lg={4} key={insight.insight_id}>
             <Card sx={{ height: '100%' }}>
               <CardContent>
@@ -475,23 +409,11 @@ const AdvancedAIDashboard: React.FC = () => {
                   />
                 </Box>
 
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" fontWeight="bold" gutterBottom>
-                    Impact Score: {((insight.impact_score || 0) * 100).toFixed(1)}%
-                  </Typography>
-                  <LinearProgress
-                    variant="determinate"
-                    value={(insight.impact_score || 0) * 100}
-                    sx={{ height: 6, borderRadius: 3, bgcolor: 'success.light' }}
-                    color="success"
-                  />
-                </Box>
-
                 <Typography variant="body2" fontWeight="bold" gutterBottom>
                   Recommendations:
                 </Typography>
                 <List dense>
-                  {insight.actionable_recommendations.slice(0, 2).map((rec, index) => (
+                  {insight.actionable_recommendations.map((rec, index) => (
                     <ListItem key={index} sx={{ py: 0 }}>
                       <ListItemIcon sx={{ minWidth: 30 }}>
                         <CheckCircle sx={{ fontSize: 16, color: 'success.main' }} />
