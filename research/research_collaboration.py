@@ -44,7 +44,7 @@ class ResearchProject:
     lead_institution: str
     collaborating_institutions: List[str]
     start_date: datetime
-    end_date: Optional[datetime]
+    end_date: Optional[datetime] = None
     budget: float
     status: str
     research_areas: List[str]
@@ -58,7 +58,7 @@ class CollaborationSession:
     participants: List[str]
     session_type: str
     start_time: datetime
-    end_time: Optional[datetime]
+    end_time: Optional[datetime] = None
     agenda: List[str]
     outcomes: List[str]
     documents_shared: List[str]
@@ -97,7 +97,7 @@ class ResearchCollaborationPlatform:
     def create_research_project(self, title: str, description: str, 
                                lead_institution: str, collaborating_institutions: List[str],
                                start_date: datetime, budget: float, 
-                               research_areas: List[str]) -> str:
+                               research_areas: List[str], end_date: Optional[datetime] = None) -> str:
         """Create a new research project."""
         project_id = str(uuid.uuid4())
         
@@ -108,6 +108,7 @@ class ResearchCollaborationPlatform:
             lead_institution=lead_institution,
             collaborating_institutions=collaborating_institutions,
             start_date=start_date,
+            end_date=end_date,
             budget=budget,
             status="Active",
             research_areas=research_areas,
