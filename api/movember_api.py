@@ -12,7 +12,7 @@ import json
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, asdict
-from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Header, Request, Form, UploadFile, File
+from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Header, Request, Form, UploadFile, File, Query, Path
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -86,6 +86,23 @@ try:
 except ImportError as e:
     logger.warning(f"Phase 2 components not available: {e}")
     PHASE2_AVAILABLE = False
+
+# Add new imports for Phase 6 research components (optional)
+try:
+    from research.clinical_data_integration import (
+        ResearchCategory, search_research_papers, search_clinical_trials_research,
+        generate_research_insights_for_category, get_clinical_integration_status
+    )
+    from research.research_collaboration import (
+        get_collaboration_network_analysis, get_platform_statistics
+    )
+    from research.publication_pipeline import (
+        get_publication_statistics, search_publications
+    )
+    PHASE6_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Phase 6 research components not available: {e}")
+    PHASE6_AVAILABLE = False
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -380,6 +397,13 @@ async def startup_event():
         else:
             logger.info("Phase 2 components not available - skipping initialization")
 
+        # Initialize Phase 6 components if available
+        if PHASE6_AVAILABLE:
+            logger.info("Initializing Phase 6 research components...")
+            logger.info("Research & Innovation Hub components loaded successfully")
+        else:
+            logger.info("Phase 6 research components not available - skipping initialization")
+
     except Exception as e:
         logger.error(f"Error during startup: {str(e)}")
 
@@ -427,6 +451,11 @@ if PHASE2_AVAILABLE:
     logger.info("Phase 2 components available")
 else:
     logger.warning("Phase 2 components not available")
+
+if PHASE6_AVAILABLE:
+    logger.info("Phase 6 research components available")
+else:
+    logger.warning("Phase 6 research components not available")
 
 # Add new global variables for Phase 2 components
 predictive_engine = None
@@ -1864,6 +1893,181 @@ async def get_dashboard_chart(chart_id: str):
     except Exception as e:
         logger.error(f"Error getting dashboard chart {chart_id}: {e}")
         raise HTTPException(status_code=500, detail=f"Chart error: {str(e)}")
+
+# Phase 6 Research Endpoints
+if PHASE6_AVAILABLE:
+    
+    @app.get("/research/papers/")
+    async def search_research_papers_endpoint(
+        query: str = Query(..., description="Search query for research papers"),
+        max_results: int = Query(20, description="Maximum number of results")
+    ):
+        """Search for research papers across multiple sources."""
+        try:
+            papers = await search_research_papers(query, max_results)
+            return {
+                "status": "success",
+                "query": query,
+                "total_results": len(papers),
+                "papers": [
+                    {
+                        "pmid": paper.pmid,
+                        "title": paper.title,
+                        "authors": paper.authors,
+                        "abstract": paper.abstract,
+                        "journal": paper.journal,
+                        "publication_date": paper.publication_date,
+                        "relevance_score": paper.relevance_score,
+                        "category": paper.category.value if paper.category else None
+                    }
+                    for paper in papers
+                ]
+            }
+        except Exception as e:
+            logger.error(f"Error searching research papers: {e}")
+            raise HTTPException(status_code=500, detail="Error searching research papers")
+
+    @app.get("/research/trials/")
+    async def search_clinical_trials_endpoint(
+        condition: str = Query(..., description="Medical condition to search for"),
+        max_results: int = Query(15, description="Maximum number of results")
+    ):
+        """Search for clinical trials."""
+        try:
+            trials = await search_clinical_trials_research(condition, max_results)
+            return {
+                "status": "success",
+                "condition": condition,
+                "total_results": len(trials),
+                "trials": [
+                    {
+                        "trial_id": trial.trial_id,
+                        "title": trial.title,
+                        "condition": trial.condition,
+                        "phase": trial.phase,
+                        "status": trial.status,
+                        "enrollment": trial.enrollment,
+                        "sponsor": trial.sponsor
+                    }
+                    for trial in trials
+                ]
+            }
+        except Exception as e:
+            logger.error(f"Error searching clinical trials: {e}")
+            raise HTTPException(status_code=500, detail="Error searching clinical trials")
+
+    @app.get("/research/insights/{category}")
+    async def generate_research_insights_endpoint(
+        category: str = Path(..., description="Research category")
+    ):
+        """Generate research insights for a specific category."""
+        try:
+            research_category = ResearchCategory(category)
+            insights = await generate_research_insights_for_category(research_category)
+            return {
+                "status": "success",
+                "category": category,
+                "total_insights": len(insights),
+                "insights": [
+                    {
+                        "insight_id": insight.insight_id,
+                        "title": insight.title,
+                        "description": insight.description,
+                        "confidence_level": insight.confidence_level,
+                        "clinical_relevance": insight.clinical_relevance,
+                        "created_date": insight.created_date.isoformat()
+                    }
+                    for insight in insights
+                ]
+            }
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Invalid research category: {category}")
+        except Exception as e:
+            logger.error(f"Error generating research insights: {e}")
+            raise HTTPException(status_code=500, detail="Error generating research insights")
+
+    @app.get("/research/collaboration/network")
+    async def get_collaboration_network():
+        """Get research collaboration network analysis."""
+        try:
+            network_data = get_collaboration_network_analysis()
+            return {
+                "status": "success",
+                "collaboration_network": network_data
+            }
+        except Exception as e:
+            logger.error(f"Error getting collaboration network: {e}")
+            raise HTTPException(status_code=500, detail="Error getting collaboration network")
+
+    @app.get("/research/publications/stats")
+    async def get_publication_statistics_endpoint():
+        """Get publication statistics."""
+        try:
+            stats = get_publication_statistics()
+            return {
+                "status": "success",
+                "publication_statistics": stats
+            }
+        except Exception as e:
+            logger.error(f"Error getting publication statistics: {e}")
+            raise HTTPException(status_code=500, detail="Error getting publication statistics")
+
+    @app.get("/research/publications/search")
+    async def search_publications_endpoint(
+        query: str = Query(..., description="Search query for publications")
+    ):
+        """Search publications."""
+        try:
+            publications = search_publications(query)
+            return {
+                "status": "success",
+                "query": query,
+                "total_results": len(publications),
+                "publications": [
+                    {
+                        "publication_id": pub.publication_id,
+                        "title": pub.title,
+                        "authors": pub.authors,
+                        "publication_type": pub.publication_type.value,
+                        "status": pub.status.value,
+                        "keywords": pub.keywords,
+                        "citation_count": pub.citation_count
+                    }
+                    for pub in publications
+                ]
+            }
+        except Exception as e:
+            logger.error(f"Error searching publications: {e}")
+            raise HTTPException(status_code=500, detail="Error searching publications")
+
+    @app.get("/research/status")
+    async def get_research_hub_status():
+        """Get the overall status of the Research & Innovation Hub."""
+        try:
+            clinical_stats = get_clinical_integration_status()
+            collaboration_stats = get_platform_statistics()
+            publication_stats = get_publication_statistics()
+            
+            return {
+                "status": "success",
+                "phase": "Phase 6: Research & Innovation Hub",
+                "components": {
+                    "clinical_data_integration": clinical_stats,
+                    "research_collaboration": collaboration_stats,
+                    "publication_pipeline": publication_stats
+                },
+                "total_papers_fetched": clinical_stats.get('total_papers_fetched', 0),
+                "total_trials_fetched": clinical_stats.get('total_trials_fetched', 0),
+                "total_insights_generated": clinical_stats.get('total_insights_generated', 0),
+                "total_publications": publication_stats.get('total_publications', 0),
+                "total_collaborations": collaboration_stats.get('total_sessions', 0)
+            }
+        except Exception as e:
+            logger.error(f"Error getting research hub status: {e}")
+            raise HTTPException(status_code=500, detail="Error getting research hub status")
+
+else:
+    logger.warning("Phase 6 research endpoints not available")
 
 
 if __name__ == "__main__":
