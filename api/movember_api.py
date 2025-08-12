@@ -2077,6 +2077,14 @@ try:
 except ImportError as e:
     logger.warning(f"Monitoring API not available: {e}")
 
+# Add digital analytics integration
+try:
+    from api.digital_analytics_api import include_digital_analytics_routes
+    include_digital_analytics_routes(app)
+    logger.info("Digital Analytics API routes included")
+except ImportError as e:
+    logger.warning(f"Digital Analytics API not available: {e}")
+
 # Add enhanced impact tracking integration
 # try:
 #     from api.enhanced_impact_api import include_enhanced_impact_routes
